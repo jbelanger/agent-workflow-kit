@@ -1,0 +1,34 @@
+name: Initiative
+description: Group related workflow-kit work under one outcome.
+title: "[Initiative] "
+labels: ["initiative"]
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What should be true when this initiative is done?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What source docs, decisions, or constraints matter?
+    validations:
+      required: true
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: Non-goals
+      description: What should this initiative not try to solve?
+    validations:
+      required: true
+  - type: textarea
+    id: first_grooming_questions
+    attributes:
+      label: First grooming questions
+      description: What should the agent clarify first?
+    validations:
+      required: false
+

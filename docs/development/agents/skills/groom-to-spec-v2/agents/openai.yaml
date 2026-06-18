@@ -1,0 +1,4 @@
+interface:
+  display_name: "Groom To Spec V2"
+  short_description: "Turn vague ideas into spec issues"
+  default_prompt: "Use $groom-to-spec-v2 to convert a vague idea into a clarified spec issue."

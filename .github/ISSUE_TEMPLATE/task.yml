@@ -1,0 +1,60 @@
+name: Task
+description: A concrete, bounded implementation or documentation task.
+title: "[Task] "
+labels: ["task"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+    validations:
+      required: true
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: Non-goals
+    validations:
+      required: true
+  - type: textarea
+    id: source_docs
+    attributes:
+      label: Source docs
+      description: Link specs, ADRs, issues, or source files that define the work.
+    validations:
+      required: true
+  - type: textarea
+    id: owned_area
+    attributes:
+      label: Owned area or module
+    validations:
+      required: true
+  - type: textarea
+    id: architecture_direction
+    attributes:
+      label: Architecture direction
+      description: Intended model, boundary, public surfaces touched, and shortcuts rejected.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation command
+    validations:
+      required: true
+  - type: dropdown
+    id: merge_risk
+    attributes:
+      label: Merge risk
+      options:
+        - Parallel-safe
+        - Needs coordination
+        - Serial only
+    validations:
+      required: true
+

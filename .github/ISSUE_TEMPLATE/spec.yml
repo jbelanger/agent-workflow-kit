@@ -1,0 +1,66 @@
+name: Spec
+description: Define accepted behavior, contracts, or user-visible semantics before implementation.
+title: "[Spec] "
+labels: ["spec"]
+body:
+  - type: markdown
+    attributes:
+      value: "Use this when behavior or contracts need to be settled before implementation."
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What operational problem does this spec solve?
+    validations:
+      required: true
+  - type: dropdown
+    id: spec_state
+    attributes:
+      label: Spec state
+      options:
+        - Draft
+        - Accepted
+        - Implemented
+        - Superseded
+    validations:
+      required: true
+  - type: textarea
+    id: current_understanding
+    attributes:
+      label: Current understanding
+      description: What do we know so far?
+    validations:
+      required: true
+  - type: textarea
+    id: clarification_questions
+    attributes:
+      label: Clarification questions
+      description: Ask one question at a time during grooming; record resolved questions here.
+    validations:
+      required: false
+  - type: textarea
+    id: proposed_behavior
+    attributes:
+      label: Proposed behavior / contract
+      description: What should agents implement after this spec is accepted?
+    validations:
+      required: false
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: Non-goals
+    validations:
+      required: true
+  - type: textarea
+    id: architecture_implications
+    attributes:
+      label: Architecture / ownership implications
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria for the spec
+    validations:
+      required: false
+

@@ -208,3 +208,151 @@ gh project field-delete \
 Posted a status comment on issue #1:
 
 - `https://github.com/jbelanger/agent-workflow-kit/issues/1#issuecomment-4746713802`
+
+## 2026-06-18: First Dogfooding Tasks
+
+Used the new workflow board to create two concrete child tasks under the dogfooding initiative.
+
+Decision:
+
+- The Codex account setup task is `Ready` and labeled `human-only`, not `Blocked`.
+- Rationale: the work is clear and ready for the human/operator, but an agent should not perform or
+  automate a personal ChatGPT Pro login flow.
+- The project setup script task is agent-executable and should codify the GitHub setup commands in
+  this trace.
+
+Task issues created:
+
+- Issue #2: `https://github.com/jbelanger/agent-workflow-kit/issues/2`
+  - Title: `[Task] Set up local Codex with ChatGPT Pro`
+  - Labels: `task`, `human-only`
+  - Project item ID: `PVTI_lAHOACJn-c4BbEGwzgwM808`
+  - GitHub issue node ID: `I_kwDOS-yxRc8AAAABF-67tg`
+- Issue #3: `https://github.com/jbelanger/agent-workflow-kit/issues/3`
+  - Title: `[Task] Create GitHub Project setup script`
+  - Labels: `task`
+  - Project item ID: `PVTI_lAHOACJn-c4BbEGwzgwM80Q`
+  - GitHub issue node ID: `I_kwDOS-yxRc8AAAABF-7Fvw`
+
+Issue creation commands:
+
+```bash
+gh issue create \
+  --repo jbelanger/agent-workflow-kit \
+  --title "[Task] Set up local Codex with ChatGPT Pro" \
+  --body-file /private/tmp/agent-workflow-kit-task-codex-auth.md \
+  --label task \
+  --label human-only
+
+gh issue create \
+  --repo jbelanger/agent-workflow-kit \
+  --title "[Task] Create GitHub Project setup script" \
+  --body-file /private/tmp/agent-workflow-kit-task-project-script.md \
+  --label task
+```
+
+Add task issues to Project #1:
+
+```bash
+gh project item-add 1 \
+  --owner jbelanger \
+  --url https://github.com/jbelanger/agent-workflow-kit/issues/2 \
+  --format json
+
+gh project item-add 1 \
+  --owner jbelanger \
+  --url https://github.com/jbelanger/agent-workflow-kit/issues/3 \
+  --format json
+```
+
+Set issue #2 project fields:
+
+- built-in `Status`: `Ready`
+- `Issue Type`: `Task`
+- `Area`: `Agent Guidance`
+- `Merge Risk`: `Parallel-safe`
+
+```bash
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM808 \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3SSg \
+  --single-select-option-id b801b3e8
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM808 \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3Sc0 \
+  --single-select-option-id fadc5d85
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM808 \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3SbE \
+  --single-select-option-id 274257f6
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM808 \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3Sb8 \
+  --single-select-option-id 3694faa4
+```
+
+Set issue #3 project fields:
+
+- built-in `Status`: `Ready`
+- `Issue Type`: `Task`
+- `Area`: `GitHub Config`
+- `Merge Risk`: `Needs coordination`
+
+```bash
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM80Q \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3SSg \
+  --single-select-option-id b801b3e8
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM80Q \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3Sc0 \
+  --single-select-option-id fadc5d85
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM80Q \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3SbE \
+  --single-select-option-id b12c1a44
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM80Q \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3Sb8 \
+  --single-select-option-id 0159a935
+```
+
+Add both tasks as built-in GitHub sub-issues of initiative #1:
+
+```bash
+gh api graphql \
+  -F parent=I_kwDOS-yxRc8AAAABF-0AqA \
+  -F sub=I_kwDOS-yxRc8AAAABF-67tg \
+  -f query='mutation($parent:ID!, $sub:ID!) { addSubIssue(input: {issueId: $parent, subIssueId: $sub}) { issue { id number } subIssue { id number } } }'
+
+gh api graphql \
+  -F parent=I_kwDOS-yxRc8AAAABF-0AqA \
+  -F sub=I_kwDOS-yxRc8AAAABF-7Fvw \
+  -f query='mutation($parent:ID!, $sub:ID!) { addSubIssue(input: {issueId: $parent, subIssueId: $sub}) { issue { id number } subIssue { id number } } }'
+```
+
+Verification commands:
+
+```bash
+gh project item-list 1 --owner jbelanger --format json --limit 10
+
+gh api graphql \
+  -f query='query($owner:String!, $repo:String!, $number:Int!) { repository(owner:$owner, name:$repo) { issue(number:$number) { number title subIssues(first:10) { nodes { number title url } } } } }' \
+  -F owner=jbelanger \
+  -F repo=agent-workflow-kit \
+  -F number=1
+```
+
+Verified project state:
+
+- Issue #2: `Status = Ready`, `Issue Type = Task`, `Area = Agent Guidance`,
+  `Merge Risk = Parallel-safe`, labels `task`, `human-only`
+- Issue #3: `Status = Ready`, `Issue Type = Task`, `Area = GitHub Config`,
+  `Merge Risk = Needs coordination`, label `task`
+- Issue #1 sub-issues: #2 and #3

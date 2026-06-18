@@ -204,3 +204,7 @@ gh project field-delete \
   --id PVTSSF_lAHOACJn-c4BbEGwzhV3Sc4 \
   --format json
 ```
+
+Posted a status comment on issue #1:
+
+- `https://github.com/jbelanger/agent-workflow-kit/issues/1#issuecomment-4746713802`

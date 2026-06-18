@@ -485,3 +485,120 @@ Verified milestone state:
 - Issue #2: open, in milestone `v0 - Project Bootstrap`
 - Issue #4: closed, in milestone `v0 - Project Bootstrap`
 - Issue #3: not in milestone `v0 - Project Bootstrap`
+
+## 2026-06-18: Pause Setup Script And Groom Local Telegram Runner
+
+Paused issue #3 after discovering the workflow's original Codex-in-CI assumption needed revisiting:
+
+- Issue #3: `https://github.com/jbelanger/agent-workflow-kit/issues/3`
+- Branch pushed with WIP progress: `codex/issue-3-project-setup-script`
+- WIP commit: `f843231`
+- Pause comment: `https://github.com/jbelanger/agent-workflow-kit/issues/3#issuecomment-4746965134`
+
+Decision:
+
+- Do not continue the GitHub Project setup script until the agent trigger architecture is clearer.
+- The branch remains useful as WIP/reference material.
+- Issue #3 is `Blocked` because completion now depends on a workflow direction choice, not because of
+  a code bug in the script.
+
+WIP branch contents:
+
+- `scripts/setup-github-project.sh`
+- `docs/development/workflow/project-setup-script.md`
+- `docs/development/workflow/bootstrap-issues/`
+- README links to the setup script and guide
+
+Validation completed before pausing:
+
+```bash
+bash -n scripts/setup-github-project.sh
+scripts/setup-github-project.sh --repo jbelanger/agent-workflow-kit --dry-run
+git diff --check
+```
+
+Operational correction:
+
+- A WIP script validation run rewrote Project single-select options, which regenerated option IDs and
+  cleared existing `Status` values on some Project items.
+- Repaired current Project statuses:
+  - Issue #1: `Grooming`
+  - Issue #2: `Ready`
+  - Issue #3: `Blocked`
+  - Issue #4: `Complete`
+
+Created a new grooming task for the local Telegram runner idea:
+
+- Issue #5: `https://github.com/jbelanger/agent-workflow-kit/issues/5`
+- Title: `[Task] Groom Telegram local Codex runner`
+- GitHub issue node ID: `I_kwDOS-yxRc8AAAABF_Grig`
+- Project item ID: `PVTI_lAHOACJn-c4BbEGwzgwNE0k`
+- Labels: `task`
+
+Issue creation command:
+
+```bash
+gh issue create \
+  --repo jbelanger/agent-workflow-kit \
+  --title "[Task] Groom Telegram local Codex runner" \
+  --body-file /private/tmp/agent-workflow-kit-telegram-grooming-task.md \
+  --label task
+```
+
+Set issue #5 project fields:
+
+- built-in `Status`: `Grooming`
+- `Issue Type`: `Task`
+- `Area`: `Workflow`
+- `Merge Risk`: `Needs coordination`
+
+```bash
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwNE0k \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3SSg \
+  --single-select-option-id 80b81043
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwNE0k \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3Sc0 \
+  --single-select-option-id 397c0ec2
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwNE0k \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3SbE \
+  --single-select-option-id c81ed43d
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwNE0k \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3Sb8 \
+  --single-select-option-id 42dd2491
+```
+
+Added issue #5 as a built-in GitHub sub-issue of initiative #1:
+
+```bash
+gh api graphql \
+  -F parent=I_kwDOS-yxRc8AAAABF-0AqA \
+  -F sub=I_kwDOS-yxRc8AAAABF_Grig \
+  -f query='mutation($parent:ID!, $sub:ID!) { addSubIssue(input: {issueId: $parent, subIssueId: $sub}) { issue { id number } subIssue { id number } } }'
+```
+
+Verification commands:
+
+```bash
+gh project item-list 1 --owner jbelanger --format json --limit 20
+
+gh api graphql \
+  -f query='query($owner:String!, $repo:String!, $number:Int!) { repository(owner:$owner, name:$repo) { issue(number:$number) { number title subIssues(first:20) { nodes { number title state url } } } } }' \
+  -F owner=jbelanger \
+  -F repo=agent-workflow-kit \
+  -F number=1
+```
+
+Verified state:
+
+- Issue #3: `Status = Blocked`, `Issue Type = Task`, `Area = GitHub Config`,
+  `Merge Risk = Needs coordination`
+- Issue #5: `Status = Grooming`, `Issue Type = Task`, `Area = Workflow`,
+  `Merge Risk = Needs coordination`
+- Issue #1 sub-issues include #2, #3, #4, and #5

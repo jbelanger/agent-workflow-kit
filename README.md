@@ -11,6 +11,7 @@ auditable.
 
 - Workflow draft: `docs/development/workflow/ai-dev-workflow.md`
 - Buy-vs-build mapping: `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`
+- Rebuild trace: `docs/development/workflow/rebuild-trace.md`
 - Development docs policy: `docs/development/README.md`
 - Future agent instructions: `docs/development/agents/AGENTS.md`
 - Draft skills: `docs/development/agents/skills/`
@@ -28,4 +29,3 @@ The initial working assumption:
 - local-first Codex agents
 - Codex-in-CI for detailed advisory review
 - no autonomous merge
-

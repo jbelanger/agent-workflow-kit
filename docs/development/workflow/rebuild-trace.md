@@ -356,3 +356,132 @@ Verified project state:
 - Issue #3: `Status = Ready`, `Issue Type = Task`, `Area = GitHub Config`,
   `Merge Risk = Needs coordination`, label `task`
 - Issue #1 sub-issues: #2 and #3
+
+## 2026-06-18: Bootstrap Milestone
+
+Created the first milestone:
+
+- Milestone: `v0 - Project Bootstrap`
+- URL: `https://github.com/jbelanger/agent-workflow-kit/milestone/1`
+- Number: `1`
+- Node ID: `MI_kwDOS-yxRc4A-pOt`
+- Description: `Initial setup needed before the workflow can dogfood itself: local Codex account setup plus the already-completed GitHub Project board configuration.`
+
+Decision:
+
+- Use milestones for delivery slices, not workflow status.
+- Keep `v0 - Project Bootstrap` focused on the minimum setup required before the workflow can
+  manage itself.
+- Include local Codex setup and the already-completed GitHub Project board setup.
+- Do not include the project setup script task in this milestone; that task belongs to a later
+  reproducibility/hardening slice.
+
+Milestone creation command:
+
+```bash
+gh api repos/jbelanger/agent-workflow-kit/milestones \
+  -f title='v0 - Project Bootstrap' \
+  -f state=open \
+  -f description='Initial setup needed before the workflow can dogfood itself: local Codex account setup plus the already-completed GitHub Project board configuration.'
+```
+
+Added issue #2 to the milestone:
+
+```bash
+gh issue edit 2 \
+  --repo jbelanger/agent-workflow-kit \
+  --milestone 'v0 - Project Bootstrap'
+```
+
+Created a historical closed task for the manual GitHub Project setup:
+
+- Issue #4: `https://github.com/jbelanger/agent-workflow-kit/issues/4`
+- Title: `[Task] Configure initial GitHub Project board`
+- Labels: `task`
+- Milestone: `v0 - Project Bootstrap`
+- GitHub issue node ID: `I_kwDOS-yxRc8AAAABF-9lig`
+- Project item ID: `PVTI_lAHOACJn-c4BbEGwzgwM-OA`
+
+Issue creation command:
+
+```bash
+gh issue create \
+  --repo jbelanger/agent-workflow-kit \
+  --title "[Task] Configure initial GitHub Project board" \
+  --body-file /private/tmp/agent-workflow-kit-task-manual-project-setup.md \
+  --label task \
+  --milestone "v0 - Project Bootstrap"
+```
+
+Added issue #4 to Project #1:
+
+```bash
+gh project item-add 1 \
+  --owner jbelanger \
+  --url https://github.com/jbelanger/agent-workflow-kit/issues/4 \
+  --format json
+```
+
+Set issue #4 project fields:
+
+- built-in `Status`: `Complete`
+- `Issue Type`: `Task`
+- `Area`: `GitHub Config`
+- `Merge Risk`: `Needs coordination`
+
+```bash
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM-OA \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3SSg \
+  --single-select-option-id 3fe3f8c2
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM-OA \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3Sc0 \
+  --single-select-option-id fadc5d85
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM-OA \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3SbE \
+  --single-select-option-id b12c1a44
+
+gh project item-edit --project-id PVT_kwHOACJn-c4BbEGw \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM-OA \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3Sb8 \
+  --single-select-option-id 0159a935
+```
+
+Added issue #4 as a built-in GitHub sub-issue of initiative #1:
+
+```bash
+gh api graphql \
+  -F parent=I_kwDOS-yxRc8AAAABF-0AqA \
+  -F sub=I_kwDOS-yxRc8AAAABF-9lig \
+  -f query='mutation($parent:ID!, $sub:ID!) { addSubIssue(input: {issueId: $parent, subIssueId: $sub}) { issue { id number } subIssue { id number } } }'
+```
+
+Closed issue #4 as completed historical work:
+
+```bash
+gh issue close 4 \
+  --repo jbelanger/agent-workflow-kit \
+  --comment "Closed as a historical bootstrap record. The GitHub Project setup was completed manually before this task issue existed; the rebuild trace contains the commands and verified IDs."
+```
+
+Verification commands:
+
+```bash
+gh issue list \
+  --repo jbelanger/agent-workflow-kit \
+  --state all \
+  --milestone "v0 - Project Bootstrap" \
+  --json number,title,state,labels,milestone,url
+
+gh project item-list 1 --owner jbelanger --format json --limit 20
+```
+
+Verified milestone state:
+
+- Issue #2: open, in milestone `v0 - Project Bootstrap`
+- Issue #4: closed, in milestone `v0 - Project Bootstrap`
+- Issue #3: not in milestone `v0 - Project Bootstrap`

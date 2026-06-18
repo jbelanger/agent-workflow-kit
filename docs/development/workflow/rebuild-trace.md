@@ -56,18 +56,48 @@ gh project create --owner jbelanger --title "Agent Workflow Kit" --format json
 gh project link 1 --owner jbelanger --repo agent-workflow-kit
 ```
 
-GitHub created a default `Status` field with `Todo`, `In Progress`, and `Done`. The workflow needs
-more states, so a separate `Workflow Status` field was created instead of relying on the default.
+GitHub created a default `Status` field with `Todo`, `In Progress`, and `Done`. Reuse that built-in
+field for the workflow lifecycle instead of creating a parallel lifecycle field.
+
+Update built-in `Status` options through GraphQL. In this run, the built-in `Status` field ID was
+`PVTSSF_lAHOACJn-c4BbEGwzhV3SSg`.
+
+```bash
+gh api graphql \
+  -f query='mutation($fieldId: ID!, $options: [ProjectV2SingleSelectFieldOptionInput!]) { updateProjectV2Field(input: { fieldId: $fieldId, singleSelectOptions: $options }) { projectV2Field { ... on ProjectV2SingleSelectField { id name options { id name } } } } }' \
+  -F fieldId=PVTSSF_lAHOACJn-c4BbEGwzhV3SSg \
+  -F 'options[][name]=Backlog' \
+  -F 'options[][color]=GRAY' \
+  -F 'options[][description]=Captured but not currently moving' \
+  -F 'options[][name]=Grooming' \
+  -F 'options[][color]=YELLOW' \
+  -F 'options[][description]=Clarifying intent and deciding next output' \
+  -F 'options[][name]=Breakdown' \
+  -F 'options[][color]=PURPLE' \
+  -F 'options[][description]=Accepted direction being split into executable issues' \
+  -F 'options[][name]=Ready' \
+  -F 'options[][color]=BLUE' \
+  -F 'options[][description]=Scoped and ready for autonomous work' \
+  -F 'options[][name]=In Progress' \
+  -F 'options[][color]=ORANGE' \
+  -F 'options[][description]=Actively being implemented or drafted' \
+  -F 'options[][name]=In Review' \
+  -F 'options[][color]=PINK' \
+  -F 'options[][description]=PR or artifact is ready for review' \
+  -F 'options[][name]=Revision Needed' \
+  -F 'options[][color]=RED' \
+  -F 'options[][description]=Review found changes needing another implementation pass' \
+  -F 'options[][name]=Blocked' \
+  -F 'options[][color]=RED' \
+  -F 'options[][description]=Progress depends on a real blocker' \
+  -F 'options[][name]=Complete' \
+  -F 'options[][color]=GREEN' \
+  -F 'options[][description]=Done and no required work remains'
+```
 
 Custom project fields:
 
 ```bash
-gh project field-create 1 --owner jbelanger \
-  --name "Workflow Status" \
-  --data-type SINGLE_SELECT \
-  --single-select-options "Backlog,Grooming,Breakdown,Ready,In Progress,In Review,Revision Needed,Blocked,Complete" \
-  --format json
-
 gh project field-create 1 --owner jbelanger \
   --name "Issue Type" \
   --data-type SINGLE_SELECT \
@@ -95,7 +125,7 @@ gh project field-create 1 --owner jbelanger \
 
 Project field values created:
 
-- `Workflow Status`: `Backlog`, `Grooming`, `Breakdown`, `Ready`, `In Progress`, `In Review`,
+- built-in `Status`: `Backlog`, `Grooming`, `Breakdown`, `Ready`, `In Progress`, `In Review`,
   `Revision Needed`, `Blocked`, `Complete`
 - `Issue Type`: `Initiative`, `Spec`, `ADR`, `Spike`, `Task`, `Bug`, `Refactor`
 - `Area`: `Workflow`, `Agent Guidance`, `GitHub Config`, `CI`, `Docs`, `Governance`, `Unclassified`
@@ -128,7 +158,7 @@ gh project item-add 1 --owner jbelanger \
 
 Set issue #1 project fields:
 
-- `Workflow Status`: `Grooming`
+- built-in `Status`: `Grooming`
 - `Issue Type`: `Initiative`
 - `Area`: `Workflow`
 - `Merge Risk`: `Needs coordination`
@@ -144,7 +174,7 @@ gh label list --repo jbelanger/agent-workflow-kit --limit 100
 Verified item #1:
 
 - Issue: `https://github.com/jbelanger/agent-workflow-kit/issues/1`
-- `Workflow Status`: `Grooming`
+- built-in `Status`: `Grooming`
 - `Issue Type`: `Initiative`
 - `Area`: `Workflow`
 - `Merge Risk`: `Needs coordination`
@@ -152,3 +182,25 @@ Verified item #1:
 Posted a status comment on issue #1:
 
 - `https://github.com/jbelanger/agent-workflow-kit/issues/1#issuecomment-4746672891`
+
+Correction note:
+
+- A temporary custom `Workflow Status` field was initially created.
+- The UI made it clear this duplicated GitHub's built-in `Status`.
+- The built-in `Status` field was updated to use the full lifecycle.
+- Issue #1 was moved to built-in `Status = Grooming`.
+- The custom `Workflow Status` field was deleted.
+
+Actual migration commands from the temporary duplicate field to built-in `Status`:
+
+```bash
+gh project item-edit \
+  --id PVTI_lAHOACJn-c4BbEGwzgwM5ls \
+  --project-id PVT_kwHOACJn-c4BbEGw \
+  --field-id PVTSSF_lAHOACJn-c4BbEGwzhV3SSg \
+  --single-select-option-id 55cd59d8
+
+gh project field-delete \
+  --id PVTSSF_lAHOACJn-c4BbEGwzhV3Sc4 \
+  --format json
+```

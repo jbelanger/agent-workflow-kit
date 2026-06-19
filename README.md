@@ -4,7 +4,7 @@ Status: seed repository.
 
 This repository is a working kit for building a GitHub-native, agent-assisted development workflow.
 It is intentionally being built with its own workflow: groom vague ideas, convert them into specs or
-ADRs when needed, implement narrow slices, review with agents and humans, and keep decisions
+ADRs when needed, implement narrow slices, review locally with agents and humans, and keep decisions
 auditable.
 
 ## Start Here
@@ -13,13 +13,12 @@ auditable.
 - Buy-vs-build mapping: `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`
 - Rebuild trace: `docs/development/workflow/rebuild-trace.md`
 - Development docs policy: `docs/development/README.md`
-- Future agent instructions: `docs/development/agents/AGENTS.md`
-- Draft skills: `docs/development/agents/skills/`
+- Active agent instructions: `AGENTS.md`
+- Local Codex skills: `.agents/skills/`
 
 ## Current Goal
 
-Dogfood the workflow by creating the first initiative and grooming it into specs, ADRs, issues, and
-CI checks for this repository.
+Dogfood a stripped-down local Codex workflow before adding automation.
 
 The initial working assumption:
 
@@ -27,5 +26,7 @@ The initial working assumption:
 - durable development artifacts under `docs/development/`
 - GitHub Issues and Projects as the planning surface
 - local-first Codex agents
-- Codex-in-CI for detailed advisory review
+- repeated workflow verbs captured as local skills
+- deterministic CI only for now
+- no Codex-in-CI baseline yet
 - no autonomous merge

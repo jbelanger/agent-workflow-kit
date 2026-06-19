@@ -29,6 +29,17 @@ Created first dogfooding initiative:
 - Issue: `https://github.com/jbelanger/agent-workflow-kit/issues/1`
 - Title: `[Initiative] Build the agent workflow kit by dogfooding it`
 
+## 2026-06-18: Install Local Codex Surfaces
+
+Moved active agent behavior out of development docs and into Codex discovery locations:
+
+- `docs/development/agents/AGENTS.md` -> `AGENTS.md`
+- `docs/development/agents/skills/` -> `.agents/skills/`
+
+Removed `docs/development/agents/`. Development docs now hold workflow, specs, ADRs, and spike
+records; active repository guidance belongs in root `AGENTS.md`, and active local skills belong in
+`.agents/skills/`.
+
 ## 2026-06-18: GitHub Project Setup
 
 Created GitHub Project:

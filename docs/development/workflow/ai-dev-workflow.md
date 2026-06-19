@@ -254,7 +254,7 @@ changes the behavior, contract, or decision they describe, updating those docume
 work, not a separate cleanup.
 
 While a spec, ADR, or spike is being written, its issue can use `In Progress`. Once accepted, mark it
-`Complete` if the artifact is the final output, or move it to `Breakdown` if it must produce
+`Done` if the artifact is the final output, or move it to `Breakdown` if it must produce
 implementation issues.
 
 When specs live in the repo, acceptance happens through a PR:
@@ -264,7 +264,7 @@ When specs live in the repo, acceptance happens through a PR:
 3. The spec PR records the draft behavior, source evidence, non-goals, architecture implications,
    and acceptance criteria.
 4. Human review accepts the spec by approving the PR and ensuring the spec state is `Accepted`.
-5. After merge, the issue moves to `Breakdown` when implementation tasks are needed, or `Complete`
+5. After merge, the issue moves to `Breakdown` when implementation tasks are needed, or `Done`
    when the spec was the final deliverable.
 
 ### 3. Breakdown
@@ -385,7 +385,7 @@ Recommended statuses:
 | `In Review` | The author believes the work is ready for review. | Use when the PR is open, CI is expected to pass, and reviewers should evaluate it. |
 | `Revision Needed` | Review found accepted or pending changes that must be addressed on the existing PR. | Use after PR review or Codex CI review finds actionable items; return to `In Progress` for the revision pass, then back to `In Review`. |
 | `Blocked` | Active work cannot move until a blocker clears. | Use for work that should resume once a dependency, decision, access issue, or failed prerequisite is resolved. |
-| `Complete` | The issue is done and no required work remains. | Use after merge, closure, or accepted completion for non-code artifacts. |
+| `Done` | The issue is done and no required work remains. | Use after merge, closure, or accepted completion for non-code artifacts. |
 
 Use `Deferred` as a label or planning field on backlog items, not as a status. Use `Blocked` when
 active work cannot move until a blocker clears.
@@ -619,7 +619,7 @@ Examples of overlay content:
 - What is the smallest useful spec template?
 - What is the smallest useful ADR template?
 - What is the smallest useful spike template?
-- When should a spec issue be marked `Complete` versus moved to `Breakdown`?
+- When should a spec issue be marked `Done` versus moved to `Breakdown`?
 - Which board fields are worth automating first?
 - Which exact CI checks should be required on every project versus configured per project?
 - Should Codex CI review eventually block on structured blocker findings, or remain required

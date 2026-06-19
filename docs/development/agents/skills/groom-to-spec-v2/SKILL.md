@@ -47,7 +47,7 @@ When the current issue needs a spec:
 7. Open or update a PR for the spec document.
 8. Ask for human review and acceptance on the PR.
 9. After acceptance, ensure the spec document says `Spec state: Accepted`.
-10. Move to `Breakdown` when implementation issues are needed, or `Complete` when the spec itself is
+10. Move to `Breakdown` when implementation issues are needed, or `Done` when the spec itself is
    the final deliverable.
 
 Do not create implementation child issues from a draft spec.

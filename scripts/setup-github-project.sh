@@ -231,7 +231,26 @@ update_single_select_options() {
   actual_names_file="$(mktemp "$tmpdir/actual-option-names.XXXXXX")"
 
   while [ "$#" -gt 0 ]; do
+    local option_id
+    option_id="$(jq -r --arg id "$field_id" --arg name "$1" '
+      .fields[]
+      | select(.id == $id)
+      | .options[]?
+      | select(.name == $name)
+      | .id
+    ' <<<"$FIELDS_JSON" | head -n 1)"
+    if [ -z "$option_id" ] && [ "$field_id" = "$(field_id_by_name "Status")" ] && [ "$1" = "Done" ]; then
+      option_id="$(jq -r --arg id "$field_id" '
+        .fields[]
+        | select(.id == $id)
+        | .options[]?
+        | select(.name == "Complete")
+        | .id
+      ' <<<"$FIELDS_JSON" | head -n 1)"
+    fi
+
     printf '%s\n' "$1" >>"$desired_names_file"
+    [ -n "$option_id" ] && args+=(-F "options[][id]=$option_id")
     args+=(-F "options[][name]=$1")
     args+=(-F "options[][color]=$2")
     args+=(-F "options[][description]=$3")
@@ -300,7 +319,7 @@ ensure_project_fields() {
     "In Review" "PINK" "PR or artifact is ready for review" \
     "Revision Needed" "RED" "Review found changes needing another implementation pass" \
     "Blocked" "RED" "Progress depends on a real blocker" \
-    "Complete" "GREEN" "Done and no required work remains"
+    "Done" "GREEN" "Done and no required work remains"
   ok "configured built-in Status options"
 
   ensure_single_select_field "Issue Type" "Initiative,Spec,ADR,Spike,Task,Bug,Refactor"
@@ -541,7 +560,9 @@ close_issue_if_open() {
 }
 
 ensure_seed_issues() {
-  [ "$SEED_ISSUES" -eq 1 ] || return
+  if [ "$SEED_ISSUES" -ne 1 ]; then
+    return 0
+  fi
 
   note "Seeding initial issues and tasks"
   ensure_milestone
@@ -586,7 +607,7 @@ ensure_seed_issues() {
   set_item_field "$setup_item" "Issue Type" "Task"
   set_item_field "$setup_item" "Area" "GitHub Config"
   set_item_field "$setup_item" "Merge Risk" "Needs coordination"
-  set_item_field "$setup_item" "Status" "Complete"
+  set_item_field "$setup_item" "Status" "Done"
   close_issue_if_open "$setup_number" "$setup_state"
 
   ensure_subissue "$initiative_id" "$codex_id" "$codex_number"
@@ -616,7 +637,7 @@ Fields:
 Key option IDs:
 - Status / Ready: $(option_id_by_name "Status" "Ready")
 - Status / In Progress: $(option_id_by_name "Status" "In Progress")
-- Status / Complete: $(option_id_by_name "Status" "Complete")
+- Status / Done: $(option_id_by_name "Status" "Done")
 - Issue Type / Initiative: $(option_id_by_name "Issue Type" "Initiative")
 - Issue Type / Task: $(option_id_by_name "Issue Type" "Task")
 - Area / GitHub Config: $(option_id_by_name "Area" "GitHub Config")

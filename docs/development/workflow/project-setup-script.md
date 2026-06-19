@@ -28,6 +28,8 @@ It does not own:
 - Codex Cloud setup
 - personal Codex authentication
 - branch protection
+- saved Project view layout, filtering, or visible-field configuration
+- enabling or configuring GitHub Project built-in workflows
 - autonomous merge
 - long-term synchronization of issue bodies after humans edit them
 
@@ -82,6 +84,11 @@ GitHub's field update mutation. It intentionally avoids rewriting option details
 match, because GitHub may regenerate option IDs when a field is rewritten. Option ID stability
 matters for later automation.
 
+When the script does need to update a single-select field, it preserves existing option IDs where
+the option can be matched by name. For the `Status` field, it also treats the old `Complete` option
+as the predecessor of `Done` so adopting GitHub's built-in automation vocabulary does not clear
+existing item statuses.
+
 For existing seed issues, the script ensures labels, milestone membership, Project membership,
 classification fields, and sub-issue links. It does not overwrite existing issue bodies because
 issue bodies may become human-edited planning records after creation.
@@ -102,3 +109,15 @@ When seeding is enabled, the script creates or locates:
 
 The historical Project board setup task is closed after creation because the setup script itself
 performs that work.
+
+## Manual Project View Settings
+
+GitHub's public Project GraphQL schema exposes saved views and built-in workflows for reading, but
+does not currently expose supported mutations for creating/updating views or enabling workflows.
+Configure these in the GitHub UI after running the script:
+
+- Rename the main table/board views to meaningful names if desired.
+- Keep `Spec State` hidden from normal work views.
+- Add a `Specs` view filtered to `Issue Type: Spec` and show `Spec State` there.
+- Enable the built-in `Item closed` and `Pull request merged` workflows so GitHub moves closed or
+  merged items to `Done`.

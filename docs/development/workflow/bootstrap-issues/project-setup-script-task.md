@@ -30,7 +30,7 @@ The project board is now part of the workflow. If the setup only exists in chat 
 
 - [ ] The script is idempotent enough to rerun against `jbelanger/agent-workflow-kit` without duplicating labels, fields, field options, or the initial initiative.
 - [ ] The script fails with a clear message when `gh` is missing, unauthenticated, or lacks the `project` scope.
-- [ ] The script configures built-in `Status` options to match the workflow lifecycle: `Backlog`, `Grooming`, `Breakdown`, `Ready`, `In Progress`, `In Review`, `Revision Needed`, `Blocked`, `Complete`.
+- [ ] The script configures built-in `Status` options to match the workflow lifecycle: `Backlog`, `Grooming`, `Breakdown`, `Ready`, `In Progress`, `In Review`, `Revision Needed`, `Blocked`, `Done`.
 - [ ] The script configures the custom fields and options recorded in the rebuild trace.
 - [ ] The script records or prints the project URL, project ID, field IDs, and option IDs.
 - [ ] Documentation shows the exact command to run for this repository.

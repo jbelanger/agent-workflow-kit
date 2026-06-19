@@ -602,3 +602,114 @@ Verified state:
 - Issue #5: `Status = Grooming`, `Issue Type = Task`, `Area = Workflow`,
   `Merge Risk = Needs coordination`
 - Issue #1 sub-issues include #2, #3, #4, and #5
+
+## 2026-06-18 - Align final status with GitHub automation vocabulary
+
+Decision:
+
+- Use GitHub's built-in `Done` status name instead of the custom `Complete` status name.
+- Reason: GitHub Projects' built-in closed/merged-item automations target `Done` by default, so the
+  workflow should adopt GitHub's native vocabulary when it does not reduce clarity.
+- Keep `Spec State` as a project-level field for now, but hide it from normal work views and show it
+  only in a dedicated `Specs` view. Project-level fields cannot be conditionally shown only for one
+  issue type; organization-level issue fields can be pinned to issue types, but this repository is
+  currently under the personal `jbelanger` account.
+
+Live Project update:
+
+- Project: `https://github.com/users/jbelanger/projects/1`
+- Project ID: `PVT_kwHOACJn-c4BbEGw`
+- Status field ID: `PVTSSF_lAHOACJn-c4BbEGwzhV3SSg`
+- Renamed option ID `080424f7` from `Complete` to `Done`.
+- Existing Project item statuses were preserved because the option ID was retained.
+
+Command executed:
+
+```bash
+gh api graphql \
+  -f query='mutation($fieldId: ID!, $options: [ProjectV2SingleSelectFieldOptionInput!]) { updateProjectV2Field(input: { fieldId: $fieldId, singleSelectOptions: $options }) { projectV2Field { ... on ProjectV2SingleSelectField { id name options { id name color description } } } } }' \
+  -F fieldId=PVTSSF_lAHOACJn-c4BbEGwzhV3SSg \
+  -F 'options[][id]=0c485f8e' -F 'options[][name]=Backlog' -F 'options[][color]=GRAY' -F 'options[][description]=Captured but not currently moving' \
+  -F 'options[][id]=80b81043' -F 'options[][name]=Grooming' -F 'options[][color]=YELLOW' -F 'options[][description]=Clarifying intent and deciding next output' \
+  -F 'options[][id]=c7f842be' -F 'options[][name]=Breakdown' -F 'options[][color]=PURPLE' -F 'options[][description]=Accepted direction being split into executable issues' \
+  -F 'options[][id]=21edf841' -F 'options[][name]=Ready' -F 'options[][color]=BLUE' -F 'options[][description]=Scoped and ready for autonomous work' \
+  -F 'options[][id]=f09d20e8' -F 'options[][name]=In Progress' -F 'options[][color]=ORANGE' -F 'options[][description]=Actively being implemented or drafted' \
+  -F 'options[][id]=3ecb11ff' -F 'options[][name]=In Review' -F 'options[][color]=PINK' -F 'options[][description]=PR or artifact is ready for review' \
+  -F 'options[][id]=21dbafb9' -F 'options[][name]=Revision Needed' -F 'options[][color]=RED' -F 'options[][description]=Review found changes needing another implementation pass' \
+  -F 'options[][id]=a06812af' -F 'options[][name]=Blocked' -F 'options[][color]=RED' -F 'options[][description]=Progress depends on a real blocker' \
+  -F 'options[][id]=080424f7' -F 'options[][name]=Done' -F 'options[][color]=GREEN' -F 'options[][description]=Done and no required work remains'
+```
+
+Verification:
+
+```bash
+gh project field-list 1 --owner jbelanger --format json
+```
+
+Verified status options:
+
+- `Backlog`: `0c485f8e`
+- `Grooming`: `80b81043`
+- `Breakdown`: `c7f842be`
+- `Ready`: `21edf841`
+- `In Progress`: `f09d20e8`
+- `In Review`: `3ecb11ff`
+- `Revision Needed`: `21dbafb9`
+- `Blocked`: `a06812af`
+- `Done`: `080424f7`
+
+API limitation discovered:
+
+```bash
+gh api graphql \
+  -f query='query { __schema { mutationType { fields { name } } } }' \
+  --jq '.data.__schema.mutationType.fields[].name | select(test("ProjectV2View|projectV2View|Workflow|workflow"))'
+```
+
+Result:
+
+- Only `deleteProjectV2Workflow` was exposed.
+- The public schema exposed saved views and workflows for reading, but not supported mutations for
+  creating/updating views or enabling/configuring built-in workflows.
+
+Current Project view/workflow state:
+
+- `View 1`, `View 2`, and `View 3` do not show `Spec State`; this satisfies the normal-view cleanup.
+- A dedicated `Specs` view was not created through the API.
+- Built-in workflows are currently:
+  - `Auto-add sub-issues to project`: enabled
+  - `Item closed`: disabled
+  - `Pull request merged`: disabled
+  - `Auto-close issue`: disabled
+  - `Item added to project`: disabled
+  - `Pull request linked to issue`: disabled
+
+Manual UI follow-up:
+
+- Add a `Specs` view filtered to `Issue Type: Spec` and show `Spec State` there.
+- Enable the built-in `Item closed` and `Pull request merged` workflows so GitHub moves items to
+  `Done`.
+
+Setup script updates made in the working branch:
+
+- Changed the configured final `Status` option from `Complete` to `Done`.
+- Preserved existing option IDs when rewriting single-select fields.
+- Added a compatibility bridge so an existing `Status / Complete` option is renamed to `Done`
+  without losing its option ID.
+- Fixed `--skip-seed-issues` so skipping seed issue creation returns success and still prints the
+  setup summary.
+
+Validation commands:
+
+```bash
+bash -n scripts/setup-github-project.sh
+scripts/setup-github-project.sh --repo jbelanger/agent-workflow-kit --dry-run
+scripts/setup-github-project.sh --repo jbelanger/agent-workflow-kit --skip-seed-issues
+```
+
+Live script validation result:
+
+- Existing Project #1 was found and linked.
+- Fields and labels were checked.
+- Milestone `v0 - Project Bootstrap` was found.
+- Summary printed `Status / Done: 080424f7`.

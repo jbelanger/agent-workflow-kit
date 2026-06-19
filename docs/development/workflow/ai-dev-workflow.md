@@ -5,41 +5,28 @@ Status: local-skills baseline draft
 This repository is the working home for the workflow. Earlier planning notes from other repositories
 are source material only; durable decisions for this kit now belong here.
 
-The baseline sentence:
+The baseline:
 
-> This project uses local Codex skills to manage planning, grooming, implementation preparation,
-> local execution, and pre-PR review. CI remains deterministic. Humans own architecture and merge
-> decisions.
+> Humans own product and architecture judgment. Agents execute prepared work, propose architecture,
+> review evidence, and create small PRs. CI remains deterministic. Agents do not merge.
 
-The goal is to make AI-assisted work small, reviewable, architecture-safe, and auditable without
-making Codex-in-CI, Codex Cloud, automation, or subagents the center of the system.
+The goal is to shift important thinking left so implementation agents can work independently without
+creating architecture debt, hidden scope, or unnecessary merge conflicts.
 
 ## Operating Surfaces
 
-Use the smallest surface that matches the job:
+Use the smallest durable surface that matches the job:
 
-- `AGENTS.md`: standing repository rules, quality bar, validation expectations, and boundaries.
-- `.agents/skills/`: installed local workflows that Codex can invoke repeatedly.
-- `docs/development/`: durable decisions, workflow docs, specs, ADRs, spike writeups, and draft
-  workflow guidance.
+- `AGENTS.md`: installed repository rules, quality bar, validation expectations, and boundaries.
+- `.agents/skills/`: installed local Codex workflows that agents can invoke repeatedly.
+- `docs/development/`: durable specs, ADRs, spike writeups, workflow docs, and planning records.
 - GitHub issues and PRs: current planning, discussion, review, and audit trail.
-- CI: deterministic checks only, such as tests, typecheck, lint, formatting, build, and architecture
+- CI: deterministic checks such as tests, typecheck, lint, formatting, build, and architecture
   checks.
 
-In this repository, the local skills live under `.agents/skills/`.
-
-## Non-Goals For Now
-
-Do not make the baseline depend on:
-
-- Codex Cloud.
-- Codex-in-CI review, labels, status changes, or merge gates.
-- Automatic issue or project-board state transitions.
-- Subagents as a default workflow requirement.
-- Plugin packaging.
-- Large board schemas.
-
-Those may become later capabilities, but only after the local skills loop is reliable.
+Development docs live in the single repo, but they must remain separate from user-facing docs and
+excluded from any published product surface when needed. Active agent instructions stay in
+`AGENTS.md` and `.agents/skills/`, not under `docs/development/`.
 
 ## Core Rule
 
@@ -54,38 +41,59 @@ Agents may not hide uncertainty.
 
 ## Local Skill Set
 
-Start with three planning skills:
+Planning and orchestration:
 
 | Skill | Purpose | May edit code? |
 | --- | --- | --- |
 | `triage-backlog` | Review open issues and classify what needs attention. | No |
 | `pick-next-item` | Recommend the best next issue based on readiness, risk, dependencies, and value. | No |
-| `groom-issue` | Turn a vague issue into a direct task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
+| `groom-issue` | Turn an unclear issue into a task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
+| `breakdown-issue` | Decompose accepted direction into independent merge-safe tasks. | No |
+| `prepare-implementation` | Convert a Ready issue into an implementation brief. | Docs/issues only when asked |
+| `improve-workflow` | Triage dogfooding feedback and propose process improvements. | Docs/issues only when asked |
 
-Add implementation skills after the planning loop feels useful:
+Execution and review:
 
 | Skill | Purpose | May edit code? |
 | --- | --- | --- |
-| `prepare-implementation` | Convert a ready issue into an implementation brief. | Docs/issues only when asked |
-| `work-issue-local` | Implement one prepared issue in a local branch or worktree. | Yes |
-| `review-local-changes` | Review the local diff before pushing or opening a PR. | No, unless explicitly asked to fix |
+| `work-issue-local` | Implement one prepared issue, bug, refactor, PR revision, or superseding sub-issue. | Yes |
+| `review-local-changes` | Lightweight local diff review before PR. | No, unless explicitly asked to fix |
+| `review-revision-triage` | Strong architecture-sensitive PR review, revision routing, and human-review escalation. | Docs/specs only when safe |
 
 Do not create one mega-skill for the whole workflow. Skills should match the verbs people actually
 say.
 
+During dogfooding, installed skills ask agents to report process friction in a `Process feedback`
+note. Treat those notes as evidence for `improve-workflow`, not as automatic process changes.
+
 ## Workflow
+
+```text
+Backlog
+  -> Grooming
+  -> Spec / ADR / Spike / Direct Direction
+  -> Breakdown
+  -> Ready
+  -> In Progress
+  -> In Review
+  -> Complete
+```
+
+`Blocked` is not a normal phase. Use it only when progress truly cannot continue because of a
+decision, dependency, access problem, failed prerequisite, or unresolved architecture fork.
 
 ### 1. Triage Backlog
 
 Use `triage-backlog` when the human asks to triage, clean up issues, or find what needs attention.
 
-The output should group issues into:
+Triage groups issues into:
 
 - Ready.
 - Needs grooming.
 - Needs spec.
 - Needs ADR.
 - Needs spike.
+- Needs breakdown.
 - Blocked.
 - Stale, duplicate, or unclear.
 - Human-only decision.
@@ -98,9 +106,9 @@ Use `pick-next-item` when the human asks what to work on next.
 
 Prefer work that is:
 
-- Ready or nearly ready.
-- Small enough for one local Codex session.
 - Valuable to the current direction.
+- Ready or close to Ready.
+- Small enough for one agent session after breakdown.
 - Low merge-risk unless foundational work is intentional.
 - Not blocked by missing decisions.
 - Unlikely to cause architecture drift.
@@ -125,7 +133,7 @@ Grooming answers:
 
 Choose the smallest useful output:
 
-- Direct task when the work is clear, bounded, and testable.
+- Direct direction when the work is clear enough to decompose into implementation tasks.
 - Bug when actual behavior differs from expected behavior.
 - Refactor when the goal is behavior-preserving structure.
 - Spec when behavior, contracts, records, user-visible semantics, or acceptance criteria need to be
@@ -135,13 +143,71 @@ Choose the smallest useful output:
 - Drop or defer when the work should not move now.
 
 Ask one clarification question at a time. Include options, a recommendation, and why the answer
-matters.
+matters. Explain concepts in operational terms, assuming the human has not looked at the codebase
+recently. Use compact visuals or tables when they make the decision easier.
 
-### 4. Prepare Implementation
+### 4. Spec, ADR, Spike, Or Direct Direction
 
-Use `prepare-implementation` only after the issue is ready enough to execute.
+Use a spec when behavior, contracts, or user-visible semantics need agreement.
 
-The brief should contain:
+Use an ADR when the decision changes architecture direction, ownership, storage, public surface, or
+operating policy.
+
+Use a spike when evidence is missing and production work would otherwise guess.
+
+Use direct direction only when the desired change is already clear, bounded, and testable.
+
+Specs and ADRs are durable planning records. They may be superseded, but they are not disposable
+scratch artifacts. Spike notes are evidence unless their findings are promoted into a spec, ADR, or
+task.
+
+Spec state is separate from board status:
+
+| Spec State | Meaning |
+| --- | --- |
+| `Draft` | Proposed behavior or contract; not authoritative for autonomous implementation. |
+| `Accepted` | Human-approved target for implementation. |
+| `Implemented` | Merged code matches the accepted spec. |
+| `Superseded` | A newer spec or ADR replaced this one. |
+
+When a spec lives in the repo, acceptance happens through PR review of the spec document. After the
+direction is accepted, send it to `breakdown-issue`.
+
+### 5. Breakdown
+
+Use `breakdown-issue` after accepted direction and before implementation readiness.
+
+Breakdown is the orchestration phase. Its job is to decompose accepted direction into independent,
+merge-safe child tasks. This can be quick and can happen in the same planning session, but it is
+still a distinct step. No implementation issue is `Ready` until breakdown has produced or confirmed
+task boundaries.
+
+Breakdown must produce tasks that are:
+
+- Linked to the parent issue.
+- Small enough for one agent, one branch or worktree, and one PR.
+- Clear about goal, non-goals, source docs, owned area, allowed files, and forbidden files.
+- Clear about contracts, APIs, storage, migrations, user surfaces, and architecture boundaries
+  touched.
+- Covered by acceptance criteria, required tests, and validation commands.
+- Classified for merge risk.
+
+Merge-risk values:
+
+| Merge Risk | Description | When to use |
+| --- | --- | --- |
+| `Parallel-safe` | Low coordination risk with other branches. | Isolated tests, local bugs, report formatting, or unrelated areas. |
+| `Needs coordination` | Can proceed with sequencing or communication. | Shared contracts, common files, public APIs, migrations, or architecture rules. |
+| `Serial only` | Should not run in parallel with related work. | Foundational changes, contested design, or likely merge-conflict paths. |
+
+If a child task is still unclear, keep it in `Grooming`. If decomposition exposes a real design fork,
+route back to grooming, spec, ADR, or spike. Do not hide architecture decisions inside task splitting.
+
+### 6. Prepare Implementation
+
+Use `prepare-implementation` after breakdown has produced a Ready task.
+
+The implementation brief contains:
 
 - Goal.
 - Non-goals.
@@ -149,17 +215,21 @@ The brief should contain:
 - Allowed files or directories.
 - Forbidden files or directories.
 - Architecture boundary.
-- Public surfaces, contracts, storage, or cross-module behavior touched.
+- Contracts, APIs, storage, or user surfaces touched.
+- Parent/child context and resolution expectations.
 - Acceptance criteria.
 - Required tests.
 - Validation command.
+- Merge risk.
 - Required PR summary sections.
 
-If the issue is not ready, return it to grooming instead of guessing.
+If the issue is clear but not decomposed into merge-safe implementation work, return it to
+`breakdown-issue`. If the issue is unclear, return it to `groom-issue`.
 
-### 5. Work Issue Locally
+### 7. Work Issue Locally
 
-Use `work-issue-local` when the human explicitly asks Codex to implement.
+Use `work-issue-local` when a Ready issue is assigned for implementation, refactor, accepted
+revision work, or a superseding sub-issue.
 
 Rules:
 
@@ -168,95 +238,166 @@ Rules:
 - One PR.
 - No scope expansion.
 - No merge.
+- Preserve behavior unless the issue explicitly changes it.
 - Stop for architecture forks.
 - Ask before changing public APIs, ownership boundaries, storage shape, migration policy, or
   long-term abstractions.
 
-Implementation agents may choose local mechanics. Humans decide product direction, architecture
-direction, public contracts, and merge approval.
+The implementation agent decides whether the full Architecture Direction Check is needed. Use the
+full check when the task touches architecture, ownership, contracts, storage, public surface,
+migrations, refactors, PR revisions, superseding work, accepted specs or ADRs, or detected smells.
+For trivial tasks, a short "no architecture surface touched" note is enough.
 
-### 6. Review Local Changes
+For PR revisions, the implementation agent starts from the reviewer's classification but verifies
+each item against the issue, diff, code, specs or ADRs, tests, and intended architecture before
+coding. Review feedback is evidence, not a command.
 
-Use `review-local-changes` before pushing or opening a PR.
+When completing a sub-issue, superseding refactor, or replacement PR, the implementation agent reads
+the parent issue and decides whether the parent is now resolved, partly resolved, or should return to
+grooming or breakdown.
 
-Review should lead with:
+### 8. Review
 
-- Blocking issues.
-- Architecture concerns.
-- Test gaps.
-- Naming issues.
-- Scope drift.
-- Suggested fixes.
-- Taste-only notes.
+There are two review paths.
 
-Treat review feedback as evidence, not commands. Accepted fixes can be implemented in a separate
-revision pass or by explicitly asking `work-issue-local` to address them.
+Use `review-local-changes` for lightweight pre-PR local diff review. It checks blockers,
+architecture concerns, test gaps, naming issues, scope drift, suggested fixes, and taste-only notes.
+If the change touches architecture-sensitive surfaces or reveals a smell, switch to
+`review-revision-triage`.
 
-### 7. PR And Merge
+Use `review-revision-triage` for risk-triggered PR review and non-trivial revision routing. Trigger
+it when the PR touches architecture, ownership, contracts, storage, public surface, core domain
+model, accepted specs or ADRs, or when either agent detects a smell, debt risk, unclear model,
+boundary drift, or meaningful non-trivial disagreement.
 
-Open a PR when the local branch is ready for review. The PR should summarize:
+Strong review must:
 
-- What changed.
-- Which issue it addresses.
-- Scope in and out.
-- Contracts or APIs touched.
-- Validation run.
-- Decisions, smells, and deferred items.
-- Review triage, when applicable.
+- Challenge architecture direction before ordinary findings.
+- Verify review claims against code and source docs.
+- Classify meaningful feedback as accepted, rejected, deferred, taste-only, or human decision
+  needed.
+- Add or recommend `revision-needed` when actionable work must be addressed before merge.
+- Add or recommend `needs-human-review` when human architecture judgment or product direction is
+  required.
+- Explain non-trivial issues for a human who has not read the codebase recently.
 
-Only the human merges. Squash merge is the default.
+Either agent can force human review. Both agents must agree before skipping human review. A revision
+is agent-pickable only when both agents agree no human-review-worthy smell exists.
 
-## Architecture Direction Gate
+Review details stay on the PR. Use `revision-needed` and `needs-human-review` as labels or fields,
+not required board statuses.
 
-Challenge architecture before implementation and again before review when the change touches
-foundation, ownership, contracts, storage, public surface, or long-term model clarity.
+### 9. Refactor And Superseding PRs
 
-Ask:
+Do not add a dedicated refactor skill yet. Refactor is an issue type and an implementation path
+handled by `work-issue-local`, usually routed by `review-revision-triage`.
 
-- What is the intended model?
-- Which ownership boundary is involved?
-- What public surface, contract, or storage shape changes?
-- What simpler option was rejected, and why?
-- Is there a real architecture fork?
+If a refactor is required before merge:
 
-If there is a real fork, stop and ask the human. Explain the options in simple operational terms,
-assuming they have not looked at the code recently. Use a compact table or diagram when useful.
+- Keep it on the same PR when the current PR cannot be accepted without it.
+- Create a linked `Refactor` sub-issue and replacement PR when the cleanup is broader than the
+  current PR or makes the original PR obsolete.
+- Close the original PR as superseded when the replacement path makes it obsolete.
+- Do not rewrite the original issue. Link the replacement sub-issue or PR and preserve the audit
+  trail.
+- Keep the parent issue active while the replacement path is active unless a real blocker exists.
 
-Cheap or minimal passes are prohibited when they make the architecture worse.
+The agent completing the replacement work owns reading the parent issue and deciding whether the
+parent is resolved.
 
-## Development Docs Policy
+### 10. Merge
 
-Use a single repository by default. Keep durable development artifacts under `docs/development/`:
+Only the human merges.
 
-```text
-docs/development/
-  specs/
-  adrs/
-  spikes/
-  workflow/
-```
+Merge only when:
 
-Scratch planning belongs in issues, PR discussion, or temporary working notes. Promote it into
-`docs/development/` only when it should guide future implementation, review, or agent behavior.
+- The issue acceptance criteria are met.
+- Required checks pass.
+- Review conversations are resolved or explicitly deferred with owner, boundary, and removal
+  condition.
+- Architecture boundaries still hold.
+- Relevant specs, ADRs, or development docs are updated when behavior, contracts, architecture, or
+  accepted decisions changed.
+- The PR summary records validation, decisions, smells, naming issues, and review triage when
+  applicable.
+- The human approves.
 
-Development docs are separate from user-facing docs. Exclude them from published artifacts when end
-users should not see internal development material.
+Use squash merge by default so `main` keeps a readable history.
 
-## Ready And Done
+## Board Model
 
-An issue is ready for implementation when it has:
+Recommended statuses:
 
-1. Goal.
-2. Non-goals.
-3. Relevant source docs or code.
-4. Owned area or module.
-5. Acceptance criteria.
-6. Expected tests.
-7. Validation command.
-8. Merge-risk classification.
-9. Human decisions resolved, or clearly marked as required.
+| Status | Description | When to use |
+| --- | --- | --- |
+| `Backlog` | Captured but not currently moving. | Ideas, future work, deferred items, and work not yet selected. |
+| `Grooming` | Clarifying intent and classifying next output. | Use while deciding spec, ADR, spike, direct direction, drop, or defer. |
+| `Breakdown` | Accepted direction is being decomposed into executable tasks. | Use before child tasks are merge-safe and Ready. |
+| `Ready` | Scoped and safe for one agent to pick up. | Use after breakdown and implementation prep are sufficient. |
+| `In Progress` | An agent or human is actively working. | Branch/worktree work, spec drafting, active replacement path, or revision pass. |
+| `In Review` | The author believes the PR or artifact is reviewable. | Use when review should evaluate the work. |
+| `Blocked` | Progress cannot continue. | Use only for real decisions, access, dependencies, failed prerequisites, or architecture forks. |
+| `Complete` | Done and no required work remains. | Use after merge, closure, or accepted completion for non-code artifacts. |
 
-An implementation is done when:
+Recommended issue types:
+
+| Issue Type | Description | When to use |
+| --- | --- | --- |
+| `Initiative` | A large outcome grouping multiple issues. | Use for parent tracking, sequencing, and progress visibility. |
+| `Spec` | Durable behavior or contract definition. | Use when behavior or acceptance criteria need agreement. |
+| `ADR` | Durable architecture or operating decision. | Use when direction, ownership, storage, public surface, or policy changes. |
+| `Spike` | Time-boxed evidence gathering. | Use when production work would otherwise guess. |
+| `Task` | Concrete executable work. | Use when one branch or PR can complete the work. |
+| `Bug` | Actual behavior differs from expected behavior. | Use with reproduction evidence or a failing check. |
+| `Refactor` | Behavior-preserving structural improvement. | Use for ownership, boundary, naming, abstraction, or debt cleanup. |
+
+Core fields:
+
+| Field | Description | When to use |
+| --- | --- | --- |
+| `Status` | Coarse lifecycle state. | Always. |
+| `Issue Type` | Work or artifact type. | Always. |
+| `Area` | Product, architecture, or code area. | Use for filtering and avoiding parallel work in the same area. |
+| `Merge Risk` | Parallel coordination risk. | Required before Ready. |
+| `Spec State` | Draft, Accepted, Implemented, or Superseded. | Use for spec issues. |
+
+Useful labels or secondary fields:
+
+| Label / Field | Description | When to use |
+| --- | --- | --- |
+| `revision-needed` | Actionable review work must be addressed before merge. | Use as a queue signal, not a board status. |
+| `needs-human-review` | Human architecture or product judgment is needed. | Use when either agent escalates. |
+| `needs-source-evidence` | Claims need code, docs, logs, or external evidence. | Use before planning or implementation can proceed. |
+| `human-only` | Should not be autonomously executed by an agent. | Credentials, subjective product decisions, finance/legal/privacy judgment, or merge approval. |
+| `deferred` | Intentionally retained but not moving now. | Use on backlog items, not as status. |
+| `target-phase` | Phase, milestone, or release. | Add only when planning across phases is useful. |
+| `estimate/budget` | Rough size, time, or cost. | Add only when timeline or agent-cost planning needs it. |
+
+Do not add `Revision Needed` as a required board status. Revision state belongs on the PR and in
+labels or fields.
+
+## Definition Of Ready
+
+An implementation issue is Ready only when it has:
+
+1. Parent issue link when applicable.
+2. Goal.
+3. Non-goals.
+4. Relevant source docs or code.
+5. Owned area or module.
+6. Allowed files or directories.
+7. Forbidden files or directories.
+8. Contracts, records, APIs, storage, or user surfaces touched.
+9. Acceptance criteria.
+10. Required tests.
+11. Validation command.
+12. Merge-risk classification.
+13. Parent resolution expectations for sub-issues or superseding work.
+14. Human decisions resolved, or clearly marked as required.
+
+## Definition Of Done
+
+An implementation issue is done only when:
 
 - The requested behavior exists.
 - Focused validation has run, or the blocker is explicit.
@@ -264,22 +405,7 @@ An implementation is done when:
 - Durable docs are updated when behavior, contracts, architecture, or accepted decisions changed.
 - Review feedback is triaged rather than blindly applied.
 - Deferred debt has an owner, boundary, and removal condition.
-
-## Minimal Board Model
-
-Keep board state light:
-
-- `Backlog`.
-- `Grooming`.
-- `Ready`.
-- `In Progress`.
-- `In Review`.
-- `Blocked`.
-- `Complete`.
-
-Use labels or issue fields for `Spec`, `ADR`, `Spike`, `Task`, `Bug`, `Refactor`, `Human Only`,
-`Needs Source Evidence`, and merge risk. Do not add `Revision Needed` as a required baseline state
-yet; revision work can live in the PR discussion or move the issue back to `In Progress`.
+- Parent issue resolution has been checked when the work is a sub-issue or replacement path.
 
 ## CI Policy
 
@@ -293,17 +419,26 @@ CI should stay deterministic:
 - Architecture or import-boundary checks.
 - Issue-link or PR-template checks, when useful.
 
-Codex-in-CI is deferred. It can be revisited later as an advisory review or gate after the local
-skills loop has proved useful and the security, prompt-injection, trigger, and API-key boundaries
-are explicit.
+Codex-in-CI is deferred. It can be revisited later as advisory review or gating after the local
+skills loop has proved useful and the security, prompt-injection, trigger, and API-key boundaries are
+explicit.
 
 ## Later Capabilities
 
-Revisit these only after the local workflow is stable:
+Revisit these after the local workflow is stable:
 
-- Hardening the installed skills after dogfooding.
 - Packaging skills as a plugin.
 - Codex-in-CI advisory review.
 - Structured issue or board automation.
-- Subagent workflows.
+- Dedicated refactor skill if refactor passes become frequent enough.
 - More detailed spec, ADR, and spike templates.
+
+## Temporary Dogfooding Feedback
+
+This workflow is still being test-driven. Agents should include a brief `Process feedback` note in
+replies, issue comments, or PR summaries when they encounter confusing instructions, missing fields,
+excess ceremony, unsafe autonomy, merge-safety gaps, or ideas that would make the workflow easier to
+use.
+
+Use `improve-workflow` to triage those notes before changing the process. Remove this section and the
+matching skill footers when the workflow is stable enough for real project rollout.

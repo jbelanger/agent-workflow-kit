@@ -1,4 +1,0 @@
-interface:
-  display_name: "Review Revision Triage"
-  short_description: "Triage and address review findings"
-  default_prompt: "Use $review-revision-triage to address PR review findings with accepted, rejected, and deferred decisions."

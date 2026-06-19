@@ -1,4 +1,0 @@
-interface:
-  display_name: "Rigorous Implementation V2"
-  short_description: "Challenge architecture direction early"
-  default_prompt: "Use $rigorous-implementation-v2 to challenge the architecture direction before implementation."

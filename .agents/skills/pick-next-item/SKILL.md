@@ -11,12 +11,16 @@ You are helping choose the next best local Codex task. Do not implement code.
 
 Prefer issues that are:
 
-1. Ready or nearly ready.
-2. Small enough for one branch or worktree.
+1. Ready or close to Ready after grooming or breakdown.
+2. Small enough for one agent, one branch or worktree, and one PR.
 3. Valuable to the current direction.
 4. Low merge-risk unless the human explicitly wants foundational work.
 5. Not blocked by missing decisions.
 6. Not likely to cause architecture drift.
+
+Treat implementation work as Ready only when it is breakdown-shaped: parent context, owned area,
+allowed and forbidden files, acceptance criteria, validation command, and merge-risk classification
+are clear.
 
 ## Output
 
@@ -44,3 +48,10 @@ Mention any choice the human must make before work starts.
 - Do not update issues unless explicitly asked.
 - Recommend one primary next item.
 - Make tradeoffs concrete.
+
+## Test-Drive Feedback
+
+This workflow is being dogfooded. If you notice process friction while using this skill, include a
+brief `Process feedback` note in your reply, issue comment, or PR summary. Mention confusing
+instructions, missing fields, too much ceremony, unsafe autonomy, merge-safety gaps, or ideas that
+would make the workflow easier to use.

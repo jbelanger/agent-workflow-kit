@@ -5,20 +5,40 @@ description: Clarify a vague issue or idea and decide whether it should become a
 
 # Groom Issue
 
-You are turning a vague issue into a prepared work item. Do not implement code.
+You are turning a vague issue or idea into the next useful planning output. Do not implement code.
+
+Keep this skill narrow: classify unclear work, ask for missing decisions, and prepare the issue for
+durable planning work or `prepare-implementation`.
+
+## Core Stance
+
+- Grooming classifies unclear work before implementation.
+- Prefer updating the current issue over creating a parallel planning issue.
+- Durable specs, ADRs, spikes, and workflow guidance belong under `docs/development/`.
+- GitHub issues and PRs carry current planning, discussion, review, and audit trail.
+- Recommend issue fields, labels, and board status changes, but do not depend on automatic project
+  board transitions.
+- Ask one clarification question at a time.
+- Give options, a recommendation, and the reason.
+- Explain decisions in simple operational terms, assuming the human has not looked at the code
+  recently.
+- Use a compact table, diagram, or before/after flow when it makes the decision clearer.
 
 ## First Classify The Issue
 
 Choose the smallest useful output:
 
-- Direct task.
-- Bug.
-- Refactor.
-- Spec.
-- ADR.
-- Spike.
-- Drop.
-- Defer.
+- **Direct task:** The work is clear, bounded, testable, and does not need behavior, contract, or
+  architecture clarification. Use issue type `Task`.
+- **Bug:** Actual behavior differs from expected behavior.
+- **Refactor:** The goal is behavior-preserving structural improvement.
+- **Spec:** Behavior, contracts, records, user-visible semantics, or acceptance criteria need to be
+  settled before implementation.
+- **ADR:** Architecture direction, ownership, storage, public surface, or operating policy needs a
+  durable decision.
+- **Spike:** Evidence is missing and production work would otherwise guess.
+- **Drop:** The work should not be done.
+- **Defer:** The work may be valid but should not move now.
 
 ## Required Analysis
 
@@ -44,6 +64,69 @@ Each question must include:
 - Recommended answer.
 - Why it matters.
 
+Use this shape when asking:
+
+```md
+Question:
+
+Options:
+1. ...
+2. ...
+3. ...
+
+Recommendation:
+
+Why:
+```
+
+## Spec Flow
+
+When the current issue needs a spec:
+
+1. Recommend converting the current issue to `Issue Type: Spec` by default.
+2. Keep the issue in `Grooming` while asking clarification questions.
+3. Use `Spec state: Draft` while the behavior or contract is proposed.
+4. Once there is enough context to draft durable text, recommend the next action as creating or
+   updating a spec document under `docs/development/specs/`.
+5. The spec PR owns review of the durable text.
+6. After human acceptance, ensure the spec document says `Spec state: Accepted`.
+7. If implementation work remains, send the accepted issue to `breakdown-issue`; if the spec itself
+   was the deliverable, recommend `Complete`.
+
+Do not create implementation child issues from a draft spec.
+
+## Spec State
+
+- `Draft`: proposed behavior or contract; not authoritative for autonomous implementation.
+- `Accepted`: human-approved target for implementation.
+- `Implemented`: merged code matches the accepted spec.
+- `Superseded`: a newer spec or ADR replaced this one.
+
+## Draft Spec Shape
+
+```md
+# Problem
+
+# Current understanding
+
+# Clarification questions
+
+# Spec state
+Draft
+
+# Proposed behavior / contract
+
+# Non-goals
+
+# Source evidence
+
+# Architecture / ownership implications
+
+# Acceptance criteria for the spec
+
+# Breakdown notes, after accepted
+```
+
 ## Output
 
 Return:
@@ -55,6 +138,7 @@ Return:
 - Source evidence needed.
 - Acceptance criteria draft.
 - Merge risk.
+- Recommended issue fields, labels, or status.
 - Next action.
 
 ## Rules
@@ -63,3 +147,12 @@ Return:
 - Use `Blocked` only for a real unresolved dependency, missing access, or decision.
 - Keep normal clarification in grooming.
 - Prefer updating the current issue over creating a parallel planning issue.
+- If the issue is clear enough for implementation, hand it to `breakdown-issue` so the orchestrator
+  can produce merge-safe executable task boundaries before `prepare-implementation`.
+
+## Test-Drive Feedback
+
+This workflow is being dogfooded. If you notice process friction while using this skill, include a
+brief `Process feedback` note in your reply, issue comment, or PR summary. Mention confusing
+instructions, missing fields, too much ceremony, unsafe autonomy, merge-safety gaps, or ideas that
+would make the workflow easier to use.

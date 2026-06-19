@@ -40,9 +40,14 @@ Use local skills for repeated workflows:
 - `triage-backlog`: classify backlog health and next actions.
 - `pick-next-item`: recommend the next issue.
 - `groom-issue`: turn an unclear issue into a task, spec, ADR, spike, bug, refactor, drop, or defer.
+- `breakdown-issue`: decompose accepted direction into independent merge-safe tasks.
 - `prepare-implementation`: produce an implementation brief for a ready issue.
 - `work-issue-local`: implement one prepared issue locally.
 - `review-local-changes`: review the local diff before PR.
+- `review-revision-triage`: perform strong architecture-sensitive PR review, revision routing, and
+  human-review escalation.
+- `improve-workflow`: triage dogfooding feedback and propose concrete process, skill, doc, label, or
+  board improvements.
 
 Use `AGENTS.md` for standing rules. Use skills for procedural recipes. Use `docs/development/` for
 durable decisions and draft guidance.
@@ -78,6 +83,8 @@ makes the decision easier.
 ## Implementation Policy
 
 - Work from one groomed issue at a time.
+- Use `breakdown-issue` before implementation when accepted direction must become one or more
+  executable tasks.
 - Use one branch or worktree per issue.
 - Keep slices narrow and reviewable.
 - Prefer the simplest model that stays honest.
@@ -109,6 +116,17 @@ Review local changes before PR. Challenge architecture direction before ordinary
 - Did it add avoidable public surface or duplicated truths?
 - Did it choose a cheap/minimal pass that worsens the architecture?
 - Is there a cleaner model that should be used before merge?
+
+Use `revision-needed` and `needs-human-review` as labels or field signals, not required board
+statuses. Either agent can force human review when it detects architecture smell, debt risk, unclear
+ownership, spec drift, or meaningful non-trivial disagreement.
+
+## Test-Drive Feedback
+
+This workflow is currently being dogfooded. When a skill or process step is confusing, too heavy,
+too loose, unsafe for autonomy, or missing a field/status/label, include a brief `Process feedback`
+note in the reply, issue comment, or PR summary. Use `improve-workflow` when asked to turn that
+feedback into process changes.
 
 ## CI Policy
 

@@ -1,0 +1,32 @@
+name: awk-work-issue-local
+description: |
+  Use when a prepared issue is ready for one local implementation pass.
+  The workflow performs a read-only preflight, pauses for human approval, then allows one
+  scoped implementation pass. It does not merge.
+
+provider: codex
+model: gpt-5.5
+modelReasoningEffort: high
+webSearchMode: disabled
+worktree:
+  enabled: true
+
+nodes:
+  - id: preflight
+    command: awk-implementation-preflight
+    context: fresh
+    output_type: implementation-preflight
+
+  - id: approve-scope
+    depends_on: [preflight]
+    approval:
+      message: |
+        Review the preflight artifact before implementation. Approve only if the scope,
+        boundaries, validation, and human-decision gates are acceptable.
+      capture_response: true
+
+  - id: implement
+    command: awk-work-issue-local
+    depends_on: [approve-scope]
+    context: fresh
+    output_type: implementation-report

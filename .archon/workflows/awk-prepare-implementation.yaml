@@ -1,0 +1,18 @@
+name: awk-prepare-implementation
+description: |
+  Use when a Ready or nearly-ready issue needs a local Codex implementation brief.
+  This workflow is read-only: it checks readiness, identifies missing decisions, and writes
+  an implementation brief artifact. It does not edit code or create a PR.
+
+provider: codex
+model: gpt-5.5
+modelReasoningEffort: high
+webSearchMode: disabled
+worktree:
+  enabled: false
+
+nodes:
+  - id: prepare
+    command: awk-prepare-implementation
+    context: fresh
+    output_type: implementation-brief

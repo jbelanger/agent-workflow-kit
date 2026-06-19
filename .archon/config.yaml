@@ -1,0 +1,17 @@
+assistant: codex
+
+assistants:
+  codex:
+    model: gpt-5.5
+    modelReasoningEffort: high
+    webSearchMode: disabled
+
+defaults:
+  loadDefaultCommands: false
+  loadDefaultWorkflows: false
+
+recommendedWorkflows:
+  - awk-prepare-implementation
+  - awk-work-issue-local
+  - awk-review-local-changes
+  - awk-validate-process-pack

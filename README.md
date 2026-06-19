@@ -18,7 +18,9 @@ auditable.
 
 ## Current Goal
 
-Dogfood a stripped-down local Codex workflow before adding automation.
+Dogfood a stripped-down local Codex workflow before adding automation. The current Archon spike
+tests whether this kit should become a policy/workflow pack on top of Archon's runtime instead of
+building a competing orchestration engine.
 
 The initial working assumption:
 
@@ -30,3 +32,4 @@ The initial working assumption:
 - deterministic CI only for now
 - no Codex-in-CI baseline yet
 - no autonomous merge
+- experimental `.archon/` workflow pack with bundled Archon defaults disabled

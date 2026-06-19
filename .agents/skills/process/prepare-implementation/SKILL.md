@@ -20,6 +20,7 @@ Before writing the brief, verify the issue has enough context:
 - Forbidden files or directories.
 - Contracts, records, APIs, storage, or user surfaces touched.
 - Acceptance criteria.
+- Feedback loop or test seam.
 - Expected tests.
 - Validation command.
 - Merge-risk classification.
@@ -53,6 +54,8 @@ Produce:
 # Parent/child context
 
 # Acceptance criteria
+
+# Feedback loop / test seam
 
 # Required tests
 

@@ -13,7 +13,8 @@ and one PR.
 
 - Breakdown protects parallel execution.
 - Every implementation task needs a clear parent, owned area, allowed files, forbidden files,
-  acceptance criteria, validation command, and merge-risk classification.
+  acceptance criteria, feedback loop or test seam, validation command, and merge-risk
+  classification.
 - Do not mark implementation work `Ready` until task boundaries are clear enough for autonomous
   work.
 - Do not hide architecture decisions inside task splitting. If decomposition exposes a real fork,
@@ -57,6 +58,7 @@ Each child task must have:
 - Forbidden files or directories.
 - Contracts, records, APIs, storage, or user surfaces touched.
 - Acceptance criteria.
+- Feedback loop or test seam.
 - Required tests.
 - Validation command.
 - Merge-risk classification.
@@ -113,6 +115,7 @@ Allowed files:
 Forbidden files:
 Contracts/APIs/storage touched:
 Acceptance criteria:
+Feedback loop / test seam:
 Required tests:
 Validation command:
 Merge risk:

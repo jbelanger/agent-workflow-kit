@@ -43,17 +43,32 @@ records; active repository guidance belongs in root `AGENTS.md`, and active loca
 ## 2026-06-19: Categorize Local Skills
 
 Moved the active process skills into `.agents/skills/process/` and documented category folders for
-future specialist and domain skills.
+specialist and domain skills.
 
 Current active skill layout:
 
 - `.agents/skills/process/<skill-name>/SKILL.md`: workflow/process skills.
-- `.agents/skills/specialist/`: placeholder for repeated code-quality, architecture, naming, or
-  refactor skills.
+- `.agents/skills/specialist/<skill-name>/SKILL.md`: repeated testing, diagnosis, code-quality,
+  architecture, naming, or refactor skills.
 - `.agents/skills/domain/`: placeholder for project or business-domain skills.
 
 Category folders are navigation only. Individual skill folders keep the skill name as the final path
 segment, and each `SKILL.md` remains the owning instruction file.
+
+## 2026-06-19: Add Feedback Loop Specialist Skills
+
+Adapted the TDD and bug-diagnosis ideas into local specialist skills instead of adding new board
+states or a new process phase.
+
+Added:
+
+- `.agents/skills/specialist/tdd/SKILL.md`
+- `.agents/skills/specialist/diagnose-bug/SKILL.md`
+
+Wired `Feedback loop / test seam` into breakdown, implementation prep, local work, review, the task
+issue template, and the PR template. The implementation rule is to choose the cheapest honest loop:
+TDD for behavior work with a useful seam, diagnosis for unreproduced bugs, characterization tests for
+risky refactors, or validation-only when tests would be brittle or lower signal.
 
 ## 2026-06-18: GitHub Project Setup
 

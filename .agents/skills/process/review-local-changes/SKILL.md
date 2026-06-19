@@ -29,6 +29,8 @@ Read the diff and touched files. Ask:
 - Did it add avoidable public surface, compatibility shims, duplicated truths, or transition debt?
 - Did it choose a cheap/minimal pass that worsens architecture?
 - Are changed behaviors covered by tests?
+- Do the tests verify behavior through the right public seam instead of implementation details?
+- Did the change add brittle, bulk-generated, or speculative tests?
 - Is the PR summary likely to name the important decisions and smells?
 
 If the change touches architecture, ownership, contracts, storage, public surface, core domain model,
@@ -59,6 +61,8 @@ Return:
 ## Architecture concerns
 
 ## Test gaps
+
+## Feedback loop / test seam
 
 ## Naming issues
 

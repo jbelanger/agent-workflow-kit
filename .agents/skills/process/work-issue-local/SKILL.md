@@ -42,13 +42,29 @@ cross-module direction, and operating policy.
 2. If this is a sub-issue, superseding refactor, or replacement PR, read the parent issue and record
    how the child work relates to the parent acceptance criteria.
 3. Restate the goal, non-goals, owned area, allowed and forbidden files, validation command, merge
-   risk, and parent/child context when relevant.
+   risk, feedback loop or test seam, and parent/child context when relevant.
 4. For PR revision work, triage review feedback before coding.
-5. Decide whether the task needs the full Architecture Direction Check.
-6. Implement in narrow slices.
-7. Add or update focused tests for changed behavior.
-8. Run focused validation first, then broader checks if warranted.
-9. Summarize changes, validation, decisions, smells, deferred items, and parent issue resolution.
+5. Choose the feedback loop for this task.
+6. Decide whether the task needs the full Architecture Direction Check.
+7. Implement in narrow slices.
+8. Add or update focused tests for changed behavior.
+9. Run focused validation first, then broader checks if warranted.
+10. Summarize changes, validation, decisions, smells, deferred items, and parent issue resolution.
+
+## Feedback Loop Selection
+
+Before coding, choose the cheapest honest loop that can prove the task:
+
+- Use `tdd` for behavior-changing work when a useful public seam exists.
+- Use `diagnose-bug` for bugs that are not already reproduced by a red-capable command.
+- Use characterization tests before behavior-preserving refactors when the existing behavior is
+  complex or risky.
+- Use validation-only for trivial wiring, documentation, or UI polish where tests would be brittle
+  or lower signal than the configured check.
+
+Do not bulk-generate speculative tests. If no correct test seam exists for behavior that should be
+testable, surface that as an architecture or refactor finding instead of adding implementation-detail
+tests.
 
 ## Architecture Direction Check
 
@@ -116,6 +132,7 @@ Include:
 
 - Summary.
 - Validation.
+- Feedback loop / test seam.
 - Architecture direction and whether it still holds.
 - Review triage, when applicable.
 - Decisions and smells.

@@ -17,6 +17,7 @@ Closes #
 - Recommended correction:
 
 ## Validation
+- Feedback loop / test seam:
 - [ ] Focused tests:
 - [ ] Full check:
 - [ ] Other project-specific checks:
@@ -36,4 +37,3 @@ Deferred:
 - Current:
 - Suggested:
 - Reason:
-

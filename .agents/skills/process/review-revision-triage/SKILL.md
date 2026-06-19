@@ -51,6 +51,8 @@ Ownership boundary:
 
 Public surfaces / contracts / storage touched:
 
+Feedback loop / test seam:
+
 Smells or debt risk:
 
 Alternatives:
@@ -123,6 +125,8 @@ Deferred:
 Taste-only:
 
 Spec / ADR impact:
+
+Feedback loop / test seam:
 
 Revision routing:
 - revision-needed:

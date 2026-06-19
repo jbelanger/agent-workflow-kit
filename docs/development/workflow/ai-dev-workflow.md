@@ -56,7 +56,7 @@ Current categories:
 | Category | Use for |
 | --- | --- |
 | `process/` | Planning, orchestration, implementation routing, review routing, and workflow improvement. |
-| `specialist/` | Repeatable expert passes such as simplification, architecture audit, naming review, or refactor support. |
+| `specialist/` | Repeatable expert passes such as testing, diagnosis, simplification, architecture audit, naming review, or refactor support. |
 | `domain/` | Project or business-domain skills with domain vocabulary, records, policies, reports, or workflows. |
 
 Process: planning and orchestration:
@@ -77,6 +77,13 @@ Process: execution and review:
 | `work-issue-local` | Implement one prepared issue, bug, refactor, PR revision, or superseding sub-issue. | Yes |
 | `review-local-changes` | Lightweight local diff review before PR. | No, unless explicitly asked to fix |
 | `review-revision-triage` | Strong architecture-sensitive PR review, revision routing, and human-review escalation. | Docs/specs only when safe |
+
+Specialist skills:
+
+| Skill | Purpose |
+| --- | --- |
+| `tdd` | Behavior-first red/green/refactor through the highest useful public seam. |
+| `diagnose-bug` | Build a tight red-capable bug feedback loop before implementation. |
 
 Do not create one mega-skill for the whole workflow. Skills should match the verbs people actually
 say. Add specialist or domain skills when repeated work needs durable procedural knowledge that is
@@ -208,7 +215,8 @@ Breakdown must produce tasks that are:
 - Clear about goal, non-goals, source docs, owned area, allowed files, and forbidden files.
 - Clear about contracts, APIs, storage, migrations, user surfaces, and architecture boundaries
   touched.
-- Covered by acceptance criteria, required tests, and validation commands.
+- Covered by acceptance criteria, feedback loop or test seam, required tests, and validation
+  commands.
 - Classified for merge risk.
 
 Merge-risk values:
@@ -237,6 +245,7 @@ The implementation brief contains:
 - Contracts, APIs, storage, or user surfaces touched.
 - Parent/child context and resolution expectations.
 - Acceptance criteria.
+- Feedback loop or test seam.
 - Required tests.
 - Validation command.
 - Merge risk.
@@ -271,6 +280,11 @@ For PR revisions, the implementation agent starts from the reviewer's classifica
 each item against the issue, diff, code, specs or ADRs, tests, and intended architecture before
 coding. Review feedback is evidence, not a command.
 
+Before coding, the implementation agent chooses the cheapest honest feedback loop: TDD for
+behavior-changing work with a useful public seam, bug diagnosis for unreproduced failures,
+characterization tests for risky refactors, or validation-only for trivial work where tests would be
+brittle or lower signal.
+
 When completing a sub-issue, superseding refactor, or replacement PR, the implementation agent reads
 the parent issue and decides whether the parent is now resolved, partly resolved, or should return to
 grooming or breakdown.
@@ -280,7 +294,8 @@ grooming or breakdown.
 There are two review paths.
 
 Use `review-local-changes` for lightweight pre-PR local diff review. It checks blockers,
-architecture concerns, test gaps, naming issues, scope drift, suggested fixes, and taste-only notes.
+architecture concerns, feedback-loop quality, test gaps, naming issues, scope drift, suggested
+fixes, and taste-only notes.
 If the change touches architecture-sensitive surfaces or reveals a smell, switch to
 `review-revision-triage`.
 
@@ -408,17 +423,19 @@ An implementation issue is Ready only when it has:
 7. Forbidden files or directories.
 8. Contracts, records, APIs, storage, or user surfaces touched.
 9. Acceptance criteria.
-10. Required tests.
-11. Validation command.
-12. Merge-risk classification.
-13. Parent resolution expectations for sub-issues or superseding work.
-14. Human decisions resolved, or clearly marked as required.
+10. Feedback loop or test seam.
+11. Required tests.
+12. Validation command.
+13. Merge-risk classification.
+14. Parent resolution expectations for sub-issues or superseding work.
+15. Human decisions resolved, or clearly marked as required.
 
 ## Definition Of Done
 
 An implementation issue is done only when:
 
 - The requested behavior exists.
+- The chosen feedback loop was run, or the reason for validation-only work is explicit.
 - Focused validation has run, or the blocker is explicit.
 - Architecture boundaries still hold.
 - Durable docs are updated when behavior, contracts, architecture, or accepted decisions changed.

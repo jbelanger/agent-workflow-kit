@@ -42,6 +42,13 @@ body:
     validations:
       required: true
   - type: textarea
+    id: feedback_loop
+    attributes:
+      label: Feedback loop / test seam
+      description: Highest useful seam, first behavior or repro to pin, and when TDD or diagnosis is not required.
+    validations:
+      required: true
+  - type: textarea
     id: validation
     attributes:
       label: Validation command
@@ -57,4 +64,3 @@ body:
         - Serial only
     validations:
       required: true
-

@@ -54,7 +54,7 @@ Use `process/` skills for repeated workflow work:
 
 Use other category folders for repeated specialist work when it is not part of the process loop:
 
-- `specialist/`: code-quality, architecture, naming, or refactor skills.
+- `specialist/`: testing, diagnosis, code-quality, architecture, naming, or refactor skills.
 - `domain/`: project or business-domain skills with domain-specific vocabulary, records, policies,
   or workflows.
 

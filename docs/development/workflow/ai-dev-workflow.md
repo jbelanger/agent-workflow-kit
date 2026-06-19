@@ -18,7 +18,7 @@ creating architecture debt, hidden scope, or unnecessary merge conflicts.
 Use the smallest durable surface that matches the job:
 
 - `AGENTS.md`: installed repository rules, quality bar, validation expectations, and boundaries.
-- `.agents/skills/`: installed local Codex workflows that agents can invoke repeatedly.
+- `.agents/skills/`: installed local Codex skills organized by category.
 - `docs/development/`: durable specs, ADRs, spike writeups, workflow docs, and planning records.
 - GitHub issues and PRs: current planning, discussion, review, and audit trail.
 - CI: deterministic checks such as tests, typecheck, lint, formatting, build, and architecture
@@ -41,7 +41,25 @@ Agents may not hide uncertainty.
 
 ## Local Skill Set
 
-Planning and orchestration:
+Active skills use this shape:
+
+```text
+.agents/skills/<category>/<skill-name>/SKILL.md
+```
+
+The final folder must remain the skill name, and the frontmatter `name` is still the invocation
+name. Category folders are for navigation and install organization. Category READMEs may explain
+what belongs there, but they must not duplicate procedural instructions from individual skills.
+
+Current categories:
+
+| Category | Use for |
+| --- | --- |
+| `process/` | Planning, orchestration, implementation routing, review routing, and workflow improvement. |
+| `specialist/` | Repeatable expert passes such as simplification, architecture audit, naming review, or refactor support. |
+| `domain/` | Project or business-domain skills with domain vocabulary, records, policies, reports, or workflows. |
+
+Process: planning and orchestration:
 
 | Skill | Purpose | May edit code? |
 | --- | --- | --- |
@@ -52,7 +70,7 @@ Planning and orchestration:
 | `prepare-implementation` | Convert a Ready issue into an implementation brief. | Docs/issues only when asked |
 | `improve-workflow` | Triage dogfooding feedback and propose process improvements. | Docs/issues only when asked |
 
-Execution and review:
+Process: execution and review:
 
 | Skill | Purpose | May edit code? |
 | --- | --- | --- |
@@ -61,7 +79,8 @@ Execution and review:
 | `review-revision-triage` | Strong architecture-sensitive PR review, revision routing, and human-review escalation. | Docs/specs only when safe |
 
 Do not create one mega-skill for the whole workflow. Skills should match the verbs people actually
-say.
+say. Add specialist or domain skills when repeated work needs durable procedural knowledge that is
+not part of the process loop.
 
 During dogfooding, installed skills ask agents to report process friction in a `Process feedback`
 note. Treat those notes as evidence for `improve-workflow`, not as automatic process changes.

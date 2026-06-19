@@ -35,7 +35,10 @@ Agents may not hide uncertainty.
 
 ## Skill Routing
 
-Use local skills for repeated workflows:
+Local skills live under `.agents/skills/<category>/<skill-name>/SKILL.md`. Category folders group
+skills by purpose; invoke skills by their frontmatter `name`, not by path.
+
+Use `process/` skills for repeated workflow work:
 
 - `triage-backlog`: classify backlog health and next actions.
 - `pick-next-item`: recommend the next issue.
@@ -48,6 +51,12 @@ Use local skills for repeated workflows:
   human-review escalation.
 - `improve-workflow`: triage dogfooding feedback and propose concrete process, skill, doc, label, or
   board improvements.
+
+Use other category folders for repeated specialist work when it is not part of the process loop:
+
+- `specialist/`: code-quality, architecture, naming, or refactor skills.
+- `domain/`: project or business-domain skills with domain-specific vocabulary, records, policies,
+  or workflows.
 
 Use `AGENTS.md` for standing rules. Use skills for procedural recipes. Use `docs/development/` for
 durable decisions and draft guidance.

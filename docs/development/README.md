@@ -17,3 +17,4 @@ or packaged artifacts when end users should not see internal development materia
 - `workflow/`: process, board, CI, review, and delivery-loop documentation.
 
 Root `AGENTS.md` owns active repository guidance. `.agents/skills/` owns active local Codex skills.
+Skill category folders are navigation only; each skill still owns its own `SKILL.md` instructions.

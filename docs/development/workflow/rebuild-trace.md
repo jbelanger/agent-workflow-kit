@@ -40,6 +40,21 @@ Removed `docs/development/agents/`. Development docs now hold workflow, specs, A
 records; active repository guidance belongs in root `AGENTS.md`, and active local skills belong in
 `.agents/skills/`.
 
+## 2026-06-19: Categorize Local Skills
+
+Moved the active process skills into `.agents/skills/process/` and documented category folders for
+future specialist and domain skills.
+
+Current active skill layout:
+
+- `.agents/skills/process/<skill-name>/SKILL.md`: workflow/process skills.
+- `.agents/skills/specialist/`: placeholder for repeated code-quality, architecture, naming, or
+  refactor skills.
+- `.agents/skills/domain/`: placeholder for project or business-domain skills.
+
+Category folders are navigation only. Individual skill folders keep the skill name as the final path
+segment, and each `SKILL.md` remains the owning instruction file.
+
 ## 2026-06-18: GitHub Project Setup
 
 Created GitHub Project:

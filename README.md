@@ -14,7 +14,7 @@ auditable.
 - Rebuild trace: `docs/development/workflow/rebuild-trace.md`
 - Development docs policy: `docs/development/README.md`
 - Active agent instructions: `AGENTS.md`
-- Local Codex skills: `.agents/skills/`
+- Local Codex skills: `.agents/skills/` category folders
 
 ## Current Goal
 

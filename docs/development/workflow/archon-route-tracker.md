@@ -84,6 +84,8 @@ Archon artifacts may feed these sources, but they do not replace them.
 - Dogfooded `awk-work-issue-local` through the `NEEDS_DECISION` path; the preflight artifact named
   the missing architecture decision and the deterministic parser routed to cancellation before
   approval or implementation.
+- Dogfooded CLI rejection from an approval pause; the run cancelled, implementation did not run, and
+  the worktree stayed clean.
 - Added `docs/development/workflow/archon-recovery-runbook.md` as the repo-visible recovery stub.
 - Captured the initial buy-vs-build stance in
   `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`.
@@ -117,7 +119,7 @@ Archon artifacts may feed these sources, but they do not replace them.
 | ARCHON-SPIKE-011 | Conditional | Codex nodes cannot be hard-restricted by Archon `allowed_tools`, `denied_tools`, or sandbox fields. | Treat Codex as broad-access trusted local execution; use Claude/Pi variants for workflows requiring enforced tool restrictions. |
 | ARCHON-SPIKE-012 | Conditional | `continue work` can inspect Archon active runs first, but must then read canonical planning state outside Archon. | Implement as a thin router only after canonical planning state is chosen. |
 | ARCHON-SPIKE-013 | Conditional | Artifact promotion is viable only through narrow, append-only, provenance-rich reporting paths. | Do not auto-promote planning, policy, architecture, readiness, or ledger truth without human review. |
-| ARCHON-SPIKE-014 | Pass with requirement | Archon has enough status, approval, resume, cancel, abandon, dashboard, and artifact primitives for recovery. | Add a repo-visible recovery runbook before background or GitHub-triggered workflows become normal. |
+| ARCHON-SPIKE-014 | Pass with requirement | Archon has enough status, approval, resume, cancel, abandon, dashboard, and artifact primitives for recovery. CLI approval/rejection are dogfooded. | Keep expanding the recovery runbook before background or GitHub-triggered workflows become normal. |
 
 ## Candidate Native AI Flow
 
@@ -175,5 +177,4 @@ git diff --check
 
 Required before calling the Archon route proven:
 
-- Dogfood CLI rejection ergonomics.
 - Recover from one failed run without using chat memory.

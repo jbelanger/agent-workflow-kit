@@ -72,10 +72,9 @@ Before approving a mutating run:
 If the worktree is missing route docs, validator scripts, or tracker files, reject or cancel and
 rerun from a source-complete branch.
 
-## Current Gaps
+## Dogfood Evidence And Current Gaps
 
-- CLI approval was dogfooded from a source-complete worktree; CLI rejection ergonomics still need a
-  separate pass.
+- CLI approval and rejection were dogfooded from source-complete worktrees.
 - Web UI recovery details are source-backed but not locally verified here.
 - GitHub comment approval and rejection remain unsafe for mutating workflows until route allowlists,
   approval binding, raw response capture, and provider permissions are settled.

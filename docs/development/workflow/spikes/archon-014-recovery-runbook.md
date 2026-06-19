@@ -67,5 +67,6 @@ Recommended recovery decision table:
 
 - Created `docs/development/workflow/archon-recovery-runbook.md` as a stub before
   background/GitHub-triggered workflows become normal.
-- Include exact commands for CLI, Web UI, and GitHub comment surfaces after ARCHON-SPIKE-008.
+- CLI approval and rejection are dogfooded in this route; Web UI and GitHub comment surfaces remain
+  future recovery documentation.
 - Add artifact-promotion guidance from ARCHON-SPIKE-013.

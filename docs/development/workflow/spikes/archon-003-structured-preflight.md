@@ -170,5 +170,4 @@ deterministic parser as the workflow-routing source.
 
 ## Follow-Up Work
 
-- No remaining preflight-routing path. CLI rejection and failed-run recovery remain separate route
-  dogfood items.
+- No remaining preflight-routing path. Failed-run recovery remains a separate route dogfood item.

@@ -41,6 +41,9 @@ Use Archon for runtime orchestration only where the workflow pack can preserve t
 
 ## Current Archon Adoption Stance
 
+Active tracker: `docs/development/workflow/archon-route-tracker.md`
+Concept spike index: `docs/development/workflow/archon-concept-spikes.md`
+
 Accepted for the trivial first pass:
 
 - Add an experimental repo-local `.archon/` pack.

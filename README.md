@@ -11,6 +11,8 @@ auditable.
 
 - Workflow draft: `docs/development/workflow/ai-dev-workflow.md`
 - Buy-vs-build mapping: `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`
+- Archon route tracker: `docs/development/workflow/archon-route-tracker.md`
+- Archon concept spikes: `docs/development/workflow/archon-concept-spikes.md`
 - Rebuild trace: `docs/development/workflow/rebuild-trace.md`
 - Development docs policy: `docs/development/README.md`
 - Active agent instructions: `AGENTS.md`

@@ -4,6 +4,7 @@ assistants:
   codex:
     model: gpt-5.5
     modelReasoningEffort: high
+    codexBinaryPath: /Applications/Codex.app/Contents/Resources/codex
     webSearchMode: disabled
 
 defaults:

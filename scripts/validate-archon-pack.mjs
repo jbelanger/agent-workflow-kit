@@ -13,6 +13,9 @@ const requiredFiles = [
   '.archon/commands/awk-work-issue-local.md',
   '.archon/commands/awk-review-local-changes.md',
   'docs/development/workflow/ai-dev-workflow-buy-vs-build.md',
+  'docs/development/workflow/archon-route-tracker.md',
+  'docs/development/workflow/archon-concept-spikes.md',
+  'docs/development/workflow/archon-recovery-runbook.md',
 ];
 
 const errors = [];
@@ -35,6 +38,9 @@ if (existsSync('.archon/config.yaml')) {
   }
   if (!config.includes('assistant: codex')) {
     errors.push('.archon/config.yaml must keep Codex as the default assistant for this kit');
+  }
+  if (!config.includes('codexBinaryPath: /Applications/Codex.app/Contents/Resources/codex')) {
+    errors.push('.archon/config.yaml must pin the Codex binary path for compiled Archon validation');
   }
 }
 
@@ -72,6 +78,38 @@ if (approvalIndex !== -1 && implementIndex !== -1 && approvalIndex > implementIn
 }
 if (!implementationWorkflow.includes('worktree:\n  enabled: true')) {
   errors.push('awk-work-issue-local workflow must require an Archon worktree');
+}
+
+const structuredPreflightSnippets = [
+  'id: preflight-status',
+  'script: |',
+  'runtime: bun',
+  'Status:\\s*(READY|STOP|NEEDS_DECISION)',
+  'id: stop-preflight',
+  'cancel: "Implementation preflight stopped:',
+  'id: decision-preflight',
+  'cancel: "Implementation preflight needs a human decision:',
+  'trigger_rule: none_failed_min_one_success',
+  'when: "$preflight-status.output.status == \'READY\'"',
+];
+
+for (const snippet of structuredPreflightSnippets) {
+  if (!implementationWorkflow.includes(snippet)) {
+    errors.push(`awk-work-issue-local workflow is missing structured preflight snippet: ${snippet}`);
+  }
+}
+
+if (implementationWorkflow.includes('output_format:')) {
+  errors.push('awk-work-issue-local workflow must route preflight through artifact parsing, not Codex output_format');
+}
+
+if (existsSync('.archon/commands/awk-implementation-preflight.md')) {
+  const preflightCommand = read('.archon/commands/awk-implementation-preflight.md');
+  for (const snippet of ['READY', 'STOP', 'NEEDS_DECISION', 'JSON only']) {
+    if (!preflightCommand.includes(snippet)) {
+      errors.push(`awk-implementation-preflight command is missing structured output snippet: ${snippet}`);
+    }
+  }
 }
 
 const mutatingPatterns = [

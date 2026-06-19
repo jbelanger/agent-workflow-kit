@@ -17,8 +17,58 @@ nodes:
     context: fresh
     output_type: implementation-preflight
 
-  - id: approve-scope
+  - id: preflight-status
     depends_on: [preflight]
+    script: |
+      const { existsSync, readFileSync } = await import('node:fs');
+
+      const artifactPath = "$ARTIFACTS_DIR/implementation-preflight.md";
+
+      function emit(status, reason, decisionNeeded = '') {
+        console.log(JSON.stringify({
+          status,
+          reason,
+          decision_needed: decisionNeeded,
+          artifact_path: artifactPath,
+        }));
+      }
+
+      if (!existsSync(artifactPath)) {
+        emit('STOP', 'Preflight artifact missing at ' + artifactPath + '.');
+        process.exit(0);
+      }
+
+      const text = readFileSync(artifactPath, 'utf8');
+      const statusMatch = text.match(/^Status:\s*(READY|STOP|NEEDS_DECISION)\s*$/m);
+      const reasonMatch = text.match(/^Reason:\s*(.*)$/m);
+      const decisionMatch = text.match(/^Decision needed:\s*(.*)$/m);
+
+      if (!statusMatch) {
+        emit('STOP', 'Preflight artifact is missing Status: READY/STOP/NEEDS_DECISION.');
+        process.exit(0);
+      }
+
+      emit(
+        statusMatch[1],
+        reasonMatch?.[1]?.trim() || 'Preflight artifact reported ' + statusMatch[1] + '.',
+        decisionMatch?.[1]?.trim() || ''
+      );
+    runtime: bun
+
+  - id: stop-preflight
+    depends_on: [preflight-status]
+    when: "$preflight-status.output.status == 'STOP'"
+    cancel: "Implementation preflight stopped: $preflight-status.output.reason"
+
+  - id: decision-preflight
+    depends_on: [preflight-status]
+    when: "$preflight-status.output.status == 'NEEDS_DECISION'"
+    cancel: "Implementation preflight needs a human decision: $preflight-status.output.decision_needed"
+
+  - id: approve-scope
+    depends_on: [preflight-status, stop-preflight, decision-preflight]
+    trigger_rule: none_failed_min_one_success
+    when: "$preflight-status.output.status == 'READY'"
     approval:
       message: |
         Review the preflight artifact before implementation. Approve only if the scope,

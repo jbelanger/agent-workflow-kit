@@ -86,6 +86,8 @@ Archon artifacts may feed these sources, but they do not replace them.
   approval or implementation.
 - Dogfooded CLI rejection from an approval pause; the run cancelled, implementation did not run, and
   the worktree stayed clean.
+- Dogfooded failed-run recovery from Archon runtime state; a preflight failure was diagnosed from
+  SQLite state and logs, then classified as non-resumable because it had no completed nodes.
 - Added `docs/development/workflow/archon-recovery-runbook.md` as the repo-visible recovery stub.
 - Captured the initial buy-vs-build stance in
   `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`.
@@ -104,7 +106,7 @@ Archon artifacts may feed these sources, but they do not replace them.
 | ARCHON-006 | Complete | Dogfood one gated implementation run. | Source-complete worktree, `READY` preflight, approval pause, CLI resume, implementation report, and validation are proven. |
 | ARCHON-007 | Complete | Validate real Archon CLI compatibility. | Archon's workflow and command validators pass, and the deterministic validation workflow executes; AI workflow smoke tests remain separate. |
 | ARCHON-008 | Open | Decide whether GitHub Project boards remain mandatory. | Either keep board state canonical, make it a derived mirror, or replace it with a repo-local ledger. |
-| ARCHON-009 | Stubbed | Add recovery docs for failed/paused runs. | `archon-recovery-runbook.md` covers the core recovery table and artifact rules; Web UI and GitHub-comment details remain follow-up. |
+| ARCHON-009 | CLI proven | Add recovery docs for failed/paused runs. | `archon-recovery-runbook.md` covers the core recovery table, artifact rules, CLI approval/rejection, and failed-run recovery. Web UI and GitHub-comment details remain follow-up. |
 | ARCHON-010 | Open | Run concept spikes for Archon machinery. | Each concept we may depend on has a short spike result before becoming durable workflow. |
 
 ## Spike Findings
@@ -119,7 +121,7 @@ Archon artifacts may feed these sources, but they do not replace them.
 | ARCHON-SPIKE-011 | Conditional | Codex nodes cannot be hard-restricted by Archon `allowed_tools`, `denied_tools`, or sandbox fields. | Treat Codex as broad-access trusted local execution; use Claude/Pi variants for workflows requiring enforced tool restrictions. |
 | ARCHON-SPIKE-012 | Conditional | `continue work` can inspect Archon active runs first, but must then read canonical planning state outside Archon. | Implement as a thin router only after canonical planning state is chosen. |
 | ARCHON-SPIKE-013 | Conditional | Artifact promotion is viable only through narrow, append-only, provenance-rich reporting paths. | Do not auto-promote planning, policy, architecture, readiness, or ledger truth without human review. |
-| ARCHON-SPIKE-014 | Pass with requirement | Archon has enough status, approval, resume, cancel, abandon, dashboard, and artifact primitives for recovery. CLI approval/rejection are dogfooded. | Keep expanding the recovery runbook before background or GitHub-triggered workflows become normal. |
+| ARCHON-SPIKE-014 | Pass with requirement | Archon has enough status, approval, resume, cancel, abandon, dashboard, and artifact primitives for recovery. CLI approval/rejection and failed-run recovery are dogfooded. | Keep expanding the recovery runbook before background or GitHub-triggered workflows become normal. |
 
 ## Candidate Native AI Flow
 
@@ -175,6 +177,8 @@ node --check scripts/validate-archon-pack.mjs
 git diff --check
 ```
 
-Required before calling the Archon route proven:
+Remaining before broadening the Archon route beyond local dogfood:
 
-- Recover from one failed run without using chat memory.
+- Choose the canonical planning-state model.
+- Implement and dogfood `awk-continue-work`.
+- Add Web UI and GitHub recovery details only after those surfaces are actually used.

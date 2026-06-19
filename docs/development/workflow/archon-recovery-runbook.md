@@ -48,7 +48,7 @@ surfaces.
 | --- | --- | --- |
 | running | Check `archon workflow status`; wait if expected, cancel if unsafe. | None unless artifacts change accepted repo/GitHub truth. |
 | paused at approval | Inspect the preflight or review artifact, worktree diff, and approval message. Approve only if scope and validation are still acceptable. | Record the accepted decision only if it changes docs, issue readiness, or architecture direction. |
-| failed | Inspect the failed node, logs, artifacts, and worktree status. Resume only when the cause is understood. | Capture workflow bugs or process gaps in tracker docs or issues. |
+| failed | Inspect the failed node, logs, artifacts, and worktree status. Resume only when the cause is understood and the run has resumable state. | Capture workflow bugs or process gaps in tracker docs or issues; rerun from canonical source state when resume is not valid. |
 | cancelled | Confirm whether cancellation was intentional. Rerun only from canonical planning state. | Do not treat partial artifacts as accepted truth. |
 | abandoned | Treat the run as discarded runtime state. | Preserve useful evidence manually before cleanup, then remove stale worktree state when safe. |
 
@@ -75,6 +75,10 @@ rerun from a source-complete branch.
 ## Dogfood Evidence And Current Gaps
 
 - CLI approval and rejection were dogfooded from source-complete worktrees.
+- Failed-run recovery was dogfooded with run `8ac88bf6f059584f7d36547787f034a7`: DB state and
+  logs identified a preflight schema failure, `abandon` was refused because the failed run was
+  already terminal, and `resume` was refused because no nodes had completed. Recovery was to record
+  the cause and rerun from canonical source state after the workflow fix.
 - Web UI recovery details are source-backed but not locally verified here.
 - GitHub comment approval and rejection remain unsafe for mutating workflows until route allowlists,
   approval binding, raw response capture, and provider permissions are settled.

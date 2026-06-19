@@ -67,7 +67,7 @@ Pass | Conditional | Fail
 | 011 | Complete | Provider/tool permissions | Is Codex permission behavior inside Archon acceptable for mutating workflows, or do we need Claude/Pi variants for stronger node restrictions? | `spikes/archon-011-provider-tool-permissions.md` - Conditional. |
 | 012 | Complete | `continue work` routing | Can Archon implement `continue work` by checking active runs first, then canonical planning state? | `spikes/archon-012-continue-work-routing.md` - Conditional. |
 | 013 | Complete | Artifact promotion | Which Archon artifacts should become issue comments, docs, or ledger entries, and which must remain runtime evidence only? | `spikes/archon-013-artifact-promotion.md` - Conditional. |
-| 014 | Complete | Recovery from failure | Can a human recover from paused, failed, cancelled, or abandoned runs without chat memory? | `spikes/archon-014-recovery-runbook.md` - Pass with runbook requirement. |
+| 014 | Complete | Recovery from failure | Can a human recover from paused, failed, cancelled, or abandoned runs without chat memory? | `spikes/archon-014-recovery-runbook.md` - Pass with CLI recovery dogfood; Web/GitHub details remain. |
 
 ## Delegation Shape
 

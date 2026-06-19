@@ -49,6 +49,14 @@ Archon appears to have enough primitives for recovery without chat memory, but t
 repo-visible runbook that tells humans which Archon command to use for each state and what state must
 be promoted back into repo/GitHub truth.
 
+CLI dogfood later confirmed:
+
+- Approval and rejection can resolve paused approval gates.
+- A failed run whose first node failed has no completed-node resume point.
+- `abandon` rejects already-terminal failed runs.
+- Recovery for that class is inspect DB/log/artifact state, record the cause, and rerun from
+  canonical source state after the workflow issue is fixed.
+
 ## What This Means For Agent Workflow Kit
 
 Recommended recovery decision table:
@@ -67,6 +75,6 @@ Recommended recovery decision table:
 
 - Created `docs/development/workflow/archon-recovery-runbook.md` as a stub before
   background/GitHub-triggered workflows become normal.
-- CLI approval and rejection are dogfooded in this route; Web UI and GitHub comment surfaces remain
-  future recovery documentation.
+- CLI approval, rejection, and failed-run recovery are dogfooded in this route; Web UI and GitHub
+  comment surfaces remain future recovery documentation.
 - Add artifact-promotion guidance from ARCHON-SPIKE-013.

@@ -138,13 +138,25 @@ implement: completed
 validation: passed
 ```
 
+Source-complete `NEEDS_DECISION` dogfood result:
+
+```text
+Run: 783faa2ac1aff98d7e1829020f6fa54a
+base: archon-workflow-pack
+preflight-status: NEEDS_DECISION
+decision-preflight: cancelled workflow
+approve-scope: not reached
+implement: not reached
+decision needed: canonical planning-state model
+```
+
 ## Result
 
 Pass with constraint.
 
 Archon can support a fail-closed preflight gate, but this pack should not route directly from Codex
-command output. Route from a deterministic parser over the preflight artifact. The `STOP` and
-`READY` branches are dogfooded; `NEEDS_DECISION` still needs live dogfood.
+command output. Route from a deterministic parser over the preflight artifact. The `STOP`, `READY`,
+and `NEEDS_DECISION` branches are dogfooded.
 
 ## What This Means For Agent Workflow Kit
 
@@ -158,4 +170,5 @@ deterministic parser as the workflow-routing source.
 
 ## Follow-Up Work
 
-- Dogfood one NEEDS_DECISION path.
+- No remaining preflight-routing path. CLI rejection and failed-run recovery remain separate route
+  dogfood items.

@@ -81,6 +81,9 @@ Archon artifacts may feed these sources, but they do not replace them.
 - Dogfooded `awk-work-issue-local` through the `READY` path from a source-complete worktree:
   preflight passed, approval paused, CLI resume continued the run, implementation edited one doc, and
   validation passed.
+- Dogfooded `awk-work-issue-local` through the `NEEDS_DECISION` path; the preflight artifact named
+  the missing architecture decision and the deterministic parser routed to cancellation before
+  approval or implementation.
 - Added `docs/development/workflow/archon-recovery-runbook.md` as the repo-visible recovery stub.
 - Captured the initial buy-vs-build stance in
   `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`.
@@ -91,7 +94,7 @@ Archon artifacts may feed these sources, but they do not replace them.
 
 | ID | Status | Item | Outcome |
 | --- | --- | --- | --- |
-| ARCHON-001 | Validated | Add a structured preflight gate. | Preflight writes `READY`, `STOP`, or `NEEDS_DECISION` to the artifact; a deterministic parser routes `STOP` to cancellation and `READY` to approval. `NEEDS_DECISION` dogfood remains. |
+| ARCHON-001 | Complete | Add a structured preflight gate. | Preflight writes `READY`, `STOP`, or `NEEDS_DECISION` to the artifact; a deterministic parser routes `STOP` and `NEEDS_DECISION` to cancellation and `READY` to approval. All three paths are dogfooded. |
 | ARCHON-002 | Open | Add `awk-continue-work`. | Workflow checks Archon runs first, then canonical planning state, and routes to resume, prepare, work, review, groom, or ask. |
 | ARCHON-003 | Open | Decide canonical planning state for the Archon route. | Pick GitHub issues/project, repo-local ledger, or hybrid; do not default to Archon DB/artifacts. |
 | ARCHON-004 | Open | Reduce duplicated policy in `.archon/commands`. | Commands become wrappers around the owning skill/rule documents instead of parallel procedural truth. |
@@ -107,7 +110,7 @@ Archon artifacts may feed these sources, but they do not replace them.
 | Spike | Result | Finding | Route Impact |
 | --- | --- | --- | --- |
 | ARCHON-SPIKE-001 | Pass | After installing Bun and Archon CLI, Archon's real validators pass and the deterministic validation workflow executes. | Keep `scripts/validate-archon-pack.mjs` for kit-specific policy; treat AI workflow execution as a separate smoke test. |
-| ARCHON-SPIKE-003 | Pass with constraint | Direct Codex `output_format` routing was unreliable in the installed CLI; parsing the preflight artifact with a deterministic Bun node routes `STOP` and `READY` safely. | Keep artifact parsing as the gate; dogfood `NEEDS_DECISION` before implementation is trusted. |
+| ARCHON-SPIKE-003 | Pass with constraint | Direct Codex `output_format` routing was unreliable in the installed CLI; parsing the preflight artifact with a deterministic Bun node routes `STOP`, `READY`, and `NEEDS_DECISION` safely. | Keep artifact parsing as the gate. |
 | ARCHON-SPIKE-007 | Conditional | GitHub comments can trigger local read-only work, but only safely with explicit `/workflow run`, webhook/App/auth controls, allowlisted users, and no mutating workflows at first. | Treat GitHub adapter as a narrow remote trigger/report surface, not a general natural-language control plane. |
 | ARCHON-SPIKE-008 | Conditional | GitHub comments can approve/reject paused workflows, but this is not safe yet for `awk-work-issue-local`. | Do not expose mutating GitHub workflows until route allowlists, approval binding, raw response capture, and resume semantics are settled. |
 | ARCHON-SPIKE-009 | Pass with boundary | Archon run DB/dashboard state is useful runtime evidence, but not accepted planning truth. | Keep source-of-truth promotion explicit and repo/GitHub-visible. |
@@ -172,6 +175,5 @@ git diff --check
 
 Required before calling the Archon route proven:
 
-- Dogfood the structured preflight `NEEDS_DECISION` path.
 - Dogfood CLI rejection ergonomics.
 - Recover from one failed run without using chat memory.

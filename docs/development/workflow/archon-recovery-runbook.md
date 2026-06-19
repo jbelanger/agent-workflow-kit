@@ -74,7 +74,8 @@ rerun from a source-complete branch.
 
 ## Current Gaps
 
-- CLI approval/rejection ergonomics still need dogfooding.
+- CLI approval was dogfooded from a source-complete worktree; CLI rejection ergonomics still need a
+  separate pass.
 - Web UI recovery details are source-backed but not locally verified here.
 - GitHub comment approval and rejection remain unsafe for mutating workflows until route allowlists,
   approval binding, raw response capture, and provider permissions are settled.

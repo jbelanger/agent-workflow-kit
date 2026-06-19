@@ -87,10 +87,10 @@ First patched shape in this branch:
 Validation after installing Archon CLI:
 
 ```text
-$ ARCHON_TELEMETRY_DISABLED=1 archon validate workflows --cwd /Users/joel/Dev/agent-workflow-kit --json
+$ archon validate workflows --cwd /Users/joel/Dev/agent-workflow-kit --json
 summary: total=4 valid=4 errors=0 warnings=0
 
-$ ARCHON_TELEMETRY_DISABLED=1 archon validate commands --cwd /Users/joel/Dev/agent-workflow-kit --json
+$ archon validate commands --cwd /Users/joel/Dev/agent-workflow-kit --json
 summary: total=4 valid=4 errors=0
 
 $ node scripts/validate-archon-pack.mjs
@@ -126,13 +126,25 @@ implement: not reached
 The `STOP` reason was correct: the isolated worktree was created from source state that did not
 contain the uncommitted Archon route docs or validator script named by the brief.
 
+Source-complete `READY` dogfood result:
+
+```text
+Run: b91b8a9a829aaf65caa5a9f555050798
+base: archon-workflow-pack
+preflight-status: READY
+approve-scope: paused
+resume: continued after CLI approval
+implement: completed
+validation: passed
+```
+
 ## Result
 
 Pass with constraint.
 
 Archon can support a fail-closed preflight gate, but this pack should not route directly from Codex
-command output. Route from a deterministic parser over the preflight artifact. The `STOP` branch is
-dogfooded; `NEEDS_DECISION` and `READY` still need live dogfood.
+command output. Route from a deterministic parser over the preflight artifact. The `STOP` and
+`READY` branches are dogfooded; `NEEDS_DECISION` still needs live dogfood.
 
 ## What This Means For Agent Workflow Kit
 
@@ -147,4 +159,3 @@ deterministic parser as the workflow-routing source.
 ## Follow-Up Work
 
 - Dogfood one NEEDS_DECISION path.
-- Dogfood one READY path through approval and implementation from a source-complete worktree.

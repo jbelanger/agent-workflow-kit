@@ -78,6 +78,9 @@ Archon artifacts may feed these sources, but they do not replace them.
 - Dogfooded `awk-prepare-implementation`; it produced a `READY` implementation brief artifact.
 - Dogfooded `awk-work-issue-local` through the `STOP` path; a deterministic artifact parser routed
   the preflight artifact to cancellation before approval or implementation.
+- Dogfooded `awk-work-issue-local` through the `READY` path from a source-complete worktree:
+  preflight passed, approval paused, CLI resume continued the run, implementation edited one doc, and
+  validation passed.
 - Added `docs/development/workflow/archon-recovery-runbook.md` as the repo-visible recovery stub.
 - Captured the initial buy-vs-build stance in
   `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`.
@@ -88,12 +91,12 @@ Archon artifacts may feed these sources, but they do not replace them.
 
 | ID | Status | Item | Outcome |
 | --- | --- | --- | --- |
-| ARCHON-001 | Validated | Add a structured preflight gate. | Preflight writes `READY`, `STOP`, or `NEEDS_DECISION` to the artifact; a deterministic parser routes `STOP` to cancellation before approval or implementation. `NEEDS_DECISION` and `READY` dogfood remain. |
+| ARCHON-001 | Validated | Add a structured preflight gate. | Preflight writes `READY`, `STOP`, or `NEEDS_DECISION` to the artifact; a deterministic parser routes `STOP` to cancellation and `READY` to approval. `NEEDS_DECISION` dogfood remains. |
 | ARCHON-002 | Open | Add `awk-continue-work`. | Workflow checks Archon runs first, then canonical planning state, and routes to resume, prepare, work, review, groom, or ask. |
 | ARCHON-003 | Open | Decide canonical planning state for the Archon route. | Pick GitHub issues/project, repo-local ledger, or hybrid; do not default to Archon DB/artifacts. |
 | ARCHON-004 | Open | Reduce duplicated policy in `.archon/commands`. | Commands become wrappers around the owning skill/rule documents instead of parallel procedural truth. |
 | ARCHON-005 | Complete | Dogfood one read-only prepare run. | `awk-prepare-implementation` produced a useful `READY` brief artifact without repo edits. |
-| ARCHON-006 | Partial | Dogfood one gated implementation run. | Worktree creation and `STOP` cancellation are proven. Full approval and implementation are blocked until the worktree starts from a source-complete branch/commit. |
+| ARCHON-006 | Complete | Dogfood one gated implementation run. | Source-complete worktree, `READY` preflight, approval pause, CLI resume, implementation report, and validation are proven. |
 | ARCHON-007 | Complete | Validate real Archon CLI compatibility. | Archon's workflow and command validators pass, and the deterministic validation workflow executes; AI workflow smoke tests remain separate. |
 | ARCHON-008 | Open | Decide whether GitHub Project boards remain mandatory. | Either keep board state canonical, make it a derived mirror, or replace it with a repo-local ledger. |
 | ARCHON-009 | Stubbed | Add recovery docs for failed/paused runs. | `archon-recovery-runbook.md` covers the core recovery table and artifact rules; Web UI and GitHub-comment details remain follow-up. |
@@ -104,7 +107,7 @@ Archon artifacts may feed these sources, but they do not replace them.
 | Spike | Result | Finding | Route Impact |
 | --- | --- | --- | --- |
 | ARCHON-SPIKE-001 | Pass | After installing Bun and Archon CLI, Archon's real validators pass and the deterministic validation workflow executes. | Keep `scripts/validate-archon-pack.mjs` for kit-specific policy; treat AI workflow execution as a separate smoke test. |
-| ARCHON-SPIKE-003 | Pass with constraint | Direct Codex `output_format` routing was unreliable in the installed CLI; parsing the preflight artifact with a deterministic Bun node routes `STOP` safely. | Keep artifact parsing as the gate; dogfood `NEEDS_DECISION` and `READY` before implementation is trusted. |
+| ARCHON-SPIKE-003 | Pass with constraint | Direct Codex `output_format` routing was unreliable in the installed CLI; parsing the preflight artifact with a deterministic Bun node routes `STOP` and `READY` safely. | Keep artifact parsing as the gate; dogfood `NEEDS_DECISION` before implementation is trusted. |
 | ARCHON-SPIKE-007 | Conditional | GitHub comments can trigger local read-only work, but only safely with explicit `/workflow run`, webhook/App/auth controls, allowlisted users, and no mutating workflows at first. | Treat GitHub adapter as a narrow remote trigger/report surface, not a general natural-language control plane. |
 | ARCHON-SPIKE-008 | Conditional | GitHub comments can approve/reject paused workflows, but this is not safe yet for `awk-work-issue-local`. | Do not expose mutating GitHub workflows until route allowlists, approval binding, raw response capture, and resume semantics are settled. |
 | ARCHON-SPIKE-009 | Pass with boundary | Archon run DB/dashboard state is useful runtime evidence, but not accepted planning truth. | Keep source-of-truth promotion explicit and repo/GitHub-visible. |
@@ -159,9 +162,9 @@ outside Archon.
 Current local checks:
 
 ```bash
-ARCHON_TELEMETRY_DISABLED=1 archon validate workflows --cwd /Users/joel/Dev/agent-workflow-kit --json
-ARCHON_TELEMETRY_DISABLED=1 archon validate commands --cwd /Users/joel/Dev/agent-workflow-kit --json
-ARCHON_TELEMETRY_DISABLED=1 archon workflow run awk-validate-process-pack --cwd /Users/joel/Dev/agent-workflow-kit
+archon validate workflows --cwd /Users/joel/Dev/agent-workflow-kit --json
+archon validate commands --cwd /Users/joel/Dev/agent-workflow-kit --json
+archon workflow run awk-validate-process-pack --cwd /Users/joel/Dev/agent-workflow-kit
 node scripts/validate-archon-pack.mjs
 node --check scripts/validate-archon-pack.mjs
 git diff --check
@@ -169,7 +172,6 @@ git diff --check
 
 Required before calling the Archon route proven:
 
-- Dogfood the structured preflight `STOP`, `NEEDS_DECISION`, and `READY` paths.
-- Dogfood the structured preflight `NEEDS_DECISION` and `READY` paths.
-- Run one gated mutating workflow in a source-complete worktree through approval and implementation.
-- Recover from one paused or failed run without using chat memory.
+- Dogfood the structured preflight `NEEDS_DECISION` path.
+- Dogfood CLI rejection ergonomics.
+- Recover from one failed run without using chat memory.

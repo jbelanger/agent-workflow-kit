@@ -91,10 +91,10 @@ Ref: `scripts/validate-archon-pack.mjs:5`
 Real validation results after installing the CLI:
 
 ```text
-$ ARCHON_TELEMETRY_DISABLED=1 archon validate workflows --cwd /Users/joel/Dev/agent-workflow-kit --json
+$ archon validate workflows --cwd /Users/joel/Dev/agent-workflow-kit --json
 summary: total=4 valid=4 errors=0 warnings=0
 
-$ ARCHON_TELEMETRY_DISABLED=1 archon validate commands --cwd /Users/joel/Dev/agent-workflow-kit --json
+$ archon validate commands --cwd /Users/joel/Dev/agent-workflow-kit --json
 summary: total=4 valid=4 errors=0
 
 $ node scripts/validate-archon-pack.mjs
@@ -113,7 +113,7 @@ assistants:
 After that config fix, the deterministic workflow executed cleanly:
 
 ```text
-$ ARCHON_TELEMETRY_DISABLED=1 archon workflow run awk-validate-process-pack --cwd /Users/joel/Dev/agent-workflow-kit
+$ archon workflow run awk-validate-process-pack --cwd /Users/joel/Dev/agent-workflow-kit
 codex.binary_resolved source=config path=/Applications/Codex.app/Contents/Resources/codex
 Archon workflow pack validation passed.
 Workflow completed successfully.
@@ -127,9 +127,9 @@ Archon's real CLI validates this repo's `.archon` workflows and commands success
 the deterministic validation workflow. Keep this validation stack:
 
 ```bash
-ARCHON_TELEMETRY_DISABLED=1 archon validate workflows --cwd /Users/joel/Dev/agent-workflow-kit --json
-ARCHON_TELEMETRY_DISABLED=1 archon validate commands --cwd /Users/joel/Dev/agent-workflow-kit --json
-ARCHON_TELEMETRY_DISABLED=1 archon workflow run awk-validate-process-pack --cwd /Users/joel/Dev/agent-workflow-kit
+archon validate workflows --cwd /Users/joel/Dev/agent-workflow-kit --json
+archon validate commands --cwd /Users/joel/Dev/agent-workflow-kit --json
+archon workflow run awk-validate-process-pack --cwd /Users/joel/Dev/agent-workflow-kit
 node scripts/validate-archon-pack.mjs
 ```
 

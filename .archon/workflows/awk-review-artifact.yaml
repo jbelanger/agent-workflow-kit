@@ -14,7 +14,9 @@ worktree:
 
 nodes:
   - id: artifact-status
-    script: |
+    bash: |
+      set -euo pipefail
+      node <<'NODE'
       const { existsSync, readFileSync, writeFileSync } = await import('node:fs');
       const { dirname, relative, resolve } = await import('node:path');
 
@@ -228,7 +230,7 @@ nodes:
       };
       writeReport(payload);
       emit(payload);
-    runtime: bun
+      NODE
 
   - id: stop-review
     depends_on: [artifact-status]
@@ -255,9 +257,12 @@ nodes:
         Review report: $artifact-status.output.report_path
 
         Approve with no special prefix to accept the artifact as authoritative for the next workflow
-        stage. To record a durable revision request without accepting it, approve with:
+        stage. To request changes without accepting, prefer running awk-revise-artifact with:
 
-        REVISE: <reason>
+        $artifact-status.output.artifact_path REVISE: <reason>
+
+        Compatibility shortcut: approve this gate with REVISE: <reason> to record the same durable
+        revision request without accepting.
 
         Use Reject only to cancel the review without a durable repo-local revision record.
       capture_response: true

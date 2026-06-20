@@ -20,6 +20,7 @@ recommendedWorkflows:
   - awk-discover-vision
   - awk-draft-spec
   - awk-review-artifact
+  - awk-revise-artifact
   - awk-breakdown-work-item
   - awk-prepare-implementation
   - awk-work-issue-local

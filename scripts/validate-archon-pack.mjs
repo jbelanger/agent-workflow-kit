@@ -28,6 +28,7 @@ const requiredFiles = [
   '.archon/workflows/awk-discover-vision.yaml',
   '.archon/workflows/awk-draft-spec.yaml',
   '.archon/workflows/awk-review-artifact.yaml',
+  '.archon/workflows/awk-revise-artifact.yaml',
   '.archon/workflows/awk-breakdown-work-item.yaml',
   '.archon/workflows/awk-prepare-implementation.yaml',
   '.archon/workflows/awk-work-issue-local.yaml',
@@ -90,6 +91,9 @@ if (existsSync(join(cwd, '.archon/config.yaml'))) {
   }
   if (!config.includes('awk-review-artifact')) {
     errors.push('.archon/config.yaml should recommend awk-review-artifact for artifact review');
+  }
+  if (!config.includes('awk-revise-artifact')) {
+    errors.push('.archon/config.yaml should recommend awk-revise-artifact for artifact revision requests');
   }
   if (!config.includes('awk-breakdown-work-item')) {
     errors.push('.archon/config.yaml should recommend awk-breakdown-work-item for accepted direction');
@@ -357,6 +361,29 @@ for (const snippet of [
 
 if (reviewArtifactWorkflow.includes('const approval = $accept-artifact.output')) {
   errors.push('awk-review-artifact workflow must not inject raw approval output into JavaScript');
+}
+
+const reviseArtifactWorkflow = existsSync(join(cwd, '.archon/workflows/awk-revise-artifact.yaml'))
+  ? read('.archon/workflows/awk-revise-artifact.yaml')
+  : '';
+
+for (const snippet of [
+  'name: awk-revise-artifact',
+  'id: record-artifact-revision',
+  'process.env.ARGUMENTS || process.env.USER_MESSAGE',
+  'artifact-revision.md',
+  'REVISION_REQUESTED',
+  'No revision reason was provided',
+  'Vision state',
+  'Spec state',
+  'Status',
+  'decision-log.md',
+  'id: stop-revision',
+  'worktree:\n  enabled: false',
+]) {
+  if (!reviseArtifactWorkflow.includes(snippet)) {
+    errors.push(`awk-revise-artifact workflow is missing required snippet: ${snippet}`);
+  }
 }
 
 if (existsSync(join(cwd, '.archon/commands/awk-draft-spec.md'))) {

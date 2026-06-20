@@ -52,9 +52,10 @@ Prefer an existing sibling decision log when present:
   `## Human decision history`.
 
 For revision requests, keep the artifact in its draft/proposed state and return to revision. In the
-Archon adapter, use an approval response starting with `REVISE:` to create a durable repo-local
-revision record. The dashboard Reject button is still a cancellation path, not a durable revision
-record.
+Archon dashboard, prefer `awk-revise-artifact` with the artifact path and reason; it creates the
+same durable repo-local revision record without using the accept button. `awk-review-artifact` also
+keeps the `REVISE:` approval-response shortcut for compatibility. The dashboard Reject button is
+still a cancellation path, not a durable revision recorder.
 
 ## Output
 

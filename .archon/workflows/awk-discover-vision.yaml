@@ -103,12 +103,15 @@ nodes:
 
   - id: record-vision-acceptance
     depends_on: [accept-vision]
-    script: |
+    bash: |
+      set -euo pipefail
+      export APPROVAL_RESPONSE=$accept-vision.output
+      node <<'NODE'
       const { existsSync, readFileSync, writeFileSync } = await import('node:fs');
 
       const reportPath = "$ARTIFACTS_DIR/discover-vision.md";
       const acceptancePath = "$ARTIFACTS_DIR/vision-acceptance.md";
-      const approval = $accept-vision.output ?? '';
+      const approval = process.env.APPROVAL_RESPONSE ?? '';
 
       function section(text, heading) {
         const lines = text.split(/\r?\n/);
@@ -174,4 +177,4 @@ nodes:
         decision_log_path: decisionLogPath,
         acceptance_path: acceptancePath,
       }));
-    runtime: bun
+      NODE

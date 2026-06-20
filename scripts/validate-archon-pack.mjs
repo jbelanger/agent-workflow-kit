@@ -259,6 +259,9 @@ for (const snippet of [
   'approval:',
   'capture_response: true',
   'id: record-vision-acceptance',
+  "node <<'NODE'",
+  'APPROVAL_RESPONSE=$accept-vision.output',
+  'process.env.APPROVAL_RESPONSE',
   'Vision state: Accepted',
   'output_type: discovery-report',
   'worktree:\n  enabled: false',
@@ -266,6 +269,10 @@ for (const snippet of [
   if (!discoverVisionWorkflow.includes(snippet)) {
     errors.push(`awk-discover-vision workflow is missing required snippet: ${snippet}`);
   }
+}
+
+if (discoverVisionWorkflow.includes('const approval = $accept-vision.output')) {
+  errors.push('awk-discover-vision workflow must not inject raw approval output into JavaScript');
 }
 
 if (existsSync(join(cwd, '.archon/commands/awk-discover-vision.md'))) {

@@ -130,6 +130,20 @@ if (existsSync(join(cwd, '.gitignore'))) {
   }
 }
 
+if (existsSync(join(cwd, 'docs/development/workflow/archon-recovery-runbook.md'))) {
+  const recoveryRunbook = read('docs/development/workflow/archon-recovery-runbook.md');
+  for (const snippet of [
+    '## Dashboard Dispatch Limitation',
+    'worktree.enabled: false',
+    'origin/main',
+    'Archon CLI as the canonical execution path',
+  ]) {
+    if (!recoveryRunbook.includes(snippet)) {
+      errors.push(`archon-recovery-runbook.md is missing dashboard limitation snippet: ${snippet}`);
+    }
+  }
+}
+
 const commandSkillRefs = new Map([
   ['.archon/commands/awk-continue-work.md', '.agents/skills/process/pick-next-item/SKILL.md'],
   ['.archon/commands/awk-groom-issue.md', '.agents/skills/process/groom-issue/SKILL.md'],

@@ -101,6 +101,15 @@ When the explicit goal is to test-drive Archon, project work after installation 
 installed `awk-*` workflows. If a needed step cannot be expressed by the installed workflows, improve
 Agent Workflow Kit first, reinstall it, then continue in Archon.
 
+Current limitation: for local-only repositories without a valid `origin/main`, the Archon dashboard
+may fail early while preparing a background worker even when an AWK planning workflow declares
+`worktree.enabled: false`. Use the Archon CLI as the canonical path for those planning runs until the
+dashboard path is verified:
+
+```bash
+archon workflow run awk-groom-issue --cwd /path/to/project "<work item>"
+```
+
 GitHub:
 
 ```text

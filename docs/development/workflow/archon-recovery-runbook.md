@@ -42,6 +42,29 @@ Known workflow-control primitives from Archon source/docs:
 Treat Web UI and GitHub-comment controls as future documentation until this kit has dogfooded those
 surfaces.
 
+## Dashboard Dispatch Limitation
+
+Observed during local test-drive on 2026-06-20:
+
+- The Archon CLI can run AWK planning workflows such as `awk-groom-issue` in the live checkout when
+  the workflow declares `worktree.enabled: false`.
+- The Archon dashboard background-dispatch path may still attempt isolation setup before creating a
+  workflow run. In a local-only repository without an `origin` remote, this can fail while fetching
+  `origin/main` and surface as a generic unexpected error.
+- Pushing the repository or adding a valid `origin/main` can work around the fetch error, but it does
+  not prove that dashboard dispatch honored the workflow's live-checkout policy.
+
+Until the dashboard path is separately verified, treat the Archon CLI as the canonical execution path
+for AWK planning workflows in local-only test drives:
+
+```bash
+archon workflow run awk-groom-issue --cwd /path/to/project "<work item>"
+```
+
+If the dashboard shows `An unexpected error occurred` immediately after starting an AWK planning
+workflow, reproduce with the CLI before changing the workflow. Record the dashboard failure as an
+Archon runtime limitation, not as evidence that the AWK command or skill failed.
+
 ## Recovery Table
 
 | Run State | Human Action | Durable Follow-Up |

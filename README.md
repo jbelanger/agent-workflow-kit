@@ -63,6 +63,9 @@ Dashboard-first artifact review is available for draft vision briefs, specs, and
 archon workflow run awk-review-artifact --cwd /Users/joel/Dev/agent-workflow-kit "Review docs/development/specs/<spec>.md"
 ```
 
+In the dashboard approval gate, approve normally to accept. To record a durable revision request
+without accepting, approve with `REVISE: <reason>`.
+
 ## Install Into Another Repo
 
 Portable skills only:

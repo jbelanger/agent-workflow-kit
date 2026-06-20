@@ -346,6 +346,9 @@ When a spec lives in the repo, acceptance happens through PR review of the spec 
 explicit human decision. For dashboard-first local review, use `review-artifact` or the Archon
 `awk-review-artifact` adapter to promote the artifact state and record the decision. After the
 direction is accepted, send it to `breakdown-issue` or the Archon `awk-breakdown-work-item` adapter.
+To request changes without accepting through `awk-review-artifact`, approve with
+`REVISE: <reason>` so the workflow can record a durable revision request while leaving the artifact
+in draft/proposed state.
 
 ### 6. Breakdown
 

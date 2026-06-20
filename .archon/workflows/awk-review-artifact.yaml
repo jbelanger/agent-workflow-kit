@@ -1,8 +1,8 @@
 name: awk-review-artifact
 description: |
-  Review a draft planning artifact from the dashboard and record human acceptance before the next
-  workflow stage. Supports accepted vision briefs, draft specs, and proposed ADRs. It does not
-  implement, break down, merge, or create child work items.
+  Review a draft planning artifact from the dashboard and record human acceptance or a durable
+  revision request before the next workflow stage. Supports draft vision briefs, draft specs, and
+  proposed ADRs. It does not implement, break down, merge, or create child work items.
 
 provider: codex
 model: gpt-5.5
@@ -254,11 +254,15 @@ nodes:
         Accepted state: $artifact-status.output.accepted_state
         Review report: $artifact-status.output.report_path
 
-        Approve only if the artifact is accepted as authoritative for the next workflow stage.
-        Reject or cancel to keep it in draft/proposed state and return to revision.
+        Approve with no special prefix to accept the artifact as authoritative for the next workflow
+        stage. To record a durable revision request without accepting it, approve with:
+
+        REVISE: <reason>
+
+        Use Reject only to cancel the review without a durable repo-local revision record.
       capture_response: true
 
-  - id: record-artifact-acceptance
+  - id: record-artifact-decision
     depends_on: [accept-artifact]
     bash: |
       set -euo pipefail
@@ -282,6 +286,7 @@ nodes:
       const nextAction = process.env.NEXT_ACTION ?? '';
       const approval = process.env.APPROVAL_RESPONSE ?? '';
       const acceptancePath = "$ARTIFACTS_DIR/artifact-acceptance.md";
+      const revisionPath = "$ARTIFACTS_DIR/artifact-revision.md";
       const workflowId = "$WORKFLOW_ID";
 
       function escapeRegExp(value) {
@@ -311,17 +316,51 @@ nodes:
         throw new Error(`Artifact state no longer matches expected ${stateLabel}: ${currentState}`);
       }
 
-      const updated = original.replace(statePattern, `${stateLabel}: ${acceptedState}`);
-      writeFileSync(artifactPath, updated);
-
       const timestamp = new Date().toISOString();
       const comment = String(approval || '').trim() || '(approved without comment)';
-      const entry = `- ${timestamp}: ${artifactType} accepted through Archon artifact review. Run: ${workflowId}. Response: ${comment}`;
-
       let decisionRecordPath = artifactPath;
       if (decisionLogPath && existsSync(decisionLogPath)) {
         decisionRecordPath = decisionLogPath;
       }
+
+      const revisionMatch = comment.match(/^(?:REVISE|REVISION|CHANGES|REJECT):\s*(.+)$/is);
+      if (revisionMatch) {
+        const reason = revisionMatch[1].trim();
+        const entry = `- ${timestamp}: ${artifactType} revision requested through Archon artifact review. Run: ${workflowId}. Reason: ${reason}`;
+        appendHistory(decisionRecordPath, entry);
+
+        writeFileSync(
+          revisionPath,
+          [
+            '# Artifact Revision Request',
+            '',
+            'Status: Revision requested',
+            '',
+            `Artifact path: ${artifactPath}`,
+            `Artifact type: ${artifactType}`,
+            `State unchanged: ${stateLabel}: ${currentState}`,
+            `Decision record: ${decisionRecordPath}`,
+            `Revision reason: ${reason}`,
+            'Next action: Revise the artifact, then rerun awk-review-artifact.',
+            '',
+          ].join('\n')
+        );
+
+        console.log(JSON.stringify({
+          status: 'REVISION_REQUESTED',
+          artifact_path: artifactPath,
+          artifact_type: artifactType,
+          revision_path: revisionPath,
+          decision_record_path: decisionRecordPath,
+          next_action: 'Revise the artifact, then rerun awk-review-artifact.',
+        }));
+        process.exit(0);
+      }
+
+      const updated = original.replace(statePattern, `${stateLabel}: ${acceptedState}`);
+      writeFileSync(artifactPath, updated);
+
+      const entry = `- ${timestamp}: ${artifactType} accepted through Archon artifact review. Run: ${workflowId}. Response: ${comment}`;
       appendHistory(decisionRecordPath, entry);
 
       writeFileSync(

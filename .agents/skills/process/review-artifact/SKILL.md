@@ -22,14 +22,13 @@ work.
 
 - Accept only when the human explicitly approves the artifact as authoritative for the next workflow
   stage.
-- Reject or route back to revision when the human gives feedback that requires changes before the
-  next workflow stage.
+- Route back to revision when the human gives feedback that requires changes before the next
+  workflow stage.
 - Do not silently resolve open product, architecture, ownership, storage, public-surface, or
   validation forks during review.
 - Do not create child work items, implementation briefs, branches, commits, or PRs.
-- Preserve the audit trail. Record acceptance decisions, reviewer response, timestamp, and next
-  action. Rejection feedback must remain available as runtime evidence until a durable rejection
-  recorder exists.
+- Preserve the audit trail. Record acceptance decisions and durable revision requests with reviewer
+  response, timestamp, and next action.
 
 ## State Changes
 
@@ -52,9 +51,10 @@ Prefer an existing sibling decision log when present:
 - Specs and ADRs normally record review history in the artifact itself under
   `## Human decision history`.
 
-For rejection, keep the artifact in its draft/proposed state and return to revision. In the current
-Archon adapter, rejection cancels the review run and keeps the dashboard rejection reason as runtime
-evidence; durable rejection recording is a follow-up increment.
+For revision requests, keep the artifact in its draft/proposed state and return to revision. In the
+Archon adapter, use an approval response starting with `REVISE:` to create a durable repo-local
+revision record. The dashboard Reject button is still a cancellation path, not a durable revision
+record.
 
 ## Output
 

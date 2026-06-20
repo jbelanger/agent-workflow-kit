@@ -2,21 +2,28 @@
 
 Status: active install contract
 
-Agent Workflow Kit is a workflow pack, not an Archon requirement.
+Agent Workflow Kit is a GitHub-first workflow pack, not an Archon requirement.
 
 The adoption contract is:
 
 ```text
 Required:
   AGENTS.md
+  .github/ISSUE_TEMPLATE/
+  .github/PULL_REQUEST_TEMPLATE.md
   .agents/skills/
+  docs/development/adrs/github-first-orchestration.md
   docs/development/discovery/
-  docs/development/work-items/
+  docs/development/specs/
+  docs/development/adrs/
+  docs/development/spikes/
   docs/development/workflow/ai-dev-workflow.md
   scripts/validate-workflow.mjs
 
 Optional:
   .archon/
+  docs/development/work-items/
+  docs/development/workflow/adr-archon-portable-skills.md
   docs/development/workflow/archon-recovery-runbook.md
   scripts/validate-archon-pack.mjs
   .gitignore entries for .archon/artifacts/ and .archon/logs/
@@ -27,23 +34,27 @@ Optional:
 | Part | Required? | Purpose |
 | --- | --- | --- |
 | `AGENTS.md` | Yes | Standing repository rules for local Codex work. |
+| `.github/ISSUE_TEMPLATE/` | Yes | GitHub-first intake contracts for initiatives, specs, ADRs, and tasks. |
+| `.github/PULL_REQUEST_TEMPLATE.md` | Yes | Review gate and validation summary for proposed docs or code. |
 | `.agents/skills/` | Yes | Portable workflow verbs and specialist lenses such as grooming, discovery, artifact drafting, breakdown, preparation, local work, and review. |
+| `docs/development/adrs/github-first-orchestration.md` | Yes | Accepted source-of-truth decision for the GitHub-first operating model. |
 | `docs/development/discovery/` | Yes | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. |
-| `docs/development/work-items/` | Yes | Portable planning records when GitHub issues are absent or only a mirror. |
+| `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Yes | Durable planning artifacts reviewed through PRs. |
 | `docs/development/workflow/ai-dev-workflow.md` | Yes | Durable explanation of the AWK process and operating surfaces. |
-| GitHub issues/PRs | Optional | Collaboration, audit trail, and remote planning mirrors. |
+| GitHub issues/PRs/projects | Yes for the default profile | Active orchestration, human answers, remote planning, audit trail, and review. |
+| `docs/development/work-items/` | Optional fallback | Portable planning records only when GitHub is absent. |
 | `.archon/` | Optional | Runtime/dashboard adapters around the same portable skills. |
 | Archon CLI/server | Optional | Workflow runs, artifacts, worktrees, approval gates, and dashboard state. |
 
 ## Install Profiles
 
-Portable skills only:
+GitHub-first workflow kit:
 
 ```bash
 node scripts/install-workflow-kit.mjs --target /path/to/project
 ```
 
-Portable skills plus Archon adapters:
+GitHub-first workflow kit plus optional Archon adapters:
 
 ```bash
 node scripts/install-workflow-kit.mjs --target /path/to/project --with-archon
@@ -84,8 +95,9 @@ Plain Codex:
 
 ```text
 Codex chat in the project
-  -> user asks "groom this work item"
-  -> Codex uses .agents/skills/process/groom-issue/SKILL.md
+  -> user asks "continue work"
+  -> Codex reads GitHub issues, project fields, PRs, and repo docs
+  -> Codex uses .agents/skills/process/continue-work/SKILL.md to choose the next workflow verb
 ```
 
 Archon:
@@ -114,6 +126,7 @@ GitHub:
 
 ```text
 Issues and PRs hold collaboration and audit trail.
-Project boards may be a progress dashboard.
-Neither replaces the repo-local skills or durable docs.
+Projects hold lifecycle, next actor, decision-needed, artifact-state, area, and merge-risk fields.
+PRs hold proposed durable docs or code and review gates.
+Repo docs remain the accepted durable truth after review.
 ```

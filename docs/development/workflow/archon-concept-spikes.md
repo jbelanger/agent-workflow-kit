@@ -1,6 +1,9 @@
 # Archon Concept Spikes
 
-Status: active spike index
+Status: superseded spike index
+
+Superseded by `docs/development/adrs/github-first-orchestration.md`. This index is retained as
+evidence from the Archon experiment; it is not the active backlog.
 
 This document breaks the Archon route into short evidence-gathering spikes. Each spike should answer
 one concrete question about Archon machinery before this kit depends on it.

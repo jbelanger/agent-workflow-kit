@@ -1,0 +1,50 @@
+name: Discovery
+description: Clarify product, UX, creative, platform, or architecture vision before drafting a spec.
+title: "[Discovery] "
+labels: ["discovery"]
+body:
+  - type: markdown
+    attributes:
+      value: "After creating this issue, add it to the active Project and set Status, Issue Type, Next Actor, Decision Needed, Area, and Merge Risk when known."
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: Link the originating idea, issue, prompt, note, or user request.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / opportunity
+      description: What is vague or unresolved enough that discovery is needed?
+    validations:
+      required: true
+  - type: textarea
+    id: target_user
+    attributes:
+      label: Target user / audience
+      description: Who is this for, if known?
+    validations:
+      required: false
+  - type: textarea
+    id: known_constraints
+    attributes:
+      label: Known constraints
+      description: Product, UX, creative, platform, architecture, validation, or schedule constraints.
+    validations:
+      required: true
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: Non-goals
+      description: What should discovery not try to decide?
+    validations:
+      required: true
+  - type: textarea
+    id: first_question
+    attributes:
+      label: First human question
+      description: One question the agent should ask first, or leave blank for discover-vision to choose.
+    validations:
+      required: false

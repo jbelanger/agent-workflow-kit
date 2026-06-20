@@ -42,6 +42,8 @@ Use `process/` skills for repeated workflow work:
 
 - `triage-backlog`: classify backlog health and next actions.
 - `pick-next-item`: recommend the next work item.
+- `continue-work`: inspect GitHub issues, project fields, PRs, and repo docs to choose the next
+  safe workflow step.
 - `groom-issue`: turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer.
 - `discover-vision`: orchestrate high-interaction early discovery for vague product, UX, creative,
   game, platform, or architecture direction before specs.
@@ -67,6 +69,21 @@ Use other category folders for repeated specialist work when it is not part of t
 
 Use `AGENTS.md` for standing rules. Use skills for procedural recipes. Use `docs/development/` for
 durable decisions and draft guidance.
+
+## GitHub-First Orchestration
+
+This repository uses GitHub as the active coordination surface:
+
+- GitHub Issues hold work items, discussion, human answers, and current collaboration state.
+- GitHub Projects hold operating state: lifecycle, next actor, decision needed, artifact state,
+  merge risk, and area.
+- GitHub PRs hold proposed durable docs or code changes and their review gates.
+- Repo docs under `docs/development/` hold accepted durable truth.
+
+Use `continue-work` when the human asks Codex to infer the next step from visible project state. The
+orchestrator may recommend issue comments and project field updates, but it must not silently mutate
+scope, accept artifacts, decide architecture, implement code, push, merge, or close work without an
+explicit instruction.
 
 ## Planning Policy
 
@@ -148,17 +165,12 @@ too loose, unsafe for autonomy, or missing a field/status/label, include a brief
 note in the reply, issue comment, or PR summary. Use `improve-workflow` when asked to turn that
 feedback into process changes.
 
-## Archon Test-Drive Discipline
+## Experimental Archon Profile
 
-When the explicit goal is to test-drive the optional Archon profile, project work in the target repo
-must happen through installed `awk-*` Archon workflows after the profile is installed.
-
-The operator may update Agent Workflow Kit in its source repo, reinstall or copy those workflow
-surfaces into the target repo, and inspect Archon artifacts. The operator must not manually create
-or edit target project implementation files as a shortcut around Archon.
-
-If the next useful project step cannot be expressed by an installed `awk-*` workflow, stop and
-improve the workflow kit first.
+Archon is experimental evidence and an optional runtime adapter. It is not the baseline planning
+interface or workflow source of truth. When the explicit goal is to test-drive Archon, project work
+in the target repo should still happen through installed `awk-*` workflows; otherwise use the
+GitHub-first flow above.
 
 ## CI Policy
 

@@ -1,6 +1,9 @@
 # AI Dev Workflow Buy-Vs-Build
 
-Status: draft
+Status: superseded by `docs/development/adrs/github-first-orchestration.md`
+
+This note is retained as experiment evidence. The active baseline is GitHub-first orchestration with
+Archon parked as an optional runtime adapter.
 
 ## Decision Frame
 

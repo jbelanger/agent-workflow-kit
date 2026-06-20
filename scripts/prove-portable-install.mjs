@@ -36,15 +36,15 @@ function initRepo(path) {
   run('git', ['init', '--quiet', path]);
 }
 
-function proveSkillsOnly(root) {
-  const target = join(root, 'skills-only');
+function proveGithubFirst(root) {
+  const target = join(root, 'github-first');
   initRepo(target);
   run(process.execPath, ['scripts/install-workflow-kit.mjs', '--target', target]);
   run(process.execPath, [join(target, 'scripts/validate-workflow.mjs'), '--cwd', target]);
 }
 
-function proveSkillsWithArchon(root, skipArchonCli) {
-  const target = join(root, 'skills-with-archon');
+function proveGithubFirstWithArchon(root, skipArchonCli) {
+  const target = join(root, 'github-first-with-archon');
   initRepo(target);
   run(process.execPath, ['scripts/install-workflow-kit.mjs', '--target', target, '--with-archon']);
   run(process.execPath, [join(target, 'scripts/validate-workflow.mjs'), '--cwd', target]);
@@ -60,9 +60,9 @@ const options = parseArgs(process.argv.slice(2));
 const root = mkdtempSync(join(tmpdir(), 'awk-portable-install-'));
 
 try {
-  proveSkillsOnly(root);
-  proveSkillsWithArchon(root, options.skipArchonCli);
-  console.log('Portable install proof passed.');
+  proveGithubFirst(root);
+  proveGithubFirstWithArchon(root, options.skipArchonCli);
+  console.log('GitHub-first install proof passed.');
   if (options.keep) {
     console.log(`Fixture root kept: ${root}`);
   } else {

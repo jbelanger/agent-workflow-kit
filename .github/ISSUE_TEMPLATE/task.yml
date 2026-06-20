@@ -3,6 +3,9 @@ description: A concrete, bounded implementation or documentation task.
 title: "[Task] "
 labels: ["task"]
 body:
+  - type: markdown
+    attributes:
+      value: "After creating this issue, add it to the active Project and set Status, Issue Type, Next Actor, Decision Needed, Area, and Merge Risk."
   - type: textarea
     id: goal
     attributes:

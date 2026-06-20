@@ -30,6 +30,8 @@ be inspected.
 - Agents do not merge, silently decide architecture, silently accept artifacts, or expand scope.
 - Improving Agent Workflow Kit is part of the work: identify process weakness when the workflow
   itself is confusing, too heavy, too loose, unsafe, or hard to resume.
+- For doc or code changes, `Status = Review` requires a linked PR. Local commits without a PR stay
+  `In Progress`; the next action is to open a draft PR or explain why review is issue-only.
 
 ## Routing Order
 
@@ -82,6 +84,10 @@ Interpret the recommended Project fields this way:
 
 If fields are missing, infer cautiously from issue text and comments, then recommend the field
 updates instead of pretending the board is complete.
+
+Do not recommend `Status = Review` for doc or code changes unless the issue has a linked PR. If the
+only evidence is a local commit, keep or recommend `In Progress`, record the commit in the issue,
+and make opening a draft PR the next workflow step.
 
 ## Output
 

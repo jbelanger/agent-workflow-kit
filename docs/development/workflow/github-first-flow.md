@@ -46,6 +46,15 @@ The active Project must make the next move legible:
 Avoid `Blocked` as a status. A blocker should be expressed as `Next Actor`, `Decision Needed`, and
 a clear issue comment.
 
+## Review Handoff Rule
+
+For doc or code changes, `Status = Review` requires a linked GitHub PR that exposes the diff. Local
+commits without a PR stay `In Progress`; the issue comment should record the commit and make opening
+a draft PR the next action.
+
+Issue-only decisions may be reviewed in the issue thread when there is no repo diff to inspect. In
+that case, the issue comment must name the exact question, artifact, or decision being reviewed.
+
 ## Continue-Work Loop
 
 When the human says "continue work," the agent should:
@@ -57,7 +66,9 @@ When the human says "continue work," the agent should:
 5. Choose one workflow verb.
 6. Either ask one question, update or draft docs, review an artifact, break down accepted direction,
    prepare implementation, or implement only when the user has clearly authorized implementation.
-7. End with current state, next actor, decision needed, next step, and process feedback.
+7. Keep doc/code work `In Progress` until a linked PR exists; do not mark local-only commits as
+   `Review`.
+8. End with current state, next actor, decision needed, next step, and process feedback.
 
 The expected reply shape is:
 
@@ -115,6 +126,9 @@ groom issue
 Draft artifacts are proposals. Implementation should not proceed from a draft vision brief, spec,
 or ADR unless the human explicitly says to ignore that gate for the current work.
 
+When a draft artifact changes repo docs, review should happen through a PR. Direct issue-thread
+approval is reserved for decisions or artifact text that is already fully visible in the issue.
+
 ## Implementation Loop
 
 Full agent execution is a later proof after the mobile-resumable loop is working.
@@ -151,6 +165,9 @@ through `improve-workflow` when the feedback is actionable.
 
 These weaknesses appeared during the first GitHub-first dogfood pass:
 
+- Review handoff was initially too loose: #11 moved to `Review` with only a local commit, so GitHub
+  Mobile could not inspect the diff. Accepted rule: doc/code work requires a linked PR before
+  `Status = Review`.
 - Implementation permission is not fully represented in Project fields. A `Ready` issue with
   `Next Actor = Agent` still does not prove that the human authorized implementation in the current
   turn. Until the workflow has a better signal, the agent must rely on the current user request or a

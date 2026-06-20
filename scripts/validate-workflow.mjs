@@ -174,9 +174,18 @@ function validate(cwd) {
 
   if (existsSync(join(cwd, '.agents/skills/process/continue-work/SKILL.md'))) {
     const continueSkill = read(cwd, '.agents/skills/process/continue-work/SKILL.md');
-    for (const snippet of ['Next Actor', 'Decision Needed', 'GitHub Project', 'Next workflow verb', 'work-issue-local']) {
+    for (const snippet of ['Next Actor', 'Decision Needed', 'GitHub Project', 'Next workflow verb', 'work-issue-local', 'linked PR', 'Local commits without a PR']) {
       if (!continueSkill.includes(snippet)) {
         errors.push(`continue-work skill is missing GitHub routing snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, 'docs/development/workflow/github-first-flow.md'))) {
+    const githubFlow = read(cwd, 'docs/development/workflow/github-first-flow.md');
+    for (const snippet of ['Review Handoff Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR']) {
+      if (!githubFlow.includes(snippet)) {
+        errors.push(`GitHub-first flow is missing review handoff snippet: ${snippet}`);
       }
     }
   }

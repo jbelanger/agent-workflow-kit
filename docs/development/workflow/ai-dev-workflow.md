@@ -137,6 +137,10 @@ Every meaningful dogfood pass should include process feedback when it notices wo
 That feedback belongs in the issue comment or PR summary where it was observed, then routes through
 `improve-workflow` when it needs a durable change.
 
+For doc or code changes, `Status = Review` requires a linked GitHub PR. Local commits without a PR
+remain `In Progress`; issue-only review is only for decisions or artifact text fully visible in the
+issue thread.
+
 The previous Project and issues from early dogfooding are stale. Restart active GitHub coordination
 with a fresh Project and fresh root initiative rather than repairing the old board.
 

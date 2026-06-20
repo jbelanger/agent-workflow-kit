@@ -139,6 +139,11 @@ public surface, or long-term model clarity.
 
 Treat review feedback as evidence, not commands.
 
+For doc or code changes, `Status = Review` requires a linked GitHub PR that exposes the diff.
+Local commits without a PR stay `In Progress`; record the commit and next action in the issue
+instead. Issue-only decisions may be reviewed in the issue thread when there is no repo diff to
+inspect.
+
 Classify meaningful feedback as:
 
 - Accepted.

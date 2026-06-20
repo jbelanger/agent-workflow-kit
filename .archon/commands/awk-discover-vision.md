@@ -41,6 +41,16 @@ The output artifact path is:
 $ARTIFACTS_DIR/discover-vision.md
 ```
 
+Dashboard output rules:
+
+- Do not format local filesystem paths as Markdown links. Print paths in backticks or fenced
+  `text` blocks only; the dashboard may rewrite absolute Markdown links into broken HTTP URLs.
+- If the discovery report status is `NEEDS_INTERVIEW`, `NEEDS_RESEARCH`, or `NEEDS_DECISION`, tell
+  the operator to answer or rerun discovery with the missing decision in the normal chat/workflow
+  prompt. Do not imply that a spec or implementation step should start.
+- If the status is `READY_FOR_SPEC`, the workflow approval gate is for accepting the draft vision as
+  authoritative before spec drafting.
+
 ## Discovery Bundle
 
 When discovery artifacts are useful, write or update:
@@ -104,5 +114,5 @@ to spec drafting.
 Write bundle paths as plain relative paths without backticks so deterministic workflow nodes can
 parse them.
 
-In the final response, include the report artifact path, status, selected lenses, vision brief path
-if created, and next workflow step.
+In the final response, include the report artifact path as plain text, status, selected lenses,
+vision brief path if created, and next workflow step.

@@ -245,7 +245,14 @@ for (const snippet of [
   'name: awk-groom-issue',
   'command: awk-groom-issue',
   'output_type: grooming-report',
+  'interactive: true',
   'worktree:\n  enabled: false',
+  'id: grooming-status',
+  'id: answer-clarification',
+  'approval:',
+  'capture_response: true',
+  'id: record-clarification-answer',
+  '$ARTIFACTS_DIR/grooming-answer.md',
 ]) {
   if (!groomWorkflow.includes(snippet)) {
     errors.push(`awk-groom-issue workflow is missing required snippet: ${snippet}`);
@@ -264,6 +271,15 @@ if (existsSync(join(cwd, '.archon/commands/awk-groom-issue.md'))) {
   }
   if (!groomCommand.includes('awk-discover-vision')) {
     errors.push('awk-groom-issue command must route unresolved product/design discovery to awk-discover-vision');
+  }
+  for (const snippet of [
+    'Dashboard output rules',
+    'Do not format local filesystem paths as Markdown links',
+    'approval/input gate',
+  ]) {
+    if (!groomCommand.includes(snippet)) {
+      errors.push(`awk-groom-issue command is missing dashboard UX snippet: ${snippet}`);
+    }
   }
 }
 
@@ -311,6 +327,8 @@ if (existsSync(join(cwd, '.archon/commands/awk-discover-vision.md'))) {
     'READY_FOR_SPEC',
     'Vision state: Draft',
     'plain relative paths without backticks',
+    'Dashboard output rules',
+    'Do not format local filesystem paths as Markdown links',
   ]) {
     if (!discoverVisionCommand.includes(snippet)) {
       errors.push(`awk-discover-vision command is missing required snippet: ${snippet}`);

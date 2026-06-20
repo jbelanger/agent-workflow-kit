@@ -8,6 +8,7 @@ provider: codex
 model: gpt-5.5
 modelReasoningEffort: high
 webSearchMode: disabled
+interactive: true
 worktree:
   enabled: false
 
@@ -16,3 +17,120 @@ nodes:
     command: awk-groom-issue
     context: fresh
     output_type: grooming-report
+
+  - id: grooming-status
+    depends_on: [groom]
+    script: |
+      const { existsSync, readFileSync } = await import('node:fs');
+
+      const reportPath = "$ARTIFACTS_DIR/groom-issue.md";
+
+      function section(text, heading) {
+        const lines = text.split(/\r?\n/);
+        const start = lines.findIndex(line => line.trim() === `## ${heading}`);
+        if (start === -1) return '';
+        const body = [];
+        for (let index = start + 1; index < lines.length; index += 1) {
+          if (/^##\s+/.test(lines[index])) break;
+          body.push(lines[index]);
+        }
+        return body.join('\n').trim();
+      }
+
+      function emit(payload) {
+        console.log(JSON.stringify({
+          report_path: reportPath,
+          ...payload,
+        }));
+      }
+
+      if (!existsSync(reportPath)) {
+        emit({
+          status: 'NEEDS_DECISION',
+          human_decision_needed: 'YES',
+          reason: 'Grooming report missing.',
+          question: 'Grooming report missing. Rerun grooming or inspect the failed run.',
+          next_action: 'Rerun awk-groom-issue after inspecting logs.',
+        });
+        process.exit(0);
+      }
+
+      const text = readFileSync(reportPath, 'utf8');
+      const status = section(text, 'Grooming status').split(/\s+/)[0]?.toUpperCase() ?? '';
+      const humanDecision = section(text, 'Human decision needed');
+      const question = section(text, 'Clarification question');
+      const nextAction = section(text, 'Next action');
+      const needsHuman = /^YES\b/i.test(humanDecision);
+      const needsPrompt = needsHuman && question && question.toLowerCase() !== 'none';
+
+      emit({
+        status,
+        human_decision_needed: needsHuman ? 'YES' : 'NO',
+        reason: humanDecision,
+        question: needsPrompt ? question : '',
+        next_action: nextAction,
+      });
+    runtime: bun
+
+  - id: answer-clarification
+    depends_on: [grooming-status]
+    when: "$grooming-status.output.human_decision_needed == 'YES'"
+    approval:
+      message: |
+        Grooming needs a human answer before the next planning step.
+
+        Report: $grooming-status.output.report_path
+
+        $grooming-status.output.question
+
+        Next action after answering:
+        $grooming-status.output.next_action
+
+        Approve with your answer. Reject or cancel to leave the item in grooming.
+      capture_response: true
+
+  - id: record-clarification-answer
+    depends_on: [answer-clarification]
+    bash: |
+      set -euo pipefail
+      export GROOMING_STATUS="$grooming-status.output.status"
+      export GROOMING_REPORT="$grooming-status.output.report_path"
+      export GROOMING_QUESTION="$grooming-status.output.question"
+      export GROOMING_ANSWER="$answer-clarification.output"
+      node <<'NODE'
+      const { writeFileSync } = await import('node:fs');
+
+      const answerPath = "$ARTIFACTS_DIR/grooming-answer.md";
+      const timestamp = new Date().toISOString();
+      const status = process.env.GROOMING_STATUS || '';
+      const report = process.env.GROOMING_REPORT || '';
+      const question = process.env.GROOMING_QUESTION || '';
+      const answer = String(process.env.GROOMING_ANSWER || '').trim() || '(approved without answer text)';
+
+      writeFileSync(
+        answerPath,
+        [
+          '# Grooming Answer',
+          '',
+          `Captured at: ${timestamp}`,
+          `Grooming status: ${status}`,
+          `Grooming report: ${report}`,
+          '',
+          '## Question',
+          question,
+          '',
+          '## Answer',
+          answer,
+          '',
+          '## Next action',
+          'Run the next workflow named by the grooming report with this answer included in the prompt.',
+          '',
+        ].join('\n')
+      );
+
+      console.log(JSON.stringify({
+        status: 'ANSWER_CAPTURED',
+        answer_path: answerPath,
+        report_path: report,
+      }));
+      NODE

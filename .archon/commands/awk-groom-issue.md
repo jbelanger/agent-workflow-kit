@@ -35,6 +35,16 @@ The output artifact path is:
 $ARTIFACTS_DIR/groom-issue.md
 ```
 
+Dashboard output rules:
+
+- Do not format local filesystem paths as Markdown links. Print paths in backticks or fenced
+  `text` blocks only; the dashboard may rewrite absolute Markdown links into broken HTTP URLs.
+- If a human decision is needed, say that the dashboard will show an approval/input gate for the
+  answer. If no gate appears, the operator should answer in the normal chat box or rerun the next
+  workflow with the answer included in the prompt.
+- Do not imply that grooming continues automatically into discovery, spec drafting, or
+  implementation.
+
 ## Artifact Shape
 
 Write this structure to `$ARTIFACTS_DIR/groom-issue.md`:
@@ -107,5 +117,6 @@ work, recommend `awk-discover-vision` as the next workflow step instead of `awk-
 
 If no clarification question is needed, write `None` under `## Clarification question`.
 
-In the final response, include the artifact path, recommended work item type, next action, and
-whether a human decision is needed.
+In the final response, include the artifact path as plain text, recommended work item type, next
+action, and whether a human decision is needed. If human decision is `YES`, include the clarification
+question and say that the answer should be supplied through the dashboard approval/input gate.

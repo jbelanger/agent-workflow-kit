@@ -42,3 +42,9 @@ Useful Archon entry point:
 ```bash
 archon workflow run awk-continue-work --cwd /Users/joel/Dev/agent-workflow-kit "continue work"
 ```
+
+The first planning fallback is also available in Archon:
+
+```bash
+archon workflow run awk-groom-issue --cwd /Users/joel/Dev/agent-workflow-kit "Groom ARCHON-010"
+```

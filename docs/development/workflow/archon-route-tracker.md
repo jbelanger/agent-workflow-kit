@@ -104,13 +104,17 @@ route, not a mandatory source of workflow truth.
   competing with portable skills.
 - Added read-only `awk-continue-work` as the first dashboard-visible router over Archon runtime
   state and portable planning state.
+- Dogfooded `awk-continue-work`; it produced a `GROOM_OR_TRIAGE` route artifact and exposed the
+  missing read-only grooming adapter.
+- Added read-only `awk-groom-issue` so the first planning fallback can run inside the Archon
+  dashboard while still using the portable `groom-issue` skill.
 
 ## Open Work Items
 
 | ID | Status | Item | Outcome |
 | --- | --- | --- | --- |
 | ARCHON-001 | Complete | Add a structured preflight gate. | Preflight writes `READY`, `STOP`, or `NEEDS_DECISION` to the artifact; a deterministic parser routes `STOP` and `NEEDS_DECISION` to cancellation and `READY` to approval. All three paths are dogfooded. |
-| ARCHON-002 | Implemented | Add `awk-continue-work`. | Read-only workflow checks Archon runtime state first, then portable planning state, and writes a routing artifact. Dogfood run still needed before broadening. |
+| ARCHON-002 | Complete | Add `awk-continue-work`. | Read-only workflow checks Archon runtime state first, then portable planning state, and writes a routing artifact. Dogfood run `366e5b663e69254be5de10fc681ee19e` completed with `GROOM_OR_TRIAGE`. |
 | ARCHON-003 | Accepted | Decide canonical planning state for the Archon route. | Portable repo surfaces are canonical: `AGENTS.md`, `.agents/skills`, `docs/development`, and GitHub issues/PRs when remote collaboration or audit trail is needed. Archon DB/artifacts remain runtime evidence. |
 | ARCHON-004 | Complete | Reduce duplicated policy in `.archon/commands`. | Commands are adapter prompts around owning skills/rules and Archon artifact shapes, not parallel procedural truth. |
 | ARCHON-005 | Complete | Dogfood one read-only prepare run. | `awk-prepare-implementation` produced a useful `READY` brief artifact without repo edits. |
@@ -118,7 +122,7 @@ route, not a mandatory source of workflow truth.
 | ARCHON-007 | Complete | Validate real Archon CLI compatibility. | Archon's workflow and command validators pass, and the deterministic validation workflow executes; AI workflow smoke tests remain separate. |
 | ARCHON-008 | Accepted | Decide whether GitHub Project boards remain mandatory. | GitHub issues/PRs remain collaboration anchors. Project fields are optional derived dashboard state, not mandatory workflow truth. |
 | ARCHON-009 | CLI proven | Add recovery docs for failed/paused runs. | `archon-recovery-runbook.md` covers the core recovery table, artifact rules, CLI approval/rejection, and failed-run recovery. Web UI and GitHub-comment details remain follow-up. |
-| ARCHON-010 | Open | Run concept spikes for Archon machinery. | Each concept we may depend on has a short spike result before becoming durable workflow. |
+| ARCHON-010 | Open | Run concept spikes for Archon machinery. | Each concept we may depend on has a short spike result before becoming durable workflow; `awk-groom-issue` can now groom the next spike target. |
 
 ## Spike Findings
 
@@ -190,5 +194,5 @@ git diff --check
 
 Remaining before broadening the Archon route beyond local dogfood:
 
-- Dogfood `awk-continue-work`.
+- Groom and run the next Archon concept spike through `awk-groom-issue`.
 - Add Web UI and GitHub recovery details only after those surfaces are actually used.

@@ -58,9 +58,11 @@ If no other Archon run is active:
    workflow verb.
 4. If no specific target is supplied, inspect the route tracker and recommend the next open,
    read-only workflow step.
-5. Recommend `awk-work-issue-local` only when the next step is already prepared and it will still go
+5. Use `awk-groom-issue` when the next work needs clarification before preparation or
+   implementation.
+6. Recommend `awk-work-issue-local` only when the next step is already prepared and it will still go
    through preflight and human approval.
-6. If the next step would decide architecture, ownership, board policy, public surface, storage, or
+7. If the next step would decide architecture, ownership, board policy, public surface, storage, or
    permission posture, return `HUMAN_DECISION`.
 
 ## Artifact Shape

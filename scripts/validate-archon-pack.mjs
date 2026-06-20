@@ -5,11 +5,13 @@ import { join } from 'node:path';
 const requiredFiles = [
   '.archon/config.yaml',
   '.archon/workflows/awk-continue-work.yaml',
+  '.archon/workflows/awk-groom-issue.yaml',
   '.archon/workflows/awk-prepare-implementation.yaml',
   '.archon/workflows/awk-work-issue-local.yaml',
   '.archon/workflows/awk-review-local-changes.yaml',
   '.archon/workflows/awk-validate-process-pack.yaml',
   '.archon/commands/awk-continue-work.md',
+  '.archon/commands/awk-groom-issue.md',
   '.archon/commands/awk-prepare-implementation.md',
   '.archon/commands/awk-implementation-preflight.md',
   '.archon/commands/awk-work-issue-local.md',
@@ -48,6 +50,9 @@ if (existsSync('.archon/config.yaml')) {
   if (!config.includes('awk-continue-work')) {
     errors.push('.archon/config.yaml should recommend awk-continue-work as the dashboard entry point');
   }
+  if (!config.includes('awk-groom-issue')) {
+    errors.push('.archon/config.yaml should recommend awk-groom-issue as the first planning fallback');
+  }
 }
 
 if (existsSync('.archon/workflows')) {
@@ -73,6 +78,7 @@ for (const path of requiredFiles.filter(path => path.startsWith('.archon/command
 
 const commandSkillRefs = new Map([
   ['.archon/commands/awk-continue-work.md', '.agents/skills/process/pick-next-item/SKILL.md'],
+  ['.archon/commands/awk-groom-issue.md', '.agents/skills/process/groom-issue/SKILL.md'],
   ['.archon/commands/awk-prepare-implementation.md', '.agents/skills/process/prepare-implementation/SKILL.md'],
   ['.archon/commands/awk-work-issue-local.md', '.agents/skills/process/work-issue-local/SKILL.md'],
   ['.archon/commands/awk-review-local-changes.md', '.agents/skills/process/review-local-changes/SKILL.md'],
@@ -146,6 +152,21 @@ for (const snippet of [
 
 if (continueWorkflow.includes('worktree:\n  enabled: true')) {
   errors.push('awk-continue-work must stay read-only without a worktree');
+}
+
+const groomWorkflow = existsSync('.archon/workflows/awk-groom-issue.yaml')
+  ? read('.archon/workflows/awk-groom-issue.yaml')
+  : '';
+
+for (const snippet of [
+  'name: awk-groom-issue',
+  'command: awk-groom-issue',
+  'output_type: grooming-report',
+  'worktree:\n  enabled: false',
+]) {
+  if (!groomWorkflow.includes(snippet)) {
+    errors.push(`awk-groom-issue workflow is missing required snippet: ${snippet}`);
+  }
 }
 
 if (existsSync('.archon/commands/awk-implementation-preflight.md')) {

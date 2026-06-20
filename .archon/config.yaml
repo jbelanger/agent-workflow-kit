@@ -12,6 +12,7 @@ defaults:
   loadDefaultWorkflows: false
 
 recommendedWorkflows:
+  - awk-continue-work
   - awk-prepare-implementation
   - awk-work-issue-local
   - awk-review-local-changes

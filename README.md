@@ -36,3 +36,9 @@ The initial working assumption:
 - no Codex-in-CI baseline yet
 - no autonomous merge
 - experimental optional `.archon/` execution profile with bundled Archon defaults disabled
+
+Useful Archon entry point:
+
+```bash
+archon workflow run awk-continue-work --cwd /Users/joel/Dev/agent-workflow-kit "continue work"
+```

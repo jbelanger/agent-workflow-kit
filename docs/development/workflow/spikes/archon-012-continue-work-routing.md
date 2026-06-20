@@ -4,7 +4,7 @@ Status: complete
 
 ## Question
 
-Can Archon implement `continue work` by checking active runs first, then canonical planning state?
+Can Archon implement `continue work` by checking active runs first, then portable planning state?
 
 ## Setup
 
@@ -67,19 +67,19 @@ status, logs, artifacts, and resume/cancel/abandon actions.
 
 Source: `/Users/joel/Dev/Archon/packages/docs-web/src/content/docs/adapters/web.md:116`.
 
-The missing half is canonical planning state. Archon can tell us whether work is active, paused,
+The missing half is portable planning state. Archon can tell us whether work is active, paused,
 failed, or complete, but the route tracker intentionally says accepted planning state must live in
-repo docs, skills, GitHub issues/PRs, or a future ledger, not in Archon's DB/artifacts. Therefore
-`continue work` must not stop after "no active workflow." It must then read canonical planning
-state and choose one of our kit verbs.
+repo docs, skills, or GitHub issues/PRs when a remote collaboration anchor is needed, not in Archon's
+DB/artifacts. Therefore `continue work` must not stop after "no active workflow." It must then read
+portable planning state and choose one of our kit verbs.
 
 ## Result
 
 Conditional.
 
 Archon has enough run-state machinery for the first stage of `continue work`, but the full workflow
-is only acceptable if the second stage reads a repo-visible or GitHub-visible planning source instead
-of treating Archon's DB, conversations, or artifacts as the backlog.
+is only acceptable if the second stage reads a portable repo-visible or GitHub-visible planning
+source instead of treating Archon's DB, conversations, or artifacts as the backlog.
 
 ## What This Means For Agent Workflow Kit
 
@@ -91,7 +91,7 @@ continue work
   -> if running: report workflow, status, id, path, and next safe command
   -> if paused: report gate, artifact/run context, and ask for approve/reject
   -> if failed/resumable: report failure summary and route recovery/resume
-  -> if no active run: inspect canonical planning state
+  -> if no active run: inspect portable planning state
   -> choose one read-only workflow by default:
        awk-prepare-implementation
        awk-review-local-changes
@@ -103,11 +103,12 @@ The router should prefer deterministic Archon commands or scripts for the active
 The AI should only make judgment calls after the runtime state and canonical planning state are both
 loaded into an explicit artifact.
 
-The canonical planning read is the unresolved design point. It should be one of:
+The portable planning read should use:
 
-- GitHub issues/project fields.
-- A repo-local planning ledger.
-- A hybrid where GitHub anchors collaboration and the ledger keeps local deterministic state.
+- `AGENTS.md`.
+- `.agents/skills/`.
+- `docs/development/`.
+- GitHub issues/PRs when a remote collaboration or audit anchor is needed.
 
 It should not be:
 

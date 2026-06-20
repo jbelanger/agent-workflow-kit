@@ -4,10 +4,12 @@ import { join } from 'node:path';
 
 const requiredFiles = [
   '.archon/config.yaml',
+  '.archon/workflows/awk-continue-work.yaml',
   '.archon/workflows/awk-prepare-implementation.yaml',
   '.archon/workflows/awk-work-issue-local.yaml',
   '.archon/workflows/awk-review-local-changes.yaml',
   '.archon/workflows/awk-validate-process-pack.yaml',
+  '.archon/commands/awk-continue-work.md',
   '.archon/commands/awk-prepare-implementation.md',
   '.archon/commands/awk-implementation-preflight.md',
   '.archon/commands/awk-work-issue-local.md',
@@ -43,6 +45,9 @@ if (existsSync('.archon/config.yaml')) {
   if (!config.includes('codexBinaryPath: /Applications/Codex.app/Contents/Resources/codex')) {
     errors.push('.archon/config.yaml must pin the Codex binary path for compiled Archon validation');
   }
+  if (!config.includes('awk-continue-work')) {
+    errors.push('.archon/config.yaml should recommend awk-continue-work as the dashboard entry point');
+  }
 }
 
 if (existsSync('.archon/workflows')) {
@@ -67,6 +72,7 @@ for (const path of requiredFiles.filter(path => path.startsWith('.archon/command
 }
 
 const commandSkillRefs = new Map([
+  ['.archon/commands/awk-continue-work.md', '.agents/skills/process/pick-next-item/SKILL.md'],
   ['.archon/commands/awk-prepare-implementation.md', '.agents/skills/process/prepare-implementation/SKILL.md'],
   ['.archon/commands/awk-work-issue-local.md', '.agents/skills/process/work-issue-local/SKILL.md'],
   ['.archon/commands/awk-review-local-changes.md', '.agents/skills/process/review-local-changes/SKILL.md'],
@@ -118,6 +124,28 @@ for (const snippet of structuredPreflightSnippets) {
 
 if (implementationWorkflow.includes('output_format:')) {
   errors.push('awk-work-issue-local workflow must route preflight through artifact parsing, not Codex output_format');
+}
+
+const continueWorkflow = existsSync('.archon/workflows/awk-continue-work.yaml')
+  ? read('.archon/workflows/awk-continue-work.yaml')
+  : '';
+
+for (const snippet of [
+  'id: runtime-state',
+  "workflow_name != 'awk-continue-work'",
+  'remote_agent_workflow_runs',
+  'remote_agent_isolation_environments',
+  'git status --short',
+  'command: awk-continue-work',
+  'output_type: continue-work-route',
+]) {
+  if (!continueWorkflow.includes(snippet)) {
+    errors.push(`awk-continue-work workflow is missing runtime router snippet: ${snippet}`);
+  }
+}
+
+if (continueWorkflow.includes('worktree:\n  enabled: true')) {
+  errors.push('awk-continue-work must stay read-only without a worktree');
 }
 
 if (existsSync('.archon/commands/awk-implementation-preflight.md')) {

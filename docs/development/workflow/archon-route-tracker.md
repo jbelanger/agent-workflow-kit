@@ -102,13 +102,15 @@ route, not a mandatory source of workflow truth.
   docs own workflow behavior; Archon commands are optional adapters.
 - Refactored `.archon/commands/awk-*` prompts to make adapter responsibilities explicit and avoid
   competing with portable skills.
+- Added read-only `awk-continue-work` as the first dashboard-visible router over Archon runtime
+  state and portable planning state.
 
 ## Open Work Items
 
 | ID | Status | Item | Outcome |
 | --- | --- | --- | --- |
 | ARCHON-001 | Complete | Add a structured preflight gate. | Preflight writes `READY`, `STOP`, or `NEEDS_DECISION` to the artifact; a deterministic parser routes `STOP` and `NEEDS_DECISION` to cancellation and `READY` to approval. All three paths are dogfooded. |
-| ARCHON-002 | Open | Add `awk-continue-work`. | Workflow checks Archon runs first, then portable planning state, and routes to resume, prepare, work, review, groom, or ask. |
+| ARCHON-002 | Implemented | Add `awk-continue-work`. | Read-only workflow checks Archon runtime state first, then portable planning state, and writes a routing artifact. Dogfood run still needed before broadening. |
 | ARCHON-003 | Accepted | Decide canonical planning state for the Archon route. | Portable repo surfaces are canonical: `AGENTS.md`, `.agents/skills`, `docs/development`, and GitHub issues/PRs when remote collaboration or audit trail is needed. Archon DB/artifacts remain runtime evidence. |
 | ARCHON-004 | Complete | Reduce duplicated policy in `.archon/commands`. | Commands are adapter prompts around owning skills/rules and Archon artifact shapes, not parallel procedural truth. |
 | ARCHON-005 | Complete | Dogfood one read-only prepare run. | `awk-prepare-implementation` produced a useful `READY` brief artifact without repo edits. |
@@ -188,5 +190,5 @@ git diff --check
 
 Remaining before broadening the Archon route beyond local dogfood:
 
-- Implement and dogfood `awk-continue-work`.
+- Dogfood `awk-continue-work`.
 - Add Web UI and GitHub recovery details only after those surfaces are actually used.

@@ -108,6 +108,8 @@ route, not a mandatory source of workflow truth.
   missing read-only grooming adapter.
 - Added read-only `awk-groom-issue` so the first planning fallback can run inside the Archon
   dashboard while still using the portable `groom-issue` skill.
+- Completed `ARCHON-SPIKE-010`; Codex-backed Archon workflows must use explicit adapter prompt
+  routing to `.agents/skills`, not workflow YAML `skills:` as a scoping mechanism.
 
 ## Open Work Items
 
@@ -122,7 +124,7 @@ route, not a mandatory source of workflow truth.
 | ARCHON-007 | Complete | Validate real Archon CLI compatibility. | Archon's workflow and command validators pass, and the deterministic validation workflow executes; AI workflow smoke tests remain separate. |
 | ARCHON-008 | Accepted | Decide whether GitHub Project boards remain mandatory. | GitHub issues/PRs remain collaboration anchors. Project fields are optional derived dashboard state, not mandatory workflow truth. |
 | ARCHON-009 | CLI proven | Add recovery docs for failed/paused runs. | `archon-recovery-runbook.md` covers the core recovery table, artifact rules, CLI approval/rejection, and failed-run recovery. Web UI and GitHub-comment details remain follow-up. |
-| ARCHON-010 | Open | Run concept spikes for Archon machinery. | Each concept we may depend on has a short spike result before becoming durable workflow; `awk-groom-issue` can now groom the next spike target. |
+| ARCHON-010 | Open | Run concept spikes for Archon machinery. | Spikes 001, 003, and 007-014 are complete; 010 confirmed the Codex skills boundary. Spikes 002, 004, 005, and 006 remain proposed. |
 
 ## Spike Findings
 
@@ -133,6 +135,7 @@ route, not a mandatory source of workflow truth.
 | ARCHON-SPIKE-007 | Conditional | GitHub comments can trigger local read-only work, but only safely with explicit `/workflow run`, webhook/App/auth controls, allowlisted users, and no mutating workflows at first. | Treat GitHub adapter as a narrow remote trigger/report surface, not a general natural-language control plane. |
 | ARCHON-SPIKE-008 | Conditional | GitHub comments can approve/reject paused workflows, but this is not safe yet for `awk-work-issue-local`. | Do not expose mutating GitHub workflows until route allowlists, approval binding, raw response capture, and resume semantics are settled. |
 | ARCHON-SPIKE-009 | Pass with boundary | Archon run DB/dashboard state is useful runtime evidence, but not accepted planning truth. | Keep source-of-truth promotion explicit and repo/GitHub-visible. |
+| ARCHON-SPIKE-010 | Conditional | Codex skill support in Archon is filesystem/context discovery, not per-node `skills:` injection. Pi has explicit `.agents/skills` resolution; Archon's validator currently checks `.claude/skills` for YAML `skills:`. | Keep AWK Codex commands as explicit adapters to portable skills; do not use Codex workflow YAML `skills:` as a scoping or enforcement mechanism. |
 | ARCHON-SPIKE-011 | Conditional | Codex nodes cannot be hard-restricted by Archon `allowed_tools`, `denied_tools`, or sandbox fields. | Treat Codex as broad-access trusted local execution; use Claude/Pi variants for workflows requiring enforced tool restrictions. |
 | ARCHON-SPIKE-012 | Conditional | `continue work` can inspect Archon active runs first, but must then read canonical planning state outside Archon. | Implement as a thin router over the accepted portable planning surfaces. |
 | ARCHON-SPIKE-013 | Conditional | Artifact promotion is viable only through narrow, append-only, provenance-rich reporting paths. | Do not auto-promote planning, policy, architecture, readiness, or ledger truth without human review. |
@@ -194,5 +197,5 @@ git diff --check
 
 Remaining before broadening the Archon route beyond local dogfood:
 
-- Groom and run the next Archon concept spike through `awk-groom-issue`.
+- Groom and run the next uncompleted Archon concept spike through `awk-groom-issue`.
 - Add Web UI and GitHub recovery details only after those surfaces are actually used.

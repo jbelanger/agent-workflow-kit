@@ -304,7 +304,7 @@ for (const snippet of [
   'name: awk-draft-spec',
   'interactive: true',
   'id: draft-readiness',
-  'process.env.ARGUMENTS',
+  'process.env.ARGUMENTS || process.env.USER_MESSAGE',
   'NEEDS_ANSWER',
   'id: answer-clarification',
   'approval:',

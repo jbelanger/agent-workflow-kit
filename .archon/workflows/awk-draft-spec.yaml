@@ -17,7 +17,7 @@ nodes:
     script: |
       const { existsSync, readFileSync } = await import('node:fs');
 
-      const args = process.env.ARGUMENTS ?? '';
+      const args = process.env.ARGUMENTS || process.env.USER_MESSAGE || '';
       const artifactMatch = args.match(/(?:^|\s)(\.archon\/artifacts\/runs\/[^\s`'"]+\/groom-issue\.md)/);
       const artifactPath = artifactMatch?.[1] ?? '';
 

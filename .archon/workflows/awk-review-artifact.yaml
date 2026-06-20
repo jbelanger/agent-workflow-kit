@@ -1,0 +1,352 @@
+name: awk-review-artifact
+description: |
+  Review a draft planning artifact from the dashboard and record human acceptance before the next
+  workflow stage. Supports accepted vision briefs, draft specs, and proposed ADRs. It does not
+  implement, break down, merge, or create child work items.
+
+provider: codex
+model: gpt-5.5
+modelReasoningEffort: high
+webSearchMode: disabled
+interactive: true
+worktree:
+  enabled: false
+
+nodes:
+  - id: artifact-status
+    script: |
+      const { existsSync, readFileSync, writeFileSync } = await import('node:fs');
+      const { dirname, relative, resolve } = await import('node:path');
+
+      const args = process.env.ARGUMENTS || process.env.USER_MESSAGE || '';
+      const cwd = process.cwd();
+      const reportPath = "$ARTIFACTS_DIR/artifact-review.md";
+
+      function emit(payload) {
+        console.log(JSON.stringify({
+          report_path: reportPath,
+          ...payload,
+        }));
+      }
+
+      function normalizePath(raw) {
+        if (!raw) return '';
+        const cleaned = raw.trim().replace(/[),.;:]+$/g, '');
+        if (cleaned.startsWith('/')) {
+          const abs = resolve(cleaned);
+          const rel = relative(cwd, abs);
+          if (!rel.startsWith('..') && rel !== '') return rel;
+        }
+        return cleaned;
+      }
+
+      function findArtifactPath(text) {
+        const patterns = [
+          /(?:^|\s)(docs\/development\/discovery\/[^\s`'")]+\/vision-brief\.md)/,
+          /(?:^|\s)(docs\/development\/specs\/[^\s`'")]+\.md)/,
+          /(?:^|\s)(docs\/development\/adrs\/[^\s`'")]+\.md)/,
+          /(?:^|\s)(\/[^\s`'")]+\/docs\/development\/discovery\/[^\s`'")]+\/vision-brief\.md)/,
+          /(?:^|\s)(\/[^\s`'")]+\/docs\/development\/specs\/[^\s`'")]+\.md)/,
+          /(?:^|\s)(\/[^\s`'")]+\/docs\/development\/adrs\/[^\s`'")]+\.md)/,
+        ];
+        for (const pattern of patterns) {
+          const match = text.match(pattern);
+          if (match) return normalizePath(match[1]);
+        }
+        return '';
+      }
+
+      function artifactConfig(path) {
+        if (/^docs\/development\/discovery\/[^/]+\/vision-brief\.md$/.test(path)) {
+          return {
+            type: 'vision',
+            stateLabel: 'Vision state',
+            draftValue: 'Draft',
+            acceptedValue: 'Accepted',
+            nextAction: 'Run awk-draft-spec from the accepted vision.',
+            decisionLogPath: `${dirname(path)}/decision-log.md`,
+          };
+        }
+        if (/^docs\/development\/specs\/[^/]+\.md$/.test(path)) {
+          return {
+            type: 'spec',
+            stateLabel: 'Spec state',
+            draftValue: 'Draft',
+            acceptedValue: 'Accepted',
+            nextAction: 'Run awk-breakdown-work-item from the accepted spec.',
+            decisionLogPath: '',
+          };
+        }
+        if (/^docs\/development\/adrs\/[^/]+\.md$/.test(path)) {
+          return {
+            type: 'adr',
+            stateLabel: 'Status',
+            draftValue: 'Proposed',
+            acceptedValue: 'Accepted',
+            nextAction: 'Route to the next workflow named by the accepted ADR consequences.',
+            decisionLogPath: '',
+          };
+        }
+        return undefined;
+      }
+
+      function stateOf(text, label) {
+        const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const match = text.match(new RegExp(`^${escaped}:\\s*(.+?)\\s*$`, 'm'));
+        return match?.[1]?.trim() ?? '';
+      }
+
+      function writeReport(payload) {
+        const lines = [
+          '# Artifact Review Report',
+          '',
+          '## Status',
+          payload.status,
+          '',
+          '## Artifact',
+          `Path: ${payload.artifact_path ?? ''}`,
+          `Type: ${payload.artifact_type ?? ''}`,
+          `State label: ${payload.state_label ?? ''}`,
+          `Current state: ${payload.current_state ?? ''}`,
+          `Accepted state: ${payload.accepted_state ?? ''}`,
+          `Decision log path: ${payload.decision_log_path ?? ''}`,
+          '',
+          '## Review guidance',
+          payload.reason,
+          '',
+          '## Next action',
+          payload.next_action ?? '',
+          '',
+          '## Process feedback',
+          '',
+        ];
+        writeFileSync(reportPath, `${lines.join('\n').trimEnd()}\n`);
+      }
+
+      const artifactPath = findArtifactPath(args);
+      if (!artifactPath) {
+        const payload = {
+          status: 'STOP',
+          reason: 'No supported artifact path was found. Provide a vision brief, spec, or ADR path.',
+          artifact_path: '',
+          artifact_type: '',
+          state_label: '',
+          current_state: '',
+          accepted_state: '',
+          decision_log_path: '',
+          next_action: 'Rerun with a supported artifact path.',
+        };
+        writeReport(payload);
+        emit(payload);
+        process.exit(0);
+      }
+
+      const config = artifactConfig(artifactPath);
+      if (!config) {
+        const payload = {
+          status: 'STOP',
+          reason: 'Unsupported artifact path. First increment supports vision briefs, specs, and ADRs.',
+          artifact_path: artifactPath,
+          artifact_type: '',
+          state_label: '',
+          current_state: '',
+          accepted_state: '',
+          decision_log_path: '',
+          next_action: 'Route unsupported artifacts through manual review or a later workflow increment.',
+        };
+        writeReport(payload);
+        emit(payload);
+        process.exit(0);
+      }
+
+      if (!existsSync(artifactPath)) {
+        const payload = {
+          status: 'STOP',
+          reason: `Artifact does not exist: ${artifactPath}`,
+          artifact_path: artifactPath,
+          artifact_type: config.type,
+          state_label: config.stateLabel,
+          current_state: '',
+          accepted_state: config.acceptedValue,
+          decision_log_path: config.decisionLogPath,
+          next_action: 'Rerun with an existing artifact path.',
+        };
+        writeReport(payload);
+        emit(payload);
+        process.exit(0);
+      }
+
+      const text = readFileSync(artifactPath, 'utf8');
+      const currentState = stateOf(text, config.stateLabel);
+      const decisionLogExists = config.decisionLogPath && existsSync(config.decisionLogPath);
+      const decisionLogPath = decisionLogExists ? config.decisionLogPath : '';
+
+      if (currentState === config.acceptedValue) {
+        const payload = {
+          status: 'ALREADY_ACCEPTED',
+          reason: 'Artifact is already accepted; no state change is needed.',
+          artifact_path: artifactPath,
+          artifact_type: config.type,
+          state_label: config.stateLabel,
+          current_state: currentState,
+          accepted_state: config.acceptedValue,
+          decision_log_path: decisionLogPath,
+          next_action: config.nextAction,
+        };
+        writeReport(payload);
+        emit(payload);
+        process.exit(0);
+      }
+
+      if (currentState !== config.draftValue) {
+        const payload = {
+          status: 'STOP',
+          reason: `Artifact state is ${currentState || '(missing)'}, not ${config.draftValue}.`,
+          artifact_path: artifactPath,
+          artifact_type: config.type,
+          state_label: config.stateLabel,
+          current_state: currentState,
+          accepted_state: config.acceptedValue,
+          decision_log_path: decisionLogPath,
+          next_action: 'Clarify whether this artifact should be accepted, revised, superseded, or left unchanged.',
+        };
+        writeReport(payload);
+        emit(payload);
+        process.exit(0);
+      }
+
+      const payload = {
+        status: 'READY_FOR_REVIEW',
+        reason: `Review ${artifactPath}. Approve only if this ${config.type} is accepted as authoritative for the next workflow stage.`,
+        artifact_path: artifactPath,
+        artifact_type: config.type,
+        state_label: config.stateLabel,
+        current_state: currentState,
+        accepted_state: config.acceptedValue,
+        decision_log_path: decisionLogPath,
+        next_action: config.nextAction,
+      };
+      writeReport(payload);
+      emit(payload);
+    runtime: bun
+
+  - id: stop-review
+    depends_on: [artifact-status]
+    when: "$artifact-status.output.status == 'STOP'"
+    cancel: "Artifact review stopped: $artifact-status.output.reason"
+
+  - id: already-accepted
+    depends_on: [artifact-status]
+    when: "$artifact-status.output.status == 'ALREADY_ACCEPTED'"
+    cancel: "Artifact is already accepted: $artifact-status.output.artifact_path"
+
+  - id: accept-artifact
+    depends_on: [artifact-status, stop-review, already-accepted]
+    trigger_rule: none_failed_min_one_success
+    when: "$artifact-status.output.status == 'READY_FOR_REVIEW'"
+    approval:
+      message: |
+        Review this planning artifact before accepting it.
+
+        Artifact: $artifact-status.output.artifact_path
+        Type: $artifact-status.output.artifact_type
+        Current state: $artifact-status.output.current_state
+        Accepted state: $artifact-status.output.accepted_state
+        Review report: $artifact-status.output.report_path
+
+        Approve only if the artifact is accepted as authoritative for the next workflow stage.
+        Reject or cancel to keep it in draft/proposed state and return to revision.
+      capture_response: true
+
+  - id: record-artifact-acceptance
+    depends_on: [accept-artifact]
+    bash: |
+      set -euo pipefail
+      export ARTIFACT_PATH=$artifact-status.output.artifact_path
+      export ARTIFACT_TYPE=$artifact-status.output.artifact_type
+      export STATE_LABEL=$artifact-status.output.state_label
+      export CURRENT_STATE=$artifact-status.output.current_state
+      export ACCEPTED_STATE=$artifact-status.output.accepted_state
+      export DECISION_LOG_PATH=$artifact-status.output.decision_log_path
+      export NEXT_ACTION=$artifact-status.output.next_action
+      export APPROVAL_RESPONSE=$accept-artifact.output
+      node <<'NODE'
+      const { existsSync, readFileSync, writeFileSync } = await import('node:fs');
+
+      const artifactPath = process.env.ARTIFACT_PATH ?? '';
+      const artifactType = process.env.ARTIFACT_TYPE ?? '';
+      const stateLabel = process.env.STATE_LABEL ?? '';
+      const currentState = process.env.CURRENT_STATE ?? '';
+      const acceptedState = process.env.ACCEPTED_STATE ?? '';
+      const decisionLogPath = process.env.DECISION_LOG_PATH ?? '';
+      const nextAction = process.env.NEXT_ACTION ?? '';
+      const approval = process.env.APPROVAL_RESPONSE ?? '';
+      const acceptancePath = "$ARTIFACTS_DIR/artifact-acceptance.md";
+      const workflowId = "$WORKFLOW_ID";
+
+      function escapeRegExp(value) {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      }
+
+      function appendHistory(path, entry) {
+        const current = existsSync(path) ? readFileSync(path, 'utf8') : '';
+        const marker = '## Human decision history';
+        if (!current.includes(marker)) {
+          writeFileSync(path, `${current.trimEnd()}\n\n${marker}\n\n${entry}\n`);
+          return;
+        }
+        writeFileSync(path, `${current.trimEnd()}\n${entry}\n`);
+      }
+
+      if (!artifactPath || !existsSync(artifactPath)) {
+        throw new Error('Artifact path missing or not found: ' + artifactPath);
+      }
+      if (!stateLabel || !acceptedState) {
+        throw new Error('Artifact state metadata is incomplete.');
+      }
+
+      const original = readFileSync(artifactPath, 'utf8');
+      const statePattern = new RegExp(`^${escapeRegExp(stateLabel)}:\\s*${escapeRegExp(currentState)}\\s*$`, 'm');
+      if (!statePattern.test(original)) {
+        throw new Error(`Artifact state no longer matches expected ${stateLabel}: ${currentState}`);
+      }
+
+      const updated = original.replace(statePattern, `${stateLabel}: ${acceptedState}`);
+      writeFileSync(artifactPath, updated);
+
+      const timestamp = new Date().toISOString();
+      const comment = String(approval || '').trim() || '(approved without comment)';
+      const entry = `- ${timestamp}: ${artifactType} accepted through Archon artifact review. Run: ${workflowId}. Response: ${comment}`;
+
+      let decisionRecordPath = artifactPath;
+      if (decisionLogPath && existsSync(decisionLogPath)) {
+        decisionRecordPath = decisionLogPath;
+      }
+      appendHistory(decisionRecordPath, entry);
+
+      writeFileSync(
+        acceptancePath,
+        [
+          '# Artifact Acceptance',
+          '',
+          'Status: Accepted',
+          '',
+          `Artifact path: ${artifactPath}`,
+          `Artifact type: ${artifactType}`,
+          `State change: ${stateLabel}: ${currentState} -> ${acceptedState}`,
+          `Decision record: ${decisionRecordPath}`,
+          `Approval response: ${comment}`,
+          `Next action: ${nextAction}`,
+          '',
+        ].join('\n')
+      );
+
+      console.log(JSON.stringify({
+        status: 'ACCEPTED',
+        artifact_path: artifactPath,
+        artifact_type: artifactType,
+        acceptance_path: acceptancePath,
+        decision_record_path: decisionRecordPath,
+        next_action: nextAction,
+      }));
+      NODE

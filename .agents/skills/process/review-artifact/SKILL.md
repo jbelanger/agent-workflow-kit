@@ -1,0 +1,82 @@
+---
+name: review-artifact
+description: "Review a durable planning artifact and record human acceptance or revision routing. Use after a vision brief, spec, or ADR is drafted and needs dashboard-first human approval before the workflow can move to spec drafting, breakdown, or implementation preparation."
+---
+
+# Review Artifact
+
+Use this when a durable planning artifact is ready for human review. This skill promotes accepted
+planning truth or routes the artifact back to revision; it does not draft, break down, or implement
+work.
+
+## Inputs To Read
+
+- The artifact under review:
+  - `docs/development/discovery/<slug>/vision-brief.md`
+  - `docs/development/specs/<name>.md`
+  - `docs/development/adrs/<name>.md`
+- Related decision log, if one exists.
+- Source provenance named by the artifact only when needed to verify the review decision.
+
+## Review Rules
+
+- Accept only when the human explicitly approves the artifact as authoritative for the next workflow
+  stage.
+- Reject or route back to revision when the human gives feedback that requires changes before the
+  next workflow stage.
+- Do not silently resolve open product, architecture, ownership, storage, public-surface, or
+  validation forks during review.
+- Do not create child work items, implementation briefs, branches, commits, or PRs.
+- Preserve the audit trail. Record acceptance decisions, reviewer response, timestamp, and next
+  action. Rejection feedback must remain available as runtime evidence until a durable rejection
+  recorder exists.
+
+## State Changes
+
+Supported first-pass state transitions:
+
+| Artifact | Draft state | Accepted state | Next workflow |
+| --- | --- | --- | --- |
+| Vision brief | `Vision state: Draft` | `Vision state: Accepted` | `draft-artifact` |
+| Spec | `Spec state: Draft` | `Spec state: Accepted` | `breakdown-issue` |
+| ADR | `Status: Proposed` | `Status: Accepted` | depends on ADR consequence |
+
+If the artifact is already accepted, report that no state change is needed. If it is implemented,
+superseded, blocked, or in an unknown state, stop and ask for the intended review action.
+
+## Decision Record
+
+Prefer an existing sibling decision log when present:
+
+- Vision briefs normally use `decision-log.md` in the same discovery directory.
+- Specs and ADRs normally record review history in the artifact itself under
+  `## Human decision history`.
+
+For rejection, keep the artifact in its draft/proposed state and return to revision. In the current
+Archon adapter, rejection cancels the review run and keeps the dashboard rejection reason as runtime
+evidence; durable rejection recording is a follow-up increment.
+
+## Output
+
+Return:
+
+```md
+## Artifact review
+Path:
+Type:
+Decision: Accepted | Rejected | No-op | Blocked
+
+## State change
+
+## Decision record
+
+## Next action
+
+## Process feedback
+```
+
+## Test-Drive Feedback
+
+If review cannot be completed from the dashboard without manual file edits, record that as process
+feedback. Dashboard-first review should have an explicit accept/reject control and a durable
+decision record.

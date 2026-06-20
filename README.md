@@ -57,6 +57,12 @@ Early product/design discovery is available when grooming reports unresolved vis
 archon workflow run awk-discover-vision --cwd /Users/joel/Dev/agent-workflow-kit "Discover vision for <work item>"
 ```
 
+Dashboard-first artifact review is available for draft vision briefs, specs, and ADRs:
+
+```bash
+archon workflow run awk-review-artifact --cwd /Users/joel/Dev/agent-workflow-kit "Review docs/development/specs/<spec>.md"
+```
+
 ## Install Into Another Repo
 
 Portable skills only:

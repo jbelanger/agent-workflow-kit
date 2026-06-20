@@ -19,6 +19,7 @@ recommendedWorkflows:
   - awk-groom-issue
   - awk-discover-vision
   - awk-draft-spec
+  - awk-review-artifact
   - awk-breakdown-work-item
   - awk-prepare-implementation
   - awk-work-issue-local

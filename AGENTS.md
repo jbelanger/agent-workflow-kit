@@ -46,6 +46,8 @@ Use `process/` skills for repeated workflow work:
 - `discover-vision`: orchestrate high-interaction early discovery for vague product, UX, creative,
   game, platform, or architecture direction before specs.
 - `draft-artifact`: draft or update one durable spec, ADR, or spike from groomed direction.
+- `review-artifact`: review and accept or reject a durable planning artifact before the next
+  workflow stage.
 - `breakdown-issue`: decompose accepted direction into independent merge-safe child work items.
 - `prepare-implementation`: produce an implementation brief for a ready work item.
 - `work-issue-local`: implement one prepared work item locally.

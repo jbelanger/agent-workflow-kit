@@ -343,8 +343,9 @@ Spec state is separate from board status:
 | `Superseded` | A newer spec or ADR replaced this one. |
 
 When a spec lives in the repo, acceptance happens through PR review of the spec document or an
-explicit human decision. After the direction is accepted, send it to `breakdown-issue` or the Archon
-`awk-breakdown-work-item` adapter.
+explicit human decision. For dashboard-first local review, use `review-artifact` or the Archon
+`awk-review-artifact` adapter to promote the artifact state and record the decision. After the
+direction is accepted, send it to `breakdown-issue` or the Archon `awk-breakdown-work-item` adapter.
 
 ### 6. Breakdown
 

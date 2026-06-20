@@ -27,6 +27,7 @@ const requiredFiles = [
   '.archon/workflows/awk-groom-issue.yaml',
   '.archon/workflows/awk-discover-vision.yaml',
   '.archon/workflows/awk-draft-spec.yaml',
+  '.archon/workflows/awk-review-artifact.yaml',
   '.archon/workflows/awk-breakdown-work-item.yaml',
   '.archon/workflows/awk-prepare-implementation.yaml',
   '.archon/workflows/awk-work-issue-local.yaml',
@@ -86,6 +87,9 @@ if (existsSync(join(cwd, '.archon/config.yaml'))) {
   }
   if (!config.includes('awk-draft-spec')) {
     errors.push('.archon/config.yaml should recommend awk-draft-spec for spec drafting');
+  }
+  if (!config.includes('awk-review-artifact')) {
+    errors.push('.archon/config.yaml should recommend awk-review-artifact for artifact review');
   }
   if (!config.includes('awk-breakdown-work-item')) {
     errors.push('.archon/config.yaml should recommend awk-breakdown-work-item for accepted direction');
@@ -319,6 +323,37 @@ for (const snippet of [
   if (!draftSpecWorkflow.includes(snippet)) {
     errors.push(`awk-draft-spec workflow is missing required snippet: ${snippet}`);
   }
+}
+
+const reviewArtifactWorkflow = existsSync(join(cwd, '.archon/workflows/awk-review-artifact.yaml'))
+  ? read('.archon/workflows/awk-review-artifact.yaml')
+  : '';
+
+for (const snippet of [
+  'name: awk-review-artifact',
+  'interactive: true',
+  'id: artifact-status',
+  'READY_FOR_REVIEW',
+  'id: accept-artifact',
+  'approval:',
+  'capture_response: true',
+  'id: record-artifact-acceptance',
+  "node <<'NODE'",
+  'APPROVAL_RESPONSE=$accept-artifact.output',
+  'process.env.APPROVAL_RESPONSE',
+  'artifact-acceptance.md',
+  'Vision state',
+  'Spec state',
+  'Status',
+  'worktree:\n  enabled: false',
+]) {
+  if (!reviewArtifactWorkflow.includes(snippet)) {
+    errors.push(`awk-review-artifact workflow is missing required snippet: ${snippet}`);
+  }
+}
+
+if (reviewArtifactWorkflow.includes('const approval = $accept-artifact.output')) {
+  errors.push('awk-review-artifact workflow must not inject raw approval output into JavaScript');
 }
 
 if (existsSync(join(cwd, '.archon/commands/awk-draft-spec.md'))) {

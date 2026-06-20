@@ -10,6 +10,33 @@ This tracker records the experiment to take the Archon route as far as practical
 Prove whether `agent-workflow-kit` can use Archon as an execution runtime without making Archon the
 source of truth for planning, architecture decisions, or long-term workflow memory.
 
+## Current Direction
+
+Updated: 2026-06-20
+
+The active dogfood thread is to use a small creative browser Tetris game as a target project for the
+Archon route. The point is to improve Agent Workflow Kit and prove the workflow loop, not to
+hand-build the game from this repo or bypass Archon.
+
+The target workflow is:
+
+```text
+groom idea
+  -> draft durable spec
+  -> review/accept direction
+  -> break down into child work items
+  -> prepare one implementation item
+  -> implement through an approved Archon worktree run
+```
+
+The current missing-product-work class is still early planning: draft and review the game V0 spec
+through installed `awk-*` workflows before any game implementation starts.
+
+When resuming, inspect live Git state and Archon artifacts in the target repo rather than trusting
+old chat context. If the next useful project step cannot be expressed by an installed `awk-*`
+workflow, improve this kit first, reinstall it into the target repo, validate the installed copy,
+and commit the workflow-pack update before continuing.
+
 The desired shape:
 
 ```text

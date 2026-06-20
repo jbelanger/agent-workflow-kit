@@ -107,7 +107,7 @@ not part of the process loop.
 ## GitHub-First Orchestration
 
 Use `docs/development/adrs/github-first-orchestration.md` as the accepted boundary for the active
-workflow model.
+workflow model. Use `docs/development/workflow/github-first-flow.md` for the v0 operating flow.
 
 The source-of-truth model is:
 
@@ -132,6 +132,10 @@ Use `continue-work` when the human asks to resume without remembering the curren
 GitHub issues, project fields, linked PRs, comments, and repo docs, then routes to the next workflow
 verb. It may recommend comments and field updates; it must not silently mutate scope, accept
 artifacts, decide architecture, implement code, push, merge, or close work.
+
+Every meaningful dogfood pass should include process feedback when it notices workflow weakness.
+That feedback belongs in the issue comment or PR summary where it was observed, then routes through
+`improve-workflow` when it needs a durable change.
 
 The previous Project and issues from early dogfooding are stale. Restart active GitHub coordination
 with a fresh Project and fresh root initiative rather than repairing the old board.

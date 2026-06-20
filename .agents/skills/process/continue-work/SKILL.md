@@ -28,6 +28,8 @@ be inspected.
 - PRs hold proposed doc/code changes and review gates.
 - Skills hold procedure.
 - Agents do not merge, silently decide architecture, silently accept artifacts, or expand scope.
+- Improving Agent Workflow Kit is part of the work: identify process weakness when the workflow
+  itself is confusing, too heavy, too loose, unsafe, or hard to resume.
 
 ## Routing Order
 
@@ -115,3 +117,7 @@ Merge Risk:
 When recommending an issue comment, provide the exact Markdown body. When recommending Project field
 updates, list the target field/value pairs. Do not claim they were applied unless you actually apply
 them with an explicit user request.
+
+Use `Process feedback` to record weaknesses in the workflow itself, such as missing fields, unclear
+handoff state, chat-only decisions, unsafe implementation permission, or ceremony that makes the next
+step harder to see. Route actionable durable changes through `improve-workflow`.

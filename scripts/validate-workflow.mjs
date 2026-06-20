@@ -10,6 +10,7 @@ const requiredPortableFiles = [
   '.agents/skills/domain/README.md',
   'docs/development/README.md',
   'docs/development/workflow/ai-dev-workflow.md',
+  'docs/development/workflow/github-first-flow.md',
   'docs/development/adrs/github-first-orchestration.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
   '.github/ISSUE_TEMPLATE/adr.yml',

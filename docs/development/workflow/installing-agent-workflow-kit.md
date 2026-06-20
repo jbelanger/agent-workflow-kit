@@ -18,6 +18,7 @@ Required:
   docs/development/adrs/
   docs/development/spikes/
   docs/development/workflow/ai-dev-workflow.md
+  docs/development/workflow/github-first-flow.md
   scripts/validate-workflow.mjs
 
 Optional:
@@ -41,6 +42,7 @@ Optional:
 | `docs/development/discovery/` | Yes | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. |
 | `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Yes | Durable planning artifacts reviewed through PRs. |
 | `docs/development/workflow/ai-dev-workflow.md` | Yes | Durable explanation of the AWK process and operating surfaces. |
+| `docs/development/workflow/github-first-flow.md` | Yes | The v0 GitHub-first operating loop for mobile answers, resume behavior, and process feedback. |
 | GitHub issues/PRs/projects | Yes for the default profile | Active orchestration, human answers, remote planning, audit trail, and review. |
 | `docs/development/work-items/` | Optional fallback | Portable planning records only when GitHub is absent. |
 | `.archon/` | Optional | Runtime/dashboard adapters around the same portable skills. |
@@ -98,6 +100,7 @@ Codex chat in the project
   -> user asks "continue work"
   -> Codex reads GitHub issues, project fields, PRs, and repo docs
   -> Codex uses .agents/skills/process/continue-work/SKILL.md to choose the next workflow verb
+  -> Codex records process feedback when the workflow itself shows weakness
 ```
 
 Archon:

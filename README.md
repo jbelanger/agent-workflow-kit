@@ -10,6 +10,7 @@ locally with agents and humans, and keep decisions auditable.
 ## Start Here
 
 - Workflow draft: `docs/development/workflow/ai-dev-workflow.md`
+- GitHub-first flow: `docs/development/workflow/github-first-flow.md`
 - Install contract: `docs/development/workflow/installing-agent-workflow-kit.md`
 - GitHub-first orchestration ADR: `docs/development/adrs/github-first-orchestration.md`
 - Buy-vs-build and Archon experiment evidence:

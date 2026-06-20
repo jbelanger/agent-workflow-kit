@@ -1,55 +1,61 @@
 ---
 name: breakdown-issue
-description: Decompose an accepted spec, ADR, spike result, initiative, or groomed direction into independent merge-safe implementation issues. Use when the user says "break this down", "create tasks", "make sub-issues", "orchestrate this work", or when accepted direction must become one-agent/one-worktree/one-PR tasks before implementation.
+description: Decompose an accepted work item, spec, ADR, spike result, initiative, or groomed direction into independent merge-safe child work items. Use when the user says "break this down", "create tasks", "make sub-issues", "orchestrate this work", or when accepted direction must become one-agent/one-worktree/one-PR tasks before implementation.
 ---
 
-# Breakdown Issue
+# Breakdown Work Item
 
 You are the orchestration step between accepted direction and implementation. Do not write production
-code. Decompose work until each resulting task can be handled by one agent in one branch or worktree
-and one PR.
+code. Decompose work until each resulting child work item can be handled by one agent in one branch
+or worktree and one PR.
+
+A work item can be a repo-local Markdown record, a GitHub issue, or another tracker entry. Treat
+repo-local records under `docs/development/work-items/` as the portable default when no external
+tracker is required. Archon artifacts are execution evidence until a human or explicit workflow
+promotes them into a durable work item.
 
 ## Core Stance
 
+- Breakdown is the task factory after grooming, spec, ADR, spike, or direct direction is accepted.
 - Breakdown protects parallel execution.
-- Every implementation task needs a clear parent, owned area, allowed files, forbidden files,
+- Every child work item needs a clear parent, owned area, allowed files, forbidden files,
   acceptance criteria, feedback loop or test seam, validation command, and merge-risk
   classification.
-- Do not mark implementation work `Ready` until task boundaries are clear enough for autonomous
-  work.
+- Do not mark implementation work `Ready` until child work item boundaries are clear enough for
+  autonomous work.
 - Do not hide architecture decisions inside task splitting. If decomposition exposes a real fork,
   send the work back to grooming, spec, ADR, or spike.
-- Prefer fewer well-shaped tasks over many tiny noisy tasks.
+- Prefer fewer well-shaped child work items over many tiny noisy tasks.
 - Prefer merge-safe ownership boundaries over superficial equal sizing.
 
 ## Inputs To Read
 
-Read the parent issue and all accepted source artifacts before proposing tasks:
+Read the parent work item and all accepted source artifacts before proposing child work items:
 
 - Accepted spec, ADR, spike result, or groomed direction.
-- Parent issue goal, non-goals, acceptance criteria, and discussion.
+- Parent goal, non-goals, acceptance criteria, and discussion.
 - Relevant source docs or code references.
 - Known ownership boundaries, public surfaces, contracts, storage, or migrations.
-- Existing open issues or PRs in the same area when available.
+- Existing open work items, issues, or PRs in the same area when available.
 
 ## Breakdown Process
 
 1. Restate the parent outcome and non-goals.
 2. Identify owned areas and shared surfaces.
 3. Identify sequencing constraints and merge-conflict risks.
-4. Split the work into tasks that each have one primary owner area.
-5. Assign each task a merge-risk value:
+4. Split the work into child work items that each have one primary owner area.
+5. Assign each child work item a merge-risk value:
    - `Parallel-safe`: isolated or unrelated to other active work.
    - `Needs coordination`: can proceed in parallel with explicit sequencing or communication.
    - `Serial only`: should not run in parallel with related work.
-6. Mark tasks that need more clarification as `Grooming`, not `Ready`.
-7. Mark executable tasks `Ready` only when they meet the Definition of Ready.
+6. Mark child work items that need more clarification as `Grooming`, not `Ready`.
+7. Mark executable child work items `Ready` only when they meet the Definition of Ready.
 
-## Definition Of Ready For Child Tasks
+## Definition Of Ready For Child Work Items
 
-Each child task must have:
+Each child work item must have:
 
-- Parent issue link.
+- Parent work item link.
 - Goal.
 - Non-goals.
 - Source docs or code.
@@ -64,29 +70,30 @@ Each child task must have:
 - Merge-risk classification.
 - Human decisions resolved, or clearly marked as required.
 
-If any item is missing, the child task is not ready.
+If any item is missing, the child work item is not ready.
 
 ## Merge-Safety Rules
 
-- Do not assign two parallel tasks to edit the same owned module unless the conflict is intentional
-  and coordination is explicit.
-- If two tasks touch the same public contract, storage shape, migration, shared helper, or
+- Do not assign two parallel child work items to edit the same owned module unless the conflict is
+  intentional and coordination is explicit.
+- If two child work items touch the same public contract, storage shape, migration, shared helper, or
   architecture rule, mark at least one as `Needs coordination` or `Serial only`.
-- If a shared utility change becomes architectural, stop and route the decision through grooming or
-  ADR instead of burying it in a task.
-- If a task needs broad repo edits, split by ownership boundary or mark it `Serial only`.
-- If one task supersedes another implementation path, preserve the original issue and create a
-  linked sub-issue instead of rewriting history.
+- If a shared utility change becomes architectural, stop and route the decision through grooming,
+  spec, or ADR instead of burying it in a child work item.
+- If a child work item needs broad repo edits, split by ownership boundary or mark it `Serial only`.
+- If one child work item supersedes another implementation path, preserve the original record and
+  create a linked child work item instead of rewriting history.
 
-## Parent Status
+## Parent Work Item Status
 
 Recommend parent status explicitly:
 
-- Keep the parent in `Breakdown` while executable child tasks are still being shaped.
-- Move child tasks to `Ready` when they satisfy the Definition of Ready.
-- For an initiative or outcome tracker, keep the parent active while child tasks execute.
-- For a spec, ADR, or spike whose artifact is accepted and whose implementation tasks are linked,
-  recommend `Complete` for the artifact issue unless it is also serving as the active tracker.
+- Keep the parent in `Breakdown` while executable child work items are still being shaped.
+- Move child work items to `Ready` when they satisfy the Definition of Ready.
+- For an initiative or outcome tracker, keep the parent active while child work items execute.
+- For a spec, ADR, or spike whose artifact is accepted and whose implementation work items are
+  linked, recommend `Complete` for the artifact work item unless it is also serving as the active
+  tracker.
 - Use `Blocked` only when a real decision, dependency, access problem, or failed prerequisite stops
   progress.
 
@@ -101,10 +108,10 @@ Return:
 
 ## Merge-safety map
 
-## Proposed child tasks
+## Proposed child work items
 
-### Task: ...
-Issue type:
+### Work item: ...
+Work item type:
 Status:
 Parent:
 Goal:
@@ -122,7 +129,7 @@ Merge risk:
 Sequencing notes:
 Human decision needed:
 
-## Tasks not ready yet
+## Child work items not ready yet
 
 ## Parent status recommendation
 

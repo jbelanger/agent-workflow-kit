@@ -19,8 +19,9 @@ Use the smallest durable surface that matches the job:
 
 - `AGENTS.md`: installed repository rules, quality bar, validation expectations, and boundaries.
 - `.agents/skills/`: installed local Codex skills organized by category.
-- `docs/development/`: durable specs, ADRs, spike writeups, workflow docs, and planning records.
-- GitHub issues and PRs: current planning, discussion, review, and audit trail.
+- `docs/development/`: durable work items, specs, ADRs, spike writeups, workflow docs, and planning
+  records.
+- GitHub issues and PRs: optional collaboration, review, and remote audit mirrors.
 - `.archon/`: optional execution profile for repos that want workflow runs, artifacts, worktrees,
   approval gates, and recovery state around the same portable workflow verbs.
 - CI: deterministic checks such as tests, typecheck, lint, formatting, build, and architecture
@@ -65,18 +66,18 @@ Process: planning and orchestration:
 
 | Skill | Purpose | May edit code? |
 | --- | --- | --- |
-| `triage-backlog` | Review open issues and classify what needs attention. | No |
-| `pick-next-item` | Recommend the best next issue based on readiness, risk, dependencies, and value. | No |
-| `groom-issue` | Turn an unclear issue into a task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
-| `breakdown-issue` | Decompose accepted direction into independent merge-safe tasks. | No |
-| `prepare-implementation` | Convert a Ready issue into an implementation brief. | Docs/issues only when asked |
+| `triage-backlog` | Review open work items and classify what needs attention. | No |
+| `pick-next-item` | Recommend the best next work item based on readiness, risk, dependencies, and value. | No |
+| `groom-issue` | Turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
+| `breakdown-issue` | Decompose accepted direction into independent merge-safe child work items. | No |
+| `prepare-implementation` | Convert one Ready work item into an implementation brief. | Docs/issues only when asked |
 | `improve-workflow` | Triage dogfooding feedback and propose process improvements. | Docs/issues only when asked |
 
 Process: execution and review:
 
 | Skill | Purpose | May edit code? |
 | --- | --- | --- |
-| `work-issue-local` | Implement one prepared issue, bug, refactor, PR revision, or superseding sub-issue. | Yes |
+| `work-issue-local` | Implement one prepared work item, bug, refactor, PR revision, or superseding child item. | Yes |
 | `review-local-changes` | Lightweight local diff review before PR. | No, unless explicitly asked to fix |
 | `review-revision-triage` | Strong architecture-sensitive PR review, revision routing, and human-review escalation. | Docs/specs only when safe |
 
@@ -99,7 +100,7 @@ Use this model:
 
 ```text
 portable source:
-  AGENTS.md + .agents/skills + docs/development + GitHub issues/PRs
+  AGENTS.md + .agents/skills + docs/development + optional GitHub issues/PRs
 
 optional runtime:
   .archon/commands/awk-* + .archon/workflows/awk-*
@@ -117,6 +118,28 @@ Archon profile.
 
 During dogfooding, installed skills ask agents to report process friction in a `Process feedback`
 note. Treat those notes as evidence for `improve-workflow`, not as automatic process changes.
+
+## Work Items
+
+A work item is the workflow's unit of planning. It can be a repo-local Markdown record under
+`docs/development/work-items/`, a GitHub issue, or another tracker item. Prefer repo-local work
+items when the project needs portability without depending on GitHub.
+
+Use this authority model:
+
+```text
+repo-local work item / accepted spec / accepted ADR
+  -> canonical planning state
+
+Archon artifact
+  -> execution evidence until promoted
+
+GitHub issue or project board
+  -> optional collaboration and progress mirror
+```
+
+Grooming classifies unclear work. Breakdown creates child work items. Preparation turns one
+breakdown-shaped child work item into an implementation brief.
 
 ## Workflow
 
@@ -136,9 +159,10 @@ decision, dependency, access problem, failed prerequisite, or unresolved archite
 
 ### 1. Triage Backlog
 
-Use `triage-backlog` when the human asks to triage, clean up issues, or find what needs attention.
+Use `triage-backlog` when the human asks to triage, clean up work items, or find what needs
+attention.
 
-Triage groups issues into:
+Triage groups work items into:
 
 - Ready.
 - Needs grooming.
@@ -165,12 +189,12 @@ Prefer work that is:
 - Not blocked by missing decisions.
 - Unlikely to cause architecture drift.
 
-The output names the recommended issue, why it wins, why plausible alternatives are not first, the
-risk, and the suggested next mode.
+The output names the recommended work item, why it wins, why plausible alternatives are not first,
+the risk, and the suggested next mode.
 
 ### 3. Groom Issue
 
-Use `groom-issue` when an issue or idea is unclear.
+Use `groom-issue` when a work item, issue, or idea is unclear.
 
 Grooming answers:
 
@@ -185,7 +209,7 @@ Grooming answers:
 
 Choose the smallest useful output:
 
-- Direct direction when the work is clear enough to decompose into implementation tasks.
+- Direct direction when the work is clear enough to decompose into implementation work items.
 - Bug when actual behavior differs from expected behavior.
 - Refactor when the goal is behavior-preserving structure.
 - Spec when behavior, contracts, records, user-visible semantics, or acceptance criteria need to be
@@ -223,20 +247,21 @@ Spec state is separate from board status:
 | `Superseded` | A newer spec or ADR replaced this one. |
 
 When a spec lives in the repo, acceptance happens through PR review of the spec document. After the
-direction is accepted, send it to `breakdown-issue`.
+direction is accepted, send it to `breakdown-issue` or the Archon `awk-breakdown-work-item`
+adapter.
 
 ### 5. Breakdown
 
 Use `breakdown-issue` after accepted direction and before implementation readiness.
 
 Breakdown is the orchestration phase. Its job is to decompose accepted direction into independent,
-merge-safe child tasks. This can be quick and can happen in the same planning session, but it is
-still a distinct step. No implementation issue is `Ready` until breakdown has produced or confirmed
-task boundaries.
+merge-safe child work items. This can be quick and can happen in the same planning session, but it
+is still a distinct step. No implementation work item is `Ready` until breakdown has produced or
+confirmed task boundaries.
 
-Breakdown must produce tasks that are:
+Breakdown must produce child work items that are:
 
-- Linked to the parent issue.
+- Linked to the parent work item.
 - Small enough for one agent, one branch or worktree, and one PR.
 - Clear about goal, non-goals, source docs, owned area, allowed files, and forbidden files.
 - Clear about contracts, APIs, storage, migrations, user surfaces, and architecture boundaries
@@ -253,12 +278,13 @@ Merge-risk values:
 | `Needs coordination` | Can proceed with sequencing or communication. | Shared contracts, common files, public APIs, migrations, or architecture rules. |
 | `Serial only` | Should not run in parallel with related work. | Foundational changes, contested design, or likely merge-conflict paths. |
 
-If a child task is still unclear, keep it in `Grooming`. If decomposition exposes a real design fork,
-route back to grooming, spec, ADR, or spike. Do not hide architecture decisions inside task splitting.
+If a child work item is still unclear, keep it in `Grooming`. If decomposition exposes a real design
+fork, route back to grooming, spec, ADR, or spike. Do not hide architecture decisions inside task
+splitting.
 
 ### 6. Prepare Implementation
 
-Use `prepare-implementation` after breakdown has produced a Ready task.
+Use `prepare-implementation` after breakdown has produced a Ready child work item.
 
 The implementation brief contains:
 
@@ -277,22 +303,22 @@ The implementation brief contains:
 - Merge risk.
 - Required PR summary sections.
 
-If the issue is clear but not decomposed into merge-safe implementation work, return it to
-`breakdown-issue`. If the issue is unclear, return it to `groom-issue`.
+If the work item is clear but not decomposed into merge-safe implementation work, return it to
+`breakdown-issue`. If the work item is unclear, return it to `groom-issue`.
 
 ### 7. Work Issue Locally
 
-Use `work-issue-local` when a Ready issue is assigned for implementation, refactor, accepted
-revision work, or a superseding sub-issue.
+Use `work-issue-local` when a Ready work item is assigned for implementation, refactor, accepted
+revision work, or a superseding child item.
 
 Rules:
 
-- One issue.
+- One work item.
 - One branch or worktree.
 - One PR.
 - No scope expansion.
 - No merge.
-- Preserve behavior unless the issue explicitly changes it.
+- Preserve behavior unless the work item explicitly changes it.
 - Stop for architecture forks.
 - Ask before changing public APIs, ownership boundaries, storage shape, migration policy, or
   long-term abstractions.
@@ -303,7 +329,7 @@ migrations, refactors, PR revisions, superseding work, accepted specs or ADRs, o
 For trivial tasks, a short "no architecture surface touched" note is enough.
 
 For PR revisions, the implementation agent starts from the reviewer's classification but verifies
-each item against the issue, diff, code, specs or ADRs, tests, and intended architecture before
+each item against the work item, diff, code, specs or ADRs, tests, and intended architecture before
 coding. Review feedback is evidence, not a command.
 
 Before coding, the implementation agent chooses the cheapest honest feedback loop: TDD for
@@ -311,9 +337,9 @@ behavior-changing work with a useful public seam, bug diagnosis for unreproduced
 characterization tests for risky refactors, or validation-only for trivial work where tests would be
 brittle or lower signal.
 
-When completing a sub-issue, superseding refactor, or replacement PR, the implementation agent reads
-the parent issue and decides whether the parent is now resolved, partly resolved, or should return to
-grooming or breakdown.
+When completing a child item, superseding refactor, or replacement PR, the implementation agent
+reads the parent work item and decides whether the parent is now resolved, partly resolved, or
+should return to grooming or breakdown.
 
 ### 8. Review
 
@@ -349,20 +375,20 @@ not required board statuses.
 
 ### 9. Refactor And Superseding PRs
 
-Do not add a dedicated refactor skill yet. Refactor is an issue type and an implementation path
+Do not add a dedicated refactor skill yet. Refactor is a work item type and an implementation path
 handled by `work-issue-local`, usually routed by `review-revision-triage`.
 
 If a refactor is required before merge:
 
 - Keep it on the same PR when the current PR cannot be accepted without it.
-- Create a linked `Refactor` sub-issue and replacement PR when the cleanup is broader than the
+- Create a linked `Refactor` child item and replacement PR when the cleanup is broader than the
   current PR or makes the original PR obsolete.
 - Close the original PR as superseded when the replacement path makes it obsolete.
-- Do not rewrite the original issue. Link the replacement sub-issue or PR and preserve the audit
+- Do not rewrite the original work item. Link the replacement child item or PR and preserve the audit
   trail.
-- Keep the parent issue active while the replacement path is active unless a real blocker exists.
+- Keep the parent work item active while the replacement path is active unless a real blocker exists.
 
-The agent completing the replacement work owns reading the parent issue and deciding whether the
+The agent completing the replacement work owns reading the parent work item and deciding whether the
 parent is resolved.
 
 ### 10. Merge
@@ -371,7 +397,7 @@ Only the human merges.
 
 Merge only when:
 
-- The issue acceptance criteria are met.
+- The work item acceptance criteria are met.
 - Required checks pass.
 - Review conversations are resolved or explicitly deferred with owner, boundary, and removal
   condition.
@@ -392,18 +418,18 @@ Recommended statuses:
 | --- | --- | --- |
 | `Backlog` | Captured but not currently moving. | Ideas, future work, deferred items, and work not yet selected. |
 | `Grooming` | Clarifying intent and classifying next output. | Use while deciding spec, ADR, spike, direct direction, drop, or defer. |
-| `Breakdown` | Accepted direction is being decomposed into executable tasks. | Use before child tasks are merge-safe and Ready. |
+| `Breakdown` | Accepted direction is being decomposed into executable child work items. | Use before child work items are merge-safe and Ready. |
 | `Ready` | Scoped and safe for one agent to pick up. | Use after breakdown and implementation prep are sufficient. |
 | `In Progress` | An agent or human is actively working. | Branch/worktree work, spec drafting, active replacement path, or revision pass. |
 | `In Review` | The author believes the PR or artifact is reviewable. | Use when review should evaluate the work. |
 | `Blocked` | Progress cannot continue. | Use only for real decisions, access, dependencies, failed prerequisites, or architecture forks. |
 | `Complete` | Done and no required work remains. | Use after merge, closure, or accepted completion for non-code artifacts. |
 
-Recommended issue types:
+Recommended work item types:
 
-| Issue Type | Description | When to use |
+| Work Item Type | Description | When to use |
 | --- | --- | --- |
-| `Initiative` | A large outcome grouping multiple issues. | Use for parent tracking, sequencing, and progress visibility. |
+| `Initiative` | A large outcome grouping multiple work items. | Use for parent tracking, sequencing, and progress visibility. |
 | `Spec` | Durable behavior or contract definition. | Use when behavior or acceptance criteria need agreement. |
 | `ADR` | Durable architecture or operating decision. | Use when direction, ownership, storage, public surface, or policy changes. |
 | `Spike` | Time-boxed evidence gathering. | Use when production work would otherwise guess. |
@@ -416,10 +442,10 @@ Core fields:
 | Field | Description | When to use |
 | --- | --- | --- |
 | `Status` | Coarse lifecycle state. | Always. |
-| `Issue Type` | Work or artifact type. | Always. |
+| `Work Item Type` | Work or artifact type. | Always. |
 | `Area` | Product, architecture, or code area. | Use for filtering and avoiding parallel work in the same area. |
 | `Merge Risk` | Parallel coordination risk. | Required before Ready. |
-| `Spec State` | Draft, Accepted, Implemented, or Superseded. | Use for spec issues. |
+| `Spec State` | Draft, Accepted, Implemented, or Superseded. | Use for spec work items. |
 
 Useful labels or secondary fields:
 
@@ -438,9 +464,9 @@ labels or fields.
 
 ## Definition Of Ready
 
-An implementation issue is Ready only when it has:
+An implementation work item is Ready only when it has:
 
-1. Parent issue link when applicable.
+1. Parent work item link when applicable.
 2. Goal.
 3. Non-goals.
 4. Relevant source docs or code.
@@ -453,12 +479,12 @@ An implementation issue is Ready only when it has:
 11. Required tests.
 12. Validation command.
 13. Merge-risk classification.
-14. Parent resolution expectations for sub-issues or superseding work.
+14. Parent resolution expectations for child items or superseding work.
 15. Human decisions resolved, or clearly marked as required.
 
 ## Definition Of Done
 
-An implementation issue is done only when:
+An implementation work item is done only when:
 
 - The requested behavior exists.
 - The chosen feedback loop was run, or the reason for validation-only work is explicit.
@@ -467,7 +493,7 @@ An implementation issue is done only when:
 - Durable docs are updated when behavior, contracts, architecture, or accepted decisions changed.
 - Review feedback is triaged rather than blindly applied.
 - Deferred debt has an owner, boundary, and removal condition.
-- Parent issue resolution has been checked when the work is a sub-issue or replacement path.
+- Parent work item resolution has been checked when the work is a child item or replacement path.
 
 ## CI Policy
 

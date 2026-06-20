@@ -78,4 +78,4 @@ Reason:
 ```
 
 If the work is not ready, keep the brief useful: explain the missing evidence and the next workflow
-verb (`groom-issue`, `breakdown-issue`, or human decision).
+verb (`groom-issue`, `breakdown-issue` / `awk-breakdown-work-item`, or human decision).

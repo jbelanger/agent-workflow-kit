@@ -25,12 +25,14 @@ const requiredFiles = [
   '.archon/config.yaml',
   '.archon/workflows/awk-continue-work.yaml',
   '.archon/workflows/awk-groom-issue.yaml',
+  '.archon/workflows/awk-breakdown-work-item.yaml',
   '.archon/workflows/awk-prepare-implementation.yaml',
   '.archon/workflows/awk-work-issue-local.yaml',
   '.archon/workflows/awk-review-local-changes.yaml',
   '.archon/workflows/awk-validate-process-pack.yaml',
   '.archon/commands/awk-continue-work.md',
   '.archon/commands/awk-groom-issue.md',
+  '.archon/commands/awk-breakdown-work-item.md',
   '.archon/commands/awk-prepare-implementation.md',
   '.archon/commands/awk-implementation-preflight.md',
   '.archon/commands/awk-work-issue-local.md',
@@ -75,6 +77,9 @@ if (existsSync(join(cwd, '.archon/config.yaml'))) {
   if (!config.includes('awk-groom-issue')) {
     errors.push('.archon/config.yaml should recommend awk-groom-issue as the first planning fallback');
   }
+  if (!config.includes('awk-breakdown-work-item')) {
+    errors.push('.archon/config.yaml should recommend awk-breakdown-work-item for accepted direction');
+  }
 }
 
 if (existsSync(join(cwd, '.archon/workflows'))) {
@@ -110,6 +115,7 @@ if (existsSync(join(cwd, '.gitignore'))) {
 const commandSkillRefs = new Map([
   ['.archon/commands/awk-continue-work.md', '.agents/skills/process/pick-next-item/SKILL.md'],
   ['.archon/commands/awk-groom-issue.md', '.agents/skills/process/groom-issue/SKILL.md'],
+  ['.archon/commands/awk-breakdown-work-item.md', '.agents/skills/process/breakdown-issue/SKILL.md'],
   ['.archon/commands/awk-prepare-implementation.md', '.agents/skills/process/prepare-implementation/SKILL.md'],
   ['.archon/commands/awk-work-issue-local.md', '.agents/skills/process/work-issue-local/SKILL.md'],
   ['.archon/commands/awk-review-local-changes.md', '.agents/skills/process/review-local-changes/SKILL.md'],
@@ -207,6 +213,28 @@ if (existsSync(join(cwd, '.archon/commands/awk-groom-issue.md'))) {
   const groomCommand = read('.archon/commands/awk-groom-issue.md');
   if (!groomCommand.includes('## Human decision needed')) {
     errors.push('awk-groom-issue command must include a machine-readable human decision field');
+  }
+}
+
+const breakdownWorkflow = existsSync(join(cwd, '.archon/workflows/awk-breakdown-work-item.yaml'))
+  ? read('.archon/workflows/awk-breakdown-work-item.yaml')
+  : '';
+
+for (const snippet of [
+  'name: awk-breakdown-work-item',
+  'command: awk-breakdown-work-item',
+  'output_type: breakdown-report',
+  'worktree:\n  enabled: false',
+]) {
+  if (!breakdownWorkflow.includes(snippet)) {
+    errors.push(`awk-breakdown-work-item workflow is missing required snippet: ${snippet}`);
+  }
+}
+
+if (existsSync(join(cwd, '.archon/commands/awk-breakdown-work-item.md'))) {
+  const breakdownCommand = read('.archon/commands/awk-breakdown-work-item.md');
+  if (!breakdownCommand.includes('## Human decision needed')) {
+    errors.push('awk-breakdown-work-item command must include a machine-readable human decision field');
   }
 }
 

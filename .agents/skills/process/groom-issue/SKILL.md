@@ -1,35 +1,39 @@
 ---
 name: groom-issue
-description: Clarify a vague issue or idea and decide whether it should become a direct task, bug, refactor, spec, ADR, spike, drop, or defer. Use when the user says "start grooming", "groom this issue", "make this ready", or "clarify this task".
+description: Clarify a vague work item, issue, or idea and decide whether it should become a direct task, bug, refactor, spec, ADR, spike, drop, or defer. Use when the user says "start grooming", "groom this issue", "groom this work item", "make this ready", or "clarify this task".
 ---
 
 # Groom Issue
 
-You are turning a vague issue or idea into the next useful planning output. Do not implement code.
+You are turning a vague work item, issue, or idea into the next useful planning output. Do not
+implement code.
 
-Keep this skill narrow: classify unclear work, ask for missing decisions, and prepare the issue for
-durable planning work or `prepare-implementation`.
+Keep this skill narrow: classify unclear work, ask for missing decisions, and prepare the work item
+for durable planning work or `breakdown-issue`.
 
 ## Core Stance
 
 - Grooming classifies unclear work before implementation.
-- Prefer updating the current issue over creating a parallel planning issue.
+- Grooming produces direction; `breakdown-issue` creates child implementation work items.
+- Prefer updating the current work item over creating a parallel planning item.
 - Durable specs, ADRs, spikes, and workflow guidance belong under `docs/development/`.
-- GitHub issues and PRs carry current planning, discussion, review, and audit trail.
-- Recommend issue fields, labels, and board status changes, but do not depend on automatic project
-  board transitions.
+- Repo-local work items under `docs/development/work-items/` are the portable default planning
+  record when no external tracker is required.
+- GitHub issues and PRs may mirror current planning, discussion, review, and audit trail.
+- Recommend work item fields, labels, and board status changes, but do not depend on automatic
+  project board transitions.
 - Ask one clarification question at a time.
 - Give options, a recommendation, and the reason.
 - Explain decisions in simple operational terms, assuming the human has not looked at the code
   recently.
 - Use a compact table, diagram, or before/after flow when it makes the decision clearer.
 
-## First Classify The Issue
+## First Classify The Work Item
 
 Choose the smallest useful output:
 
 - **Direct task:** The work is clear, bounded, testable, and does not need behavior, contract, or
-  architecture clarification. Use issue type `Task`.
+  architecture clarification. Use work item type `Task`.
 - **Bug:** Actual behavior differs from expected behavior.
 - **Refactor:** The goal is behavior-preserving structural improvement.
 - **Spec:** Behavior, contracts, records, user-visible semantics, or acceptance criteria need to be
@@ -81,19 +85,19 @@ Why:
 
 ## Spec Flow
 
-When the current issue needs a spec:
+When the current work item needs a spec:
 
-1. Recommend converting the current issue to `Issue Type: Spec` by default.
-2. Keep the issue in `Grooming` while asking clarification questions.
+1. Recommend converting the current work item to `Work Item Type: Spec` by default.
+2. Keep the work item in `Grooming` while asking clarification questions.
 3. Use `Spec state: Draft` while the behavior or contract is proposed.
 4. Once there is enough context to draft durable text, recommend the next action as creating or
    updating a spec document under `docs/development/specs/`.
 5. The spec PR owns review of the durable text.
 6. After human acceptance, ensure the spec document says `Spec state: Accepted`.
-7. If implementation work remains, send the accepted issue to `breakdown-issue`; if the spec itself
-   was the deliverable, recommend `Complete`.
+7. If implementation work remains, send the accepted work item to `breakdown-issue`; if the spec
+   itself was the deliverable, recommend `Complete`.
 
-Do not create implementation child issues from a draft spec.
+Do not create implementation child work items from a draft spec.
 
 ## Spec State
 
@@ -132,21 +136,21 @@ Draft
 Return:
 
 - Current understanding.
-- Recommended issue type.
+- Recommended work item type.
 - Draft goal.
 - Draft non-goals.
 - Source evidence needed.
 - Acceptance criteria draft.
 - Merge risk.
-- Recommended issue fields, labels, or status.
+- Recommended work item fields, labels, or status.
 - Next action.
 
 ## Rules
 
-- Do not create implementation child issues from a draft spec.
+- Do not create implementation child work items from a draft spec.
 - Use `Blocked` only for a real unresolved dependency, missing access, or decision.
 - Keep normal clarification in grooming.
-- Prefer updating the current issue over creating a parallel planning issue.
+- Prefer updating the current work item over creating a parallel planning item.
 - If the issue is clear enough for implementation, hand it to `breakdown-issue` so the orchestrator
   can produce merge-safe executable task boundaries before `prepare-implementation`.
 

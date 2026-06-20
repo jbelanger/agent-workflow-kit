@@ -10,6 +10,7 @@ The adoption contract is:
 Required:
   AGENTS.md
   .agents/skills/
+  docs/development/work-items/
   docs/development/workflow/ai-dev-workflow.md
   scripts/validate-workflow.mjs
 
@@ -26,8 +27,9 @@ Optional:
 | --- | --- | --- |
 | `AGENTS.md` | Yes | Standing repository rules for local Codex work. |
 | `.agents/skills/` | Yes | Portable workflow verbs such as grooming, breakdown, preparation, local work, and review. |
+| `docs/development/work-items/` | Yes | Portable planning records when GitHub issues are absent or only a mirror. |
 | `docs/development/workflow/ai-dev-workflow.md` | Yes | Durable explanation of the AWK process and operating surfaces. |
-| GitHub issues/PRs | Optional but expected for team work | Collaboration, audit trail, and remote planning anchors. |
+| GitHub issues/PRs | Optional | Collaboration, audit trail, and remote planning mirrors. |
 | `.archon/` | Optional | Runtime/dashboard adapters around the same portable skills. |
 | Archon CLI/server | Optional | Workflow runs, artifacts, worktrees, approval gates, and dashboard state. |
 
@@ -80,7 +82,7 @@ Plain Codex:
 
 ```text
 Codex chat in the project
-  -> user asks "groom this issue"
+  -> user asks "groom this work item"
   -> Codex uses .agents/skills/process/groom-issue/SKILL.md
 ```
 
@@ -88,7 +90,7 @@ Archon:
 
 ```text
 Archon dashboard or CLI in the project
-  -> run awk-continue-work or awk-groom-issue
+  -> run awk-continue-work, awk-groom-issue, or awk-breakdown-work-item
   -> .archon command points Codex at the same .agents/skills procedure
   -> Archon stores run state and artifacts
 ```

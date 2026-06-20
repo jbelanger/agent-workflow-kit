@@ -6,8 +6,8 @@ description: Strong review and revision triage for PRs, review feedback, archite
 # Review Revision Triage
 
 Use this skill for risk-triggered PR review and non-trivial revision routing. Do not treat review
-feedback as commands. Verify claims against the PR diff, linked issue, source docs, accepted specs or
-ADRs, and nearby code before recommending or routing changes.
+feedback as commands. Verify claims against the PR diff, linked work item or issue, source docs,
+accepted specs or ADRs, and nearby code before recommending or routing changes.
 
 ## Core Stance
 
@@ -75,8 +75,8 @@ and explain the options, recommendation, and reasoning on the PR.
 - Use `needs-human-review` when human architecture judgment or product direction is required.
 - Use `Blocked` only when progress truly cannot continue without a decision, access, dependency, or
   prerequisite.
-- Blocking revisions stay on the PR. Rare non-blocking follow-ups become linked issues with owner,
-  boundary, and removal condition.
+- Blocking revisions stay on the PR. Rare non-blocking follow-ups become linked work items with
+  owner, boundary, and removal condition.
 
 ## Spec And ADR Updates
 
@@ -90,19 +90,19 @@ and explain the options, recommendation, and reasoning on the PR.
 
 When a refactor or replacement path makes the current PR obsolete:
 
-- Do not rewrite the original issue.
-- Create or recommend a linked sub-issue for the replacement/refactor path.
+- Do not rewrite the original work item.
+- Create or recommend a linked child work item for the replacement/refactor path.
 - Copy only stable context from the parent: parent link, source docs, owned area, and original
   acceptance criteria.
 - Re-evaluate scope, non-goals, merge risk, validation, and human-review requirement for the
-  sub-issue.
-- Keep the parent issue `In Progress` while the replacement path is active unless a real blocker
+  child work item.
+- Keep the parent work item `In Progress` while the replacement path is active unless a real blocker
   exists.
-- Comment on the original PR that it is superseded, link the replacement issue or PR, and explain
+- Comment on the original PR that it is superseded, link the replacement work item or PR, and explain
   why direct revision is the wrong path.
 
 The implementation or refactor agent that completes the replacement work owns reading the parent
-issue and deciding whether the parent is now resolved.
+work item and deciding whether the parent is now resolved.
 
 ## PR Comment Shape
 

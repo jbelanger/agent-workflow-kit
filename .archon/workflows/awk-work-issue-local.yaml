@@ -1,6 +1,6 @@
 name: awk-work-issue-local
 description: |
-  Use when a prepared issue is ready for one local implementation pass.
+  Use when a prepared work item is ready for one local implementation pass.
   The workflow performs a read-only preflight, pauses for human approval, then allows one
   scoped implementation pass. It does not merge.
 

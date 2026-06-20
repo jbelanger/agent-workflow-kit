@@ -1,6 +1,6 @@
 ---
-description: Groom an unclear issue, idea, tracker item, or spike candidate without implementing.
-argument-hint: <issue-number|issue-url|tracker-item|description>
+description: Groom an unclear work item, issue, idea, tracker item, or spike candidate without implementing.
+argument-hint: <work-item|issue-number|issue-url|tracker-item|description>
 ---
 
 # Agent Workflow Kit: Groom Issue
@@ -41,7 +41,7 @@ Write this structure to `$ARTIFACTS_DIR/groom-issue.md`:
 
 ## Current understanding
 
-## Recommended issue type
+## Recommended work item type
 
 ## Draft goal
 
@@ -55,7 +55,7 @@ Write this structure to `$ARTIFACTS_DIR/groom-issue.md`:
 
 ## Architecture / ownership implications
 
-## Recommended issue fields, labels, or status
+## Recommended work item fields, labels, or status
 
 ## Human decision needed
 
@@ -77,5 +77,5 @@ Why:
 
 If no clarification question is needed, write `None` under `## Clarification question`.
 
-In the final response, include the artifact path, recommended issue type, next action, and whether a
-human decision is needed.
+In the final response, include the artifact path, recommended work item type, next action, and
+whether a human decision is needed.

@@ -1,6 +1,6 @@
 name: awk-groom-issue
 description: |
-  Use when an issue, idea, tracker item, or spike candidate is not ready for implementation.
+  Use when a work item, issue, idea, tracker item, or spike candidate is not ready for implementation.
   The workflow runs the portable groom-issue skill as a read-only Archon adapter and writes
   a grooming artifact. It does not edit code or update GitHub.
 

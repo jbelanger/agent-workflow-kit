@@ -117,8 +117,8 @@ Archon may eventually write constrained progress updates to GitHub, such as:
 - validation passed or failed
 - artifact summary
 
-Archon must not silently rewrite issue scope, decide architecture, mark specs accepted, or promote
-runtime artifacts into durable truth.
+Archon must not silently rewrite work-item scope, decide architecture, mark specs accepted, or
+promote runtime artifacts into durable truth.
 
 ## Consequences
 

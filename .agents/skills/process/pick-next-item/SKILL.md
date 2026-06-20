@@ -1,6 +1,6 @@
 ---
 name: pick-next-item
-description: Choose the best next issue to work on from the current backlog based on readiness, value, risk, dependencies, and merge coordination. Use when the user says "pick next item", "what should I work on next", "choose next issue", or "find the next best task".
+description: Choose the best next work item to work on from the current backlog based on readiness, value, risk, dependencies, and merge coordination. Use when the user says "pick next item", "what should I work on next", "choose next issue", "choose next work item", or "find the next best task".
 ---
 
 # Pick Next Item
@@ -9,7 +9,7 @@ You are helping choose the next best local Codex task. Do not implement code.
 
 ## Selection Criteria
 
-Prefer issues that are:
+Prefer work items that are:
 
 1. Ready or close to Ready after grooming or breakdown.
 2. Small enough for one agent, one branch or worktree, and one PR.
@@ -28,7 +28,7 @@ Return:
 
 ## Recommended next item
 
-- Issue:
+- Work item:
 - Why this one:
 - Expected workflow:
 - Risk:
@@ -45,7 +45,7 @@ Mention any choice the human must make before work starts.
 ## Rules
 
 - Do not edit code.
-- Do not update issues unless explicitly asked.
+- Do not update work items or issues unless explicitly asked.
 - Recommend one primary next item.
 - Make tradeoffs concrete.
 

@@ -25,12 +25,13 @@ This command is an Archon adapter, not a second source of process truth.
 3. Read `docs/development/workflow/adr-archon-portable-skills.md` if present.
 4. Read `docs/development/workflow/archon-recovery-runbook.md` if present and runtime recovery is
    relevant.
-5. Inspect local planning state under `docs/development/` and GitHub issue/PR context when
-   `$ARGUMENTS` names it or the local tools expose it.
+5. Inspect local planning state under `docs/development/` first. Include GitHub issue/PR context
+   when `$ARGUMENTS` names it or the local tools expose it.
 6. Read the relevant portable skill only after choosing the likely verb:
    - `.agents/skills/process/triage-backlog/SKILL.md`
    - `.agents/skills/process/pick-next-item/SKILL.md`
    - `.agents/skills/process/groom-issue/SKILL.md`
+   - `.agents/skills/process/breakdown-issue/SKILL.md`
    - `.agents/skills/process/prepare-implementation/SKILL.md`
    - `.agents/skills/process/work-issue-local/SKILL.md`
    - `.agents/skills/process/review-local-changes/SKILL.md`
@@ -60,13 +61,16 @@ If no other Archon run is active:
 3. If `$ARGUMENTS` names a specific issue, PR, brief, or goal, recommend the narrowest matching
    workflow verb.
 4. If no specific target is supplied, inspect local planning state and recommend the next open,
-   read-only workflow step. Prefer GitHub issues/PRs when available; otherwise use repo-local specs,
-   ADRs, spikes, and workflow docs.
+   read-only workflow step. Prefer repo-local work items, specs, ADRs, spikes, and workflow docs;
+   include GitHub issues/PRs as optional mirrors when available.
 5. Use `awk-groom-issue` when the next work needs clarification before preparation or
    implementation.
-6. Recommend `awk-work-issue-local` only when the next step is already prepared and it will still go
+6. Use `awk-breakdown-work-item` when accepted direction exists but executable child work items do
+   not yet have merge-safe boundaries.
+7. Use `awk-prepare-implementation` only for one breakdown-shaped child work item.
+8. Recommend `awk-work-issue-local` only when the next step is already prepared and it will still go
    through preflight and human approval.
-7. If the next step would decide architecture, ownership, board policy, public surface, storage, or
+9. If the next step would decide architecture, ownership, board policy, public surface, storage, or
    permission posture, return `HUMAN_DECISION`.
 
 ## Artifact Shape
@@ -112,6 +116,7 @@ Reason:
 - `PAUSED`
 - `FAILED_RECOVERY`
 - `REVIEW_LOCAL_CHANGES`
+- `BREAKDOWN_WORK_ITEM`
 - `PREPARE_IMPLEMENTATION`
 - `WORK_ISSUE_LOCAL`
 - `GROOM_OR_TRIAGE`

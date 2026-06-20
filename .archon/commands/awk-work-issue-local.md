@@ -1,6 +1,6 @@
 ---
-description: Implement one approved, prepared issue locally without merging.
-argument-hint: <issue-number|issue-url|implementation-brief-path|description>
+description: Implement one approved, prepared work item locally without merging.
+argument-hint: <work-item|issue-number|issue-url|implementation-brief-path|description>
 ---
 
 # Agent Workflow Kit: Work Issue Local
@@ -13,7 +13,7 @@ argument-hint: <issue-number|issue-url|implementation-brief-path|description>
 ## Mission
 
 Run the portable `work-issue-local` workflow verb inside Archon after preflight and approval.
-Preserve behavior unless the issue explicitly changes it. Do not merge.
+Preserve behavior unless the work item explicitly changes it. Do not merge.
 
 ## Adapter Boundary
 
@@ -25,7 +25,7 @@ This command is an Archon adapter, not a second source of process truth.
 4. Read `$ARTIFACTS_DIR/implementation-preflight.md`.
 5. If the preflight says `Proceed after approval: NO`, stop and report why.
 6. If the approval response adds constraints, treat them as binding unless they conflict with
-   `AGENTS.md` or the issue scope.
+   `AGENTS.md` or the work item scope.
 7. Run `git status --short` and ensure unrelated overlapping changes are not present.
 8. Follow the `work-issue-local` skill as the owning procedure.
 9. Use this command only to enforce the Archon artifact path and artifact shape below.
@@ -66,7 +66,7 @@ Human decision needed:
 
 ## Deferred items
 
-## Parent issue resolution
+## Parent work item resolution
 
 ## Process feedback
 ```

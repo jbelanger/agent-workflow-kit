@@ -41,11 +41,11 @@ skills by purpose; invoke skills by their frontmatter `name`, not by path.
 Use `process/` skills for repeated workflow work:
 
 - `triage-backlog`: classify backlog health and next actions.
-- `pick-next-item`: recommend the next issue.
-- `groom-issue`: turn an unclear issue into a task, spec, ADR, spike, bug, refactor, drop, or defer.
-- `breakdown-issue`: decompose accepted direction into independent merge-safe tasks.
-- `prepare-implementation`: produce an implementation brief for a ready issue.
-- `work-issue-local`: implement one prepared issue locally.
+- `pick-next-item`: recommend the next work item.
+- `groom-issue`: turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer.
+- `breakdown-issue`: decompose accepted direction into independent merge-safe child work items.
+- `prepare-implementation`: produce an implementation brief for a ready work item.
+- `work-issue-local`: implement one prepared work item locally.
 - `review-local-changes`: review the local diff before PR.
 - `review-revision-triage`: perform strong architecture-sensitive PR review, revision routing, and
   human-review escalation.
@@ -93,7 +93,7 @@ makes the decision easier.
 
 - Work from one groomed issue at a time.
 - Use `breakdown-issue` before implementation when accepted direction must become one or more
-  executable tasks.
+  executable child work items.
 - Use one branch or worktree per issue.
 - Keep slices narrow and reviewable.
 - Prefer the simplest model that stays honest.

@@ -14,8 +14,8 @@ The desired shape:
 
 ```text
 Canonical intent/state:
-  AGENTS.md, .agents/skills, docs/development, and GitHub issues/PRs when a remote
-  collaboration anchor is needed
+  AGENTS.md, .agents/skills, docs/development/work-items, docs/development, and
+  optional GitHub issues/PRs when a remote collaboration anchor is needed
 
 Execution:
   Archon workflows, runs, artifacts, worktrees, approval gates, and dashboard
@@ -59,6 +59,7 @@ Accepted planning state must live in one of these durable surfaces:
 
 - `AGENTS.md` for standing agent rules.
 - `.agents/skills/` for portable process and specialist procedures.
+- `docs/development/work-items/` for portable planning records.
 - `docs/development/` for durable workflow, spec, ADR, and spike records.
 - GitHub issues/PRs when the work item or review discussion needs a remote collaboration anchor.
 
@@ -117,6 +118,8 @@ route, not a mandatory source of workflow truth.
 - Dogfooding in `bullet-tetris-lab` exposed that Archon test-drive work must stay inside installed
   `awk-*` workflows, runtime artifacts/logs must be ignored by installed repos, and fresh local repos
   need a default `worktree.baseBranch`.
+- Added `docs/development/work-items/` as the portable planning lane and `awk-breakdown-work-item`
+  as the read-only Archon adapter between accepted direction and implementation preparation.
 
 ## Open Work Items
 
@@ -132,6 +135,7 @@ route, not a mandatory source of workflow truth.
 | ARCHON-008 | Accepted | Decide whether GitHub Project boards remain mandatory. | GitHub issues/PRs remain collaboration anchors. Project fields are optional derived dashboard state, not mandatory workflow truth. |
 | ARCHON-009 | CLI proven | Add recovery docs for failed/paused runs. | `archon-recovery-runbook.md` covers the core recovery table, artifact rules, CLI approval/rejection, and failed-run recovery. Web UI and GitHub-comment details remain follow-up. |
 | ARCHON-010 | Open | Run concept spikes for Archon machinery. | Spikes 001, 003, and 007-014 are complete; 010 confirmed the Codex skills boundary. Spikes 002, 004, 005, and 006 remain proposed. |
+| ARCHON-011 | Complete | Add breakdown adapter for the local work-item model. | `awk-breakdown-work-item` runs the portable `breakdown-issue` skill and writes a read-only artifact for child work item proposals. |
 
 ## Spike Findings
 

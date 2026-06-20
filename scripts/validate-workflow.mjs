@@ -12,6 +12,7 @@ const requiredPortableFiles = [
   'docs/development/workflow/ai-dev-workflow.md',
   'docs/development/workflow/adr-archon-portable-skills.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
+  'docs/development/work-items/.gitkeep',
   'scripts/validate-workflow.mjs',
 ];
 

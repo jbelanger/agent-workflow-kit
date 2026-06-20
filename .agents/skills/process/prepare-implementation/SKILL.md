@@ -1,16 +1,16 @@
 ---
 name: prepare-implementation
-description: Convert a breakdown-shaped ready issue, refactor, revision, or sub-issue into a local Codex implementation brief with goal, non-goals, allowed files, boundaries, acceptance criteria, tests, validation, merge risk, parent context, and PR summary requirements. Use when the user says "prepare this for codex", "make implementation prompt", or "make this issue agent-ready".
+description: Convert a breakdown-shaped ready work item, issue, refactor, revision, or child item into a local Codex implementation brief with goal, non-goals, allowed files, boundaries, acceptance criteria, tests, validation, merge risk, parent context, and PR summary requirements. Use when the user says "prepare this for codex", "make implementation prompt", "make this issue agent-ready", or "make this work item agent-ready".
 ---
 
 # Prepare Implementation
 
-You are preparing a breakdown-shaped ready issue for a local Codex implementation session. Do not
-write production code.
+You are preparing one breakdown-shaped ready work item for a local Codex implementation session. Do
+not write production code.
 
 ## Readiness Check
 
-Before writing the brief, verify the issue has enough context:
+Before writing the brief, verify the work item has enough context:
 
 - Goal.
 - Non-goals.
@@ -24,12 +24,12 @@ Before writing the brief, verify the issue has enough context:
 - Expected tests.
 - Validation command.
 - Merge-risk classification.
-- Parent issue link and resolution expectations, when this is a sub-issue, superseding refactor, or
-  replacement path.
+- Parent work item link and resolution expectations, when this is a child item, superseding
+  refactor, or replacement path.
 - Human decisions resolved, or clearly marked as required.
 
-If the issue is not ready, return it to grooming and explain the missing information.
-If the issue is clear but not decomposed into merge-safe implementation work, send it to
+If the work item is not ready, return it to grooming and explain the missing information.
+If the work item is clear but not decomposed into merge-safe implementation work, send it to
 `breakdown-issue` first.
 
 ## Brief Shape

@@ -76,7 +76,7 @@ Human decision needed before enabling:
 | Workflow | Mutates code? | Purpose |
 | --- | --- | --- |
 | `awk-prepare-implementation` | No | Produce a Ready/not-ready implementation brief. |
-| `awk-work-issue-local` | Yes, after approval | Preflight one prepared issue, pause, then implement one scoped pass. |
+| `awk-work-issue-local` | Yes, after approval | Preflight one prepared work item, pause, then implement one scoped pass. |
 | `awk-review-local-changes` | No | Review local diff before PR. |
 | `awk-validate-process-pack` | No | Validate the `.archon` pack files and safety invariants. |
 

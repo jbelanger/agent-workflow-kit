@@ -1,6 +1,6 @@
 ---
 description: Read-only preflight before one scoped implementation pass.
-argument-hint: <issue-number|issue-url|implementation-brief-path|description>
+argument-hint: <work-item|issue-number|issue-url|implementation-brief-path|description>
 ---
 
 # Agent Workflow Kit: Implementation Preflight
@@ -12,7 +12,7 @@ argument-hint: <issue-number|issue-url|implementation-brief-path|description>
 ## Mission
 
 Run the Archon-only safety gate before code-changing work. Do not edit files. Do not stage, commit,
-push, open a PR, or update issues.
+push, open a PR, or update work items or issues.
 
 ## Adapter Boundary
 
@@ -24,7 +24,7 @@ before the approval node.
 2. Read `docs/development/workflow/ai-dev-workflow.md`.
 3. Read `.agents/skills/process/prepare-implementation/SKILL.md`.
 4. Read `.agents/skills/process/work-issue-local/SKILL.md`.
-5. Read the issue or implementation brief named by `$ARGUMENTS`.
+5. Read the work item, issue, or implementation brief named by `$ARGUMENTS`.
 6. Inspect `git status --short`.
 7. Inspect only the source files needed to verify the planned boundary and test seam.
 8. Decide whether implementation may proceed after human approval.
@@ -42,7 +42,7 @@ $ARTIFACTS_DIR/implementation-preflight.md
 Return `STOP` if implementation must not proceed because the work is not ready or the local state is
 unsafe, and no architecture decision would make this run safe as-is:
 
-- The issue is not Ready.
+- The work item is not Ready.
 - Allowed/forbidden files are unclear.
 - Validation cannot be run or interpreted.
 - The working tree has unrelated changes that overlap the task.

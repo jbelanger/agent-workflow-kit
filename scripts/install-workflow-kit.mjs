@@ -19,6 +19,7 @@ const portableEntries = [
   'docs/development/workflow/ai-dev-workflow.md',
   'docs/development/workflow/adr-archon-portable-skills.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
+  'docs/development/discovery/.gitkeep',
   'docs/development/work-items/.gitkeep',
   'docs/development/specs/.gitkeep',
   'docs/development/adrs/.gitkeep',

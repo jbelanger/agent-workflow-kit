@@ -49,6 +49,7 @@ The mental model is one set of workflow verbs:
 triage backlog
 pick next item
 groom issue
+discover vision
 break down issue
 prepare implementation
 work issue locally

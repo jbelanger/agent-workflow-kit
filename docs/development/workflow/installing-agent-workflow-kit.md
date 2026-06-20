@@ -10,6 +10,7 @@ The adoption contract is:
 Required:
   AGENTS.md
   .agents/skills/
+  docs/development/discovery/
   docs/development/work-items/
   docs/development/workflow/ai-dev-workflow.md
   scripts/validate-workflow.mjs
@@ -26,7 +27,8 @@ Optional:
 | Part | Required? | Purpose |
 | --- | --- | --- |
 | `AGENTS.md` | Yes | Standing repository rules for local Codex work. |
-| `.agents/skills/` | Yes | Portable workflow verbs such as grooming, artifact drafting, breakdown, preparation, local work, and review. |
+| `.agents/skills/` | Yes | Portable workflow verbs and specialist lenses such as grooming, discovery, artifact drafting, breakdown, preparation, local work, and review. |
+| `docs/development/discovery/` | Yes | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. |
 | `docs/development/work-items/` | Yes | Portable planning records when GitHub issues are absent or only a mirror. |
 | `docs/development/workflow/ai-dev-workflow.md` | Yes | Durable explanation of the AWK process and operating surfaces. |
 | GitHub issues/PRs | Optional | Collaboration, audit trail, and remote planning mirrors. |
@@ -90,7 +92,7 @@ Archon:
 
 ```text
 Archon dashboard or CLI in the project
-  -> run awk-continue-work, awk-groom-issue, awk-draft-spec, or awk-breakdown-work-item
+  -> run awk-continue-work, awk-groom-issue, awk-discover-vision, awk-draft-spec, or awk-breakdown-work-item
   -> .archon command points Codex at the same .agents/skills procedure
   -> Archon stores run state and artifacts
 ```

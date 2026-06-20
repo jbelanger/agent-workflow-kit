@@ -4,8 +4,8 @@ Status: seed repository.
 
 This repository is a working kit for building a GitHub-native, agent-assisted development workflow.
 It is intentionally being built with its own workflow: groom vague ideas, convert them into specs or
-ADRs when needed, implement narrow slices, review locally with agents and humans, and keep decisions
-auditable.
+ADRs when needed, discover product vision before vague specs, implement narrow slices, review
+locally with agents and humans, and keep decisions auditable.
 
 ## Start Here
 
@@ -33,6 +33,7 @@ The initial working assumption:
 - GitHub Issues and Projects as the planning surface
 - local-first Codex agents
 - repeated workflow verbs captured as local skills
+- high-interaction discovery for vague product/design direction before low-interaction execution
 - deterministic CI only for now
 - no Codex-in-CI baseline yet
 - no autonomous merge
@@ -48,6 +49,12 @@ The first planning fallback is also available in Archon:
 
 ```bash
 archon workflow run awk-groom-issue --cwd /Users/joel/Dev/agent-workflow-kit "Groom ARCHON-010"
+```
+
+Early product/design discovery is available when grooming reports unresolved vision work:
+
+```bash
+archon workflow run awk-discover-vision --cwd /Users/joel/Dev/agent-workflow-kit "Discover vision for <work item>"
 ```
 
 ## Install Into Another Repo

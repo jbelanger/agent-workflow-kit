@@ -22,6 +22,7 @@ The target workflow is:
 
 ```text
 groom idea
+  -> discover and accept high-level vision when the idea is vague product/design work
   -> draft durable spec
   -> review/accept direction
   -> break down into child work items
@@ -149,6 +150,15 @@ route, not a mandatory source of workflow truth.
   as the read-only Archon adapter between accepted direction and implementation preparation.
 - Added `draft-artifact` as the portable durable-artifact drafting skill and `awk-draft-spec` as the
   spec-only Archon adapter between grooming and breakdown.
+- Dogfooding in `bullet-tetris-lab` exposed a planning hole: grooming asked a clarification
+  question, but `awk-draft-spec` could still proceed from that unresolved artifact and produce a
+  thin product spec. Grooming now has explicit interview/research readiness states, product/design
+  vision expectations, and `awk-draft-spec` has a deterministic readiness gate that pauses for a
+  human answer before drafting from unresolved grooming.
+- Added `discover-vision` as the high-interaction PM/PO orchestrator between grooming and spec
+  drafting. It uses conditional specialist lenses, writes compact discovery bundles under
+  `docs/development/discovery/`, and has an `awk-discover-vision` adapter with one vision-acceptance
+  gate before spec drafting.
 
 ## Open Work Items
 
@@ -166,6 +176,8 @@ route, not a mandatory source of workflow truth.
 | ARCHON-010 | Open | Run concept spikes for Archon machinery. | Spikes 001, 003, and 007-014 are complete; 010 confirmed the Codex skills boundary. Spikes 002, 004, 005, and 006 remain proposed. |
 | ARCHON-011 | Complete | Add breakdown adapter for the local work-item model. | `awk-breakdown-work-item` runs the portable `breakdown-issue` skill and writes a read-only artifact for child work item proposals. |
 | ARCHON-012 | Complete | Add spec drafting adapter. | `awk-draft-spec` runs the portable `draft-artifact` skill in spec mode, writes one draft spec under `docs/development/specs/`, and records an Archon report artifact. |
+| ARCHON-013 | Complete | Add planning interview/readiness gate. | Vague product/design grooming now routes to `NEEDS_INTERVIEW` or `NEEDS_RESEARCH`; `awk-draft-spec` parses referenced grooming artifacts and pauses for a captured human answer before drafting from unresolved grooming. |
+| ARCHON-014 | Complete | Add discovery/vision orchestrator. | `discover-vision` coordinates conditional specialist lenses, stores compact vision artifacts, and `awk-discover-vision` records human vision acceptance before spec drafting. |
 
 ## Spike Findings
 

@@ -3,7 +3,7 @@
 Active local skills are grouped by category:
 
 - `process/`: workflow, planning, implementation routing, and review routing skills.
-- `specialist/`: repeatable expert passes that are not part of the process loop.
+- `specialist/`: repeatable expert passes and advisory lenses that are not process orchestrators.
 - `domain/`: project or business-domain skills with domain vocabulary, records, policies, or workflows.
 
 Each skill still owns its own folder and `SKILL.md`:

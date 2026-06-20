@@ -24,7 +24,10 @@ This command is an Archon adapter, not a second source of process truth.
 4. Read any source docs, tracker items, issues, PRs, specs, ADRs, or spike notes referenced by
    `$ARGUMENTS`.
 5. Follow the `groom-issue` skill as the owning procedure.
-6. Use this command only to enforce the Archon artifact path and artifact shape below.
+6. If the input is vague product, design, creative, game, workflow, architecture, or platform work,
+   preserve interview/research mode from the owning skill. Do not compress the idea into a draftable
+   spec just because the operator asked for a narrow first implementation.
+7. Use this command only to enforce the Archon artifact path and artifact shape below.
 
 The output artifact path is:
 
@@ -41,11 +44,17 @@ Write this structure to `$ARTIFACTS_DIR/groom-issue.md`:
 
 ## Current understanding
 
+## Grooming status
+
 ## Recommended work item type
 
 ## Draft goal
 
 ## Draft non-goals
+
+## Vision / design analysis
+
+## Research needed or completed
 
 ## Source evidence needed
 
@@ -73,7 +82,28 @@ Why:
 ## Process feedback
 ```
 
+`## Grooming status` must be one of:
+
+- `READY_FOR_DRAFT`
+- `NEEDS_INTERVIEW`
+- `NEEDS_RESEARCH`
+- `NEEDS_DECISION`
+- `DIRECT_TASK`
+- `DROP`
+- `DEFER`
+
 `## Human decision needed` must be `YES` or `NO`, followed by a short reason.
+
+Use `READY_FOR_DRAFT` only when a downstream spec can be drafted without inventing meaningful
+product behavior, creative direction, architecture, platform shape, ownership, or acceptance
+criteria.
+
+Use `NEEDS_INTERVIEW` for vague product/design/creative work that needs a human answer before a
+useful spec can exist. Use `NEEDS_RESEARCH` when market, genre, comparable-product, platform,
+architecture, or source-code evidence must be gathered before the next decision.
+
+When status is `NEEDS_INTERVIEW`, `NEEDS_RESEARCH`, or `NEEDS_DECISION` for product/design vision
+work, recommend `awk-discover-vision` as the next workflow step instead of `awk-draft-spec`.
 
 If no clarification question is needed, write `None` under `## Clarification question`.
 

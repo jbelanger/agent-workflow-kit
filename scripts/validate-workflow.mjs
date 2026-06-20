@@ -12,6 +12,7 @@ const requiredPortableFiles = [
   'docs/development/workflow/ai-dev-workflow.md',
   'docs/development/workflow/adr-archon-portable-skills.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
+  'docs/development/discovery/.gitkeep',
   'docs/development/work-items/.gitkeep',
   'scripts/validate-workflow.mjs',
 ];
@@ -20,6 +21,7 @@ const requiredSkills = [
   '.agents/skills/process/triage-backlog/SKILL.md',
   '.agents/skills/process/pick-next-item/SKILL.md',
   '.agents/skills/process/groom-issue/SKILL.md',
+  '.agents/skills/process/discover-vision/SKILL.md',
   '.agents/skills/process/draft-artifact/SKILL.md',
   '.agents/skills/process/breakdown-issue/SKILL.md',
   '.agents/skills/process/prepare-implementation/SKILL.md',
@@ -27,6 +29,11 @@ const requiredSkills = [
   '.agents/skills/process/review-local-changes/SKILL.md',
   '.agents/skills/process/review-revision-triage/SKILL.md',
   '.agents/skills/process/improve-workflow/SKILL.md',
+  '.agents/skills/specialist/product-strategy/SKILL.md',
+  '.agents/skills/specialist/technical-architecture/SKILL.md',
+  '.agents/skills/specialist/validation-strategy/SKILL.md',
+  '.agents/skills/specialist/ux-direction/SKILL.md',
+  '.agents/skills/specialist/creative-direction/SKILL.md',
   '.agents/skills/specialist/diagnose-bug/SKILL.md',
   '.agents/skills/specialist/tdd/SKILL.md',
 ];
@@ -132,6 +139,33 @@ function validate(cwd) {
       }
       if (text.includes('docs/development/workflow/archon-concept-spikes.md')) {
         errors.push(`${relativePath} must not depend on the kit repo Archon concept spike index`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, '.agents/skills/process/groom-issue/SKILL.md'))) {
+    const groomSkill = read(cwd, '.agents/skills/process/groom-issue/SKILL.md');
+    for (const snippet of ['Interview And Research Mode', 'Grooming status', 'NEEDS_INTERVIEW', 'NEEDS_RESEARCH', 'discover-vision']) {
+      if (!groomSkill.includes(snippet)) {
+        errors.push(`groom-issue skill is missing interview/readiness snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, '.agents/skills/process/discover-vision/SKILL.md'))) {
+    const discoverSkill = read(cwd, '.agents/skills/process/discover-vision/SKILL.md');
+    for (const snippet of ['product-strategy', 'technical-architecture', 'validation-strategy', 'ux-direction', 'creative-direction', 'READY_FOR_SPEC', 'DIRECT_TASK', 'real fork']) {
+      if (!discoverSkill.includes(snippet)) {
+        errors.push(`discover-vision skill is missing required snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, '.agents/skills/process/draft-artifact/SKILL.md'))) {
+    const draftSkill = read(cwd, '.agents/skills/process/draft-artifact/SKILL.md');
+    for (const snippet of ['NEEDS_INTERVIEW', 'Human decision needed: YES', 'thin rules-only spec']) {
+      if (!draftSkill.includes(snippet)) {
+        errors.push(`draft-artifact skill is missing unresolved-grooming guard snippet: ${snippet}`);
       }
     }
   }

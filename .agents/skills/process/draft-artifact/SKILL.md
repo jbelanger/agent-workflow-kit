@@ -18,12 +18,18 @@ production code. Do not mark a proposal accepted unless the human explicitly acc
 - Preserve provenance: link or name source artifacts, run IDs, work items, issues, and source docs.
 - Ask one clarification question when the artifact would otherwise invent product behavior,
   architecture direction, acceptance criteria, ownership, storage, or public surface.
+- If a source grooming artifact says `Grooming status: NEEDS_INTERVIEW`, `NEEDS_RESEARCH`, or
+  `NEEDS_DECISION`, do not draft the artifact until that status is resolved or the human supplies
+  the missing answer in the current request.
+- If a source grooming artifact has `Human decision needed: YES` or a non-empty clarification
+  question, do not turn the unanswered decision into an ordinary open question inside a draft.
 
 ## Inputs To Read
 
 Read only the context needed to draft the artifact:
 
 - The groomed work item, issue, or Archon grooming artifact.
+- Accepted discovery vision brief and decision log, when product/design discovery preceded drafting.
 - Existing specs, ADRs, or spike notes in the same area.
 - Relevant source docs or code references named by the work item.
 - Prior decisions that constrain the artifact.
@@ -77,6 +83,15 @@ Rules:
 - Do not create child implementation work items from a draft spec.
 - If the spec file already exists and is `Accepted`, `Implemented`, or `Superseded`, do not rewrite
   it without explicit instruction. Propose a new draft or ask.
+- For product, design, game, interaction, or user-facing workflow specs, include a product/design
+  vision section before detailed behavior. Cover intended audience, experience pillars, core loop or
+  workflow, comparable references or research evidence, differentiators, and design risks. If those
+  are missing, stop and ask one interview question instead of producing a thin rules-only spec.
+- If an accepted `vision-brief.md` exists for the work, use it as the source of product direction
+  instead of reopening the vision silently.
+- For platform or architecture-sensitive specs, include the credible options and tradeoffs. If the
+  source only contains one agent-invented recommendation without evidence, stop and route back to
+  grooming, ADR, or spike.
 
 ## ADR Draft Rules
 

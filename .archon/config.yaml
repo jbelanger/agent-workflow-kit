@@ -17,6 +17,7 @@ worktree:
 recommendedWorkflows:
   - awk-continue-work
   - awk-groom-issue
+  - awk-discover-vision
   - awk-draft-spec
   - awk-breakdown-work-item
   - awk-prepare-implementation

@@ -27,6 +27,12 @@ for durable planning work or `breakdown-issue`.
 - Explain decisions in simple operational terms, assuming the human has not looked at the code
   recently.
 - Use a compact table, diagram, or before/after flow when it makes the decision clearer.
+- When product, creative direction, interaction design, game feel, information architecture, or
+  platform choice is central to the value, enter interview mode instead of compressing the idea into
+  a small implementation shape.
+- Do product/design research before recommending a vision when current market, genre, platform,
+  competitor, or user-expectation evidence would materially change the answer. If the environment
+  cannot access needed external evidence, say that and route to a spike or human-supplied sources.
 
 ## First Classify The Work Item
 
@@ -57,6 +63,16 @@ Answer:
 - What architecture risks exist?
 - Is this parallel-safe, needs coordination, or serial only?
 
+For user-facing product, design, or creative work, also answer:
+
+- Who is the intended user or player?
+- What should the experience feel like?
+- What comparable products, genre conventions, or market expectations matter?
+- What is the core loop or primary workflow?
+- What must be distinctive enough to justify building it?
+- Which platform or technical shape options are credible, and what tradeoff does each create?
+- Which decisions are product judgment rather than agent judgment?
+
 ## Clarification Behavior
 
 Ask at most one clarification question at a time.
@@ -83,6 +99,35 @@ Recommendation:
 Why:
 ```
 
+## Interview And Research Mode
+
+Use interview mode when the work is vague and the missing information is product, design, creative,
+workflow, architecture, or platform judgment. In interview mode:
+
+1. Do not draft a spec, child work item, or implementation brief yet.
+2. Ask the highest-leverage next question only.
+3. Include options, a recommendation, and why the answer changes downstream work.
+4. Keep the work in `Grooming`.
+5. Set `Grooming status: NEEDS_INTERVIEW`.
+
+Use research mode when the next useful answer depends on evidence the agent should gather before
+asking the human to decide. In research mode:
+
+1. Name the research question.
+2. Name the sources to inspect: code/docs, comparable products, current market or genre references,
+   platform/library options, accessibility or usability constraints, operational constraints, or
+   prior decisions.
+3. Separate evidence from interpretation and recommendation.
+4. Set `Grooming status: NEEDS_RESEARCH`.
+
+Use `Grooming status: READY_FOR_DRAFT` only when the next durable artifact can be drafted without
+inventing meaningful product behavior, creative direction, architecture, ownership, platform shape,
+or acceptance criteria.
+
+Route to `discover-vision` when the work needs an orchestrated product, UX, creative, platform, or
+architecture vision before a useful spec can exist. Do not run discovery for `DIRECT_TASK`, `DROP`,
+or `DEFER`.
+
 ## Spec Flow
 
 When the current work item needs a spec:
@@ -90,8 +135,9 @@ When the current work item needs a spec:
 1. Recommend converting the current work item to `Work Item Type: Spec` by default.
 2. Keep the work item in `Grooming` while asking clarification questions.
 3. Use `Spec state: Draft` while the behavior or contract is proposed.
-4. Once there is enough context to draft durable text, recommend the next action as creating or
-   updating a spec document under `docs/development/specs/`.
+4. Once there is enough context to draft durable text and `Grooming status: READY_FOR_DRAFT`,
+   recommend the next action as creating or updating a spec document under
+   `docs/development/specs/`.
 5. The spec PR owns review of the durable text.
 6. After human acceptance, ensure the spec document says `Spec state: Accepted`.
 7. If implementation work remains, send the accepted work item to `breakdown-issue`; if the spec
@@ -136,12 +182,17 @@ Draft
 Return:
 
 - Current understanding.
+- Grooming status: `READY_FOR_DRAFT`, `NEEDS_INTERVIEW`, `NEEDS_RESEARCH`, `NEEDS_DECISION`,
+  `DIRECT_TASK`, `DROP`, or `DEFER`.
 - Recommended work item type.
 - Draft goal.
 - Draft non-goals.
+- Vision / design analysis, when product or creative direction matters.
 - Source evidence needed.
 - Acceptance criteria draft.
 - Merge risk.
+- Human decision needed: `YES` or `NO`, with reason.
+- Clarification question, or `None`.
 - Recommended work item fields, labels, or status.
 - Next action.
 

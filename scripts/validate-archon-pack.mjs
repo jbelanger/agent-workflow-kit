@@ -25,6 +25,7 @@ const requiredFiles = [
   '.archon/config.yaml',
   '.archon/workflows/awk-continue-work.yaml',
   '.archon/workflows/awk-groom-issue.yaml',
+  '.archon/workflows/awk-discover-vision.yaml',
   '.archon/workflows/awk-draft-spec.yaml',
   '.archon/workflows/awk-breakdown-work-item.yaml',
   '.archon/workflows/awk-prepare-implementation.yaml',
@@ -33,6 +34,7 @@ const requiredFiles = [
   '.archon/workflows/awk-validate-process-pack.yaml',
   '.archon/commands/awk-continue-work.md',
   '.archon/commands/awk-groom-issue.md',
+  '.archon/commands/awk-discover-vision.md',
   '.archon/commands/awk-draft-spec.md',
   '.archon/commands/awk-breakdown-work-item.md',
   '.archon/commands/awk-prepare-implementation.md',
@@ -79,6 +81,9 @@ if (existsSync(join(cwd, '.archon/config.yaml'))) {
   if (!config.includes('awk-groom-issue')) {
     errors.push('.archon/config.yaml should recommend awk-groom-issue as the first planning fallback');
   }
+  if (!config.includes('awk-discover-vision')) {
+    errors.push('.archon/config.yaml should recommend awk-discover-vision for early product discovery');
+  }
   if (!config.includes('awk-draft-spec')) {
     errors.push('.archon/config.yaml should recommend awk-draft-spec for spec drafting');
   }
@@ -120,6 +125,7 @@ if (existsSync(join(cwd, '.gitignore'))) {
 const commandSkillRefs = new Map([
   ['.archon/commands/awk-continue-work.md', '.agents/skills/process/pick-next-item/SKILL.md'],
   ['.archon/commands/awk-groom-issue.md', '.agents/skills/process/groom-issue/SKILL.md'],
+  ['.archon/commands/awk-discover-vision.md', '.agents/skills/process/discover-vision/SKILL.md'],
   ['.archon/commands/awk-draft-spec.md', '.agents/skills/process/draft-artifact/SKILL.md'],
   ['.archon/commands/awk-breakdown-work-item.md', '.agents/skills/process/breakdown-issue/SKILL.md'],
   ['.archon/commands/awk-prepare-implementation.md', '.agents/skills/process/prepare-implementation/SKILL.md'],
@@ -200,6 +206,15 @@ if (continueWorkflow.includes('worktree:\n  enabled: true')) {
   errors.push('awk-continue-work must stay read-only without a worktree');
 }
 
+if (existsSync(join(cwd, '.archon/commands/awk-continue-work.md'))) {
+  const continueCommand = read('.archon/commands/awk-continue-work.md');
+  for (const snippet of ['.agents/skills/process/discover-vision/SKILL.md', 'awk-discover-vision', 'DISCOVER_VISION']) {
+    if (!continueCommand.includes(snippet)) {
+      errors.push(`awk-continue-work command is missing discovery routing snippet: ${snippet}`);
+    }
+  }
+}
+
 const groomWorkflow = existsSync(join(cwd, '.archon/workflows/awk-groom-issue.yaml'))
   ? read('.archon/workflows/awk-groom-issue.yaml')
   : '';
@@ -220,6 +235,58 @@ if (existsSync(join(cwd, '.archon/commands/awk-groom-issue.md'))) {
   if (!groomCommand.includes('## Human decision needed')) {
     errors.push('awk-groom-issue command must include a machine-readable human decision field');
   }
+  for (const snippet of ['## Grooming status', 'READY_FOR_DRAFT', 'NEEDS_INTERVIEW', 'NEEDS_RESEARCH']) {
+    if (!groomCommand.includes(snippet)) {
+      errors.push(`awk-groom-issue command is missing grooming readiness snippet: ${snippet}`);
+    }
+  }
+  if (!groomCommand.includes('awk-discover-vision')) {
+    errors.push('awk-groom-issue command must route unresolved product/design discovery to awk-discover-vision');
+  }
+}
+
+const discoverVisionWorkflow = existsSync(join(cwd, '.archon/workflows/awk-discover-vision.yaml'))
+  ? read('.archon/workflows/awk-discover-vision.yaml')
+  : '';
+
+for (const snippet of [
+  'name: awk-discover-vision',
+  'interactive: true',
+  'command: awk-discover-vision',
+  'id: discovery-status',
+  'READY_FOR_SPEC',
+  'id: accept-vision',
+  'approval:',
+  'capture_response: true',
+  'id: record-vision-acceptance',
+  'Vision state: Accepted',
+  'output_type: discovery-report',
+  'worktree:\n  enabled: false',
+]) {
+  if (!discoverVisionWorkflow.includes(snippet)) {
+    errors.push(`awk-discover-vision workflow is missing required snippet: ${snippet}`);
+  }
+}
+
+if (existsSync(join(cwd, '.archon/commands/awk-discover-vision.md'))) {
+  const discoverVisionCommand = read('.archon/commands/awk-discover-vision.md');
+  for (const snippet of [
+    'docs/development/discovery/',
+    '$ARTIFACTS_DIR/discover-vision.md',
+    '.agents/skills/process/discover-vision/SKILL.md',
+    'product-strategy',
+    'technical-architecture',
+    'validation-strategy',
+    'ux-direction',
+    'creative-direction',
+    'READY_FOR_SPEC',
+    'Vision state: Draft',
+    'plain relative paths without backticks',
+  ]) {
+    if (!discoverVisionCommand.includes(snippet)) {
+      errors.push(`awk-discover-vision command is missing required snippet: ${snippet}`);
+    }
+  }
 }
 
 const draftSpecWorkflow = existsSync(join(cwd, '.archon/workflows/awk-draft-spec.yaml'))
@@ -228,7 +295,17 @@ const draftSpecWorkflow = existsSync(join(cwd, '.archon/workflows/awk-draft-spec
 
 for (const snippet of [
   'name: awk-draft-spec',
+  'interactive: true',
+  'id: draft-readiness',
+  'process.env.ARGUMENTS',
+  'NEEDS_ANSWER',
+  'id: answer-clarification',
+  'approval:',
+  'capture_response: true',
+  'id: stop-draft',
+  'cancel: "Spec drafting stopped:',
   'command: awk-draft-spec',
+  'trigger_rule: none_failed_min_one_success',
   'output_type: draft-spec-report',
   'worktree:\n  enabled: false',
 ]) {
@@ -245,6 +322,11 @@ if (existsSync(join(cwd, '.archon/commands/awk-draft-spec.md'))) {
     '## Durable spec path',
     '## Human decision needed',
     'Spec state: Draft',
+    'Draft readiness',
+    'Interview answer',
+    'NEEDS_INTERVIEW',
+    'rules-only spec',
+    'generic approval',
   ]) {
     if (!draftSpecCommand.includes(snippet)) {
       errors.push(`awk-draft-spec command is missing required snippet: ${snippet}`);

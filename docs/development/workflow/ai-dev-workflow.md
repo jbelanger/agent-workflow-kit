@@ -59,7 +59,7 @@ Current categories:
 | Category | Use for |
 | --- | --- |
 | `process/` | Planning, orchestration, implementation routing, review routing, and workflow improvement. |
-| `specialist/` | Repeatable expert passes such as testing, diagnosis, simplification, architecture audit, naming review, or refactor support. |
+| `specialist/` | Repeatable expert passes such as product strategy, UX direction, creative direction, technical architecture, validation strategy, testing, diagnosis, simplification, naming review, or refactor support. |
 | `domain/` | Project or business-domain skills with domain vocabulary, records, policies, reports, or workflows. |
 
 Process: planning and orchestration:
@@ -69,6 +69,7 @@ Process: planning and orchestration:
 | `triage-backlog` | Review open work items and classify what needs attention. | No |
 | `pick-next-item` | Recommend the best next work item based on readiness, risk, dependencies, and value. | No |
 | `groom-issue` | Turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
+| `discover-vision` | Orchestrate early high-interaction product, UX, creative, platform, or architecture discovery before specs. | Docs only |
 | `draft-artifact` | Draft or update one durable spec, ADR, or spike from groomed direction. | Docs only |
 | `breakdown-issue` | Decompose accepted direction into independent merge-safe child work items. | No |
 | `prepare-implementation` | Convert one Ready work item into an implementation brief. | Docs/issues only when asked |
@@ -86,6 +87,11 @@ Specialist skills:
 
 | Skill | Purpose |
 | --- | --- |
+| `product-strategy` | Advisory product, audience, value, market, and differentiation lens for discovery. |
+| `technical-architecture` | Advisory platform, ownership, build/runtime, storage, public-surface, and architecture lens. |
+| `validation-strategy` | Advisory acceptance evidence, feedback-loop, test, playtest, and quality strategy lens. |
+| `ux-direction` | Conditional UX, interaction, information architecture, accessibility, and usability lens. |
+| `creative-direction` | Conditional creative, brand, content, game-design, tone, and game-feel lens. |
 | `tdd` | Behavior-first red/green/refactor through the highest useful public seam. |
 | `diagnose-bug` | Build a tight red-capable bug feedback loop before implementation. |
 
@@ -148,6 +154,7 @@ child work item into an implementation brief.
 ```text
 Backlog
   -> Grooming
+  -> Discovery / Vision, when vague product direction needs it
   -> Draft Spec / ADR / Spike / Direct Direction
   -> Breakdown
   -> Ready
@@ -209,6 +216,13 @@ Grooming answers:
 - What architecture risks exist?
 - Is this parallel-safe, needs coordination, or serial only?
 
+For product, design, game, interaction, or other user-facing creative work, grooming also owns the
+vision interview before specification. The agent should not turn a vague product prompt into a
+minimal implementation slice by guessing the product. It should identify audience, experience
+goals, core loop or workflow, comparable products or genre expectations, design risks, and platform
+options. When current market, competitor, genre, library, or platform evidence would materially
+change the recommendation, gather evidence or route to a spike before drafting.
+
 Choose the smallest useful output:
 
 - Direct direction when the work is clear enough to decompose into implementation work items.
@@ -224,7 +238,72 @@ Ask one clarification question at a time. Include options, a recommendation, and
 matters. Explain concepts in operational terms, assuming the human has not looked at the codebase
 recently. Use compact visuals or tables when they make the decision easier.
 
-### 4. Spec, ADR, Spike, Or Direct Direction
+Grooming status values:
+
+| Grooming Status | Meaning |
+| --- | --- |
+| `READY_FOR_DRAFT` | The next durable spec, ADR, or spike can be drafted without inventing meaningful decisions. |
+| `NEEDS_INTERVIEW` | One human answer is needed before useful durable text can exist. |
+| `NEEDS_RESEARCH` | Evidence must be gathered before the next decision or draft. |
+| `NEEDS_DECISION` | A known architecture, product, ownership, storage, public surface, or policy decision blocks progress. |
+| `DIRECT_TASK` | The work is clear enough to send to breakdown without a spec or ADR. |
+| `DROP` | The work should not be done. |
+| `DEFER` | The work may be valid but should not move now. |
+
+`draft-artifact` should consume grooming only when the status is `READY_FOR_DRAFT` or the current
+human response resolves the blocking question. Otherwise the workflow should keep the item in
+grooming, ask the next interview question, run `discover-vision`, or run the named research spike.
+
+### 4. Discover Vision
+
+Use `discover-vision` when grooming reports unresolved product, UX, creative, game, platform, or
+architecture direction that should be settled before a useful spec can exist.
+
+Discovery is the workflow's high-human-interaction stage. Its job is to decide the high-level
+vision: who the work is for, what experience or operational outcome matters, which direction is
+distinctive or useful, which technical shape is credible, and what evidence will prove the direction
+is good enough to specify.
+
+`discover-vision` acts as the orchestrator. It chooses specialist lenses conditionally:
+
+- Default for vague product or platform work: `product-strategy`, `technical-architecture`, and
+  `validation-strategy`.
+- Add `ux-direction` only when journey, interaction, information architecture, usability, or
+  accessibility materially affects the direction.
+- Add `creative-direction` only when brand, tone, content, game design, emotional target, visual or
+  audio language, or memorability materially affects the direction.
+
+Specialists are advisory. They produce observations, options, recommendations, risks, questions,
+evidence needs, and readiness impact. They do not create accepted truth or ask the human directly.
+The orchestrator reconciles conflicts, deduplicates findings, and asks exactly one highest-leverage
+human question.
+
+Discovery artifacts live under:
+
+```text
+docs/development/discovery/<slug>/
+  00-intake.md
+  vision-brief.md
+  decision-log.md
+  research-notes.md   # only when research exists
+```
+
+Avoid permanent specialist transcript files by default. Later workflow stages should read the
+accepted `vision-brief.md` and `decision-log.md`, not raw brainstorming.
+
+Vision state is separate from board status:
+
+| Vision State | Meaning |
+| --- | --- |
+| `Draft` | Proposed direction; not authoritative for autonomous specification. |
+| `Accepted` | Human-approved direction for spec drafting and breakdown. |
+| `Superseded` | A newer vision, spec, or ADR replaced it. |
+
+After the vision is accepted, route to `draft-artifact` for a spec, ADR, or spike. Later stages
+should interrupt the human only for real forks: choices that would materially change the accepted
+vision, platform, ownership, storage, public surface, non-goals, or validation strategy.
+
+### 5. Spec, ADR, Spike, Or Direct Direction
 
 Use a spec when behavior, contracts, or user-visible semantics need agreement.
 
@@ -249,6 +328,11 @@ Draft artifacts are reviewable proposals. They are not accepted truth until the 
 through review or an explicit decision. Do not create implementation child work items from a draft
 spec or proposed ADR.
 
+For product or design specs, the draft must include a real product/design vision before detailed
+rules: intended audience, experience pillars, core loop or workflow, comparable references or
+research evidence, differentiators, and design risks. If the source grooming record does not support
+that depth, do not draft a thin rules-only spec; return to interview or research.
+
 Spec state is separate from board status:
 
 | Spec State | Meaning |
@@ -262,7 +346,7 @@ When a spec lives in the repo, acceptance happens through PR review of the spec 
 explicit human decision. After the direction is accepted, send it to `breakdown-issue` or the Archon
 `awk-breakdown-work-item` adapter.
 
-### 5. Breakdown
+### 6. Breakdown
 
 Use `breakdown-issue` after accepted direction and before implementation readiness.
 
@@ -294,7 +378,7 @@ If a child work item is still unclear, keep it in `Grooming`. If decomposition e
 fork, route back to grooming, spec, ADR, or spike. Do not hide architecture decisions inside task
 splitting.
 
-### 6. Prepare Implementation
+### 7. Prepare Implementation
 
 Use `prepare-implementation` after breakdown has produced a Ready child work item.
 
@@ -318,7 +402,7 @@ The implementation brief contains:
 If the work item is clear but not decomposed into merge-safe implementation work, return it to
 `breakdown-issue`. If the work item is unclear, return it to `groom-issue`.
 
-### 7. Work Issue Locally
+### 8. Work Issue Locally
 
 Use `work-issue-local` when a Ready work item is assigned for implementation, refactor, accepted
 revision work, or a superseding child item.
@@ -353,7 +437,7 @@ When completing a child item, superseding refactor, or replacement PR, the imple
 reads the parent work item and decides whether the parent is now resolved, partly resolved, or
 should return to grooming or breakdown.
 
-### 8. Review
+### 9. Review
 
 There are two review paths.
 
@@ -385,7 +469,7 @@ is agent-pickable only when both agents agree no human-review-worthy smell exist
 Review details stay on the PR. Use `revision-needed` and `needs-human-review` as labels or fields,
 not required board statuses.
 
-### 9. Refactor And Superseding PRs
+### 10. Refactor And Superseding PRs
 
 Do not add a dedicated refactor skill yet. Refactor is a work item type and an implementation path
 handled by `work-issue-local`, usually routed by `review-revision-triage`.
@@ -403,7 +487,7 @@ If a refactor is required before merge:
 The agent completing the replacement work owns reading the parent work item and deciding whether the
 parent is resolved.
 
-### 10. Merge
+### 11. Merge
 
 Only the human merges.
 
@@ -457,6 +541,7 @@ Core fields:
 | `Work Item Type` | Work or artifact type. | Always. |
 | `Area` | Product, architecture, or code area. | Use for filtering and avoiding parallel work in the same area. |
 | `Merge Risk` | Parallel coordination risk. | Required before Ready. |
+| `Vision State` | Draft, Accepted, or Superseded. | Use for discovery/vision work. |
 | `Spec State` | Draft, Accepted, Implemented, or Superseded. | Use for spec work items. |
 
 Useful labels or secondary fields:

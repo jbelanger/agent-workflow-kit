@@ -43,6 +43,8 @@ Use `process/` skills for repeated workflow work:
 - `triage-backlog`: classify backlog health and next actions.
 - `pick-next-item`: recommend the next work item.
 - `groom-issue`: turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer.
+- `discover-vision`: orchestrate high-interaction early discovery for vague product, UX, creative,
+  game, platform, or architecture direction before specs.
 - `draft-artifact`: draft or update one durable spec, ADR, or spike from groomed direction.
 - `breakdown-issue`: decompose accepted direction into independent merge-safe child work items.
 - `prepare-implementation`: produce an implementation brief for a ready work item.
@@ -56,6 +58,8 @@ Use `process/` skills for repeated workflow work:
 Use other category folders for repeated specialist work when it is not part of the process loop:
 
 - `specialist/`: testing, diagnosis, code-quality, architecture, naming, or refactor skills.
+  Product, UX, creative, technical architecture, and validation specialist lenses are advisory and
+  should be invoked conditionally by `discover-vision`, not treated as always-on process gates.
 - `domain/`: project or business-domain skills with domain-specific vocabulary, records, policies,
   or workflows.
 
@@ -70,6 +74,8 @@ Use:
 - Bug when actual behavior differs from expected behavior.
 - Refactor when the change preserves behavior but improves structure.
 - Spec when behavior, contracts, records, semantics, or acceptance criteria need agreement.
+- Discovery when vague product, UX, creative, game, platform, or architecture direction needs a
+  high-level vision before a spec.
 - ADR when architecture direction, ownership, storage, public surface, or operating policy changes.
 - Spike when evidence is missing and production work would otherwise guess.
 

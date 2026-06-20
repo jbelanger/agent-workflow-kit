@@ -114,6 +114,9 @@ route, not a mandatory source of workflow truth.
   and portable skills plus the optional Archon adapter pack.
 - Removed the copied Archon adapter dependency on this branch's route tracker so installed projects
   read their own local planning state instead of the kit experiment tracker.
+- Dogfooding in `bullet-tetris-lab` exposed that Archon test-drive work must stay inside installed
+  `awk-*` workflows, runtime artifacts/logs must be ignored by installed repos, and fresh local repos
+  need a default `worktree.baseBranch`.
 
 ## Open Work Items
 

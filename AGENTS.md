@@ -137,6 +137,18 @@ too loose, unsafe for autonomy, or missing a field/status/label, include a brief
 note in the reply, issue comment, or PR summary. Use `improve-workflow` when asked to turn that
 feedback into process changes.
 
+## Archon Test-Drive Discipline
+
+When the explicit goal is to test-drive the optional Archon profile, project work in the target repo
+must happen through installed `awk-*` Archon workflows after the profile is installed.
+
+The operator may update Agent Workflow Kit in its source repo, reinstall or copy those workflow
+surfaces into the target repo, and inspect Archon artifacts. The operator must not manually create
+or edit target project implementation files as a shortcut around Archon.
+
+If the next useful project step cannot be expressed by an installed `awk-*` workflow, stop and
+improve the workflow kit first.
+
 ## CI Policy
 
 Run deterministic checks before claiming completion:

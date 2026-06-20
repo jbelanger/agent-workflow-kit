@@ -39,6 +39,7 @@ const requiredFiles = [
   'docs/development/workflow/adr-archon-portable-skills.md',
   'docs/development/workflow/archon-recovery-runbook.md',
   'scripts/validate-workflow.mjs',
+  '.gitignore',
 ];
 
 const errors = [];
@@ -64,6 +65,9 @@ if (existsSync(join(cwd, '.archon/config.yaml'))) {
   }
   if (!config.includes('codexBinaryPath: /Applications/Codex.app/Contents/Resources/codex')) {
     errors.push('.archon/config.yaml must pin the Codex binary path for compiled Archon validation');
+  }
+  if (!config.includes('baseBranch: main')) {
+    errors.push('.archon/config.yaml must set worktree.baseBranch: main for local repos without origin/HEAD');
   }
   if (!config.includes('awk-continue-work')) {
     errors.push('.archon/config.yaml should recommend awk-continue-work as the dashboard entry point');
@@ -91,6 +95,15 @@ for (const path of requiredFiles.filter(path => path.startsWith('.archon/command
   }
   if (!text.includes('## Adapter Boundary')) {
     errors.push(`${path} must name its Adapter Boundary so it does not become a parallel skill`);
+  }
+}
+
+if (existsSync(join(cwd, '.gitignore'))) {
+  const gitignore = read('.gitignore');
+  for (const snippet of ['.archon/artifacts/', '.archon/logs/']) {
+    if (!gitignore.includes(snippet)) {
+      errors.push(`.gitignore must ignore Archon runtime path: ${snippet}`);
+    }
   }
 }
 
@@ -187,6 +200,13 @@ for (const snippet of [
 ]) {
   if (!groomWorkflow.includes(snippet)) {
     errors.push(`awk-groom-issue workflow is missing required snippet: ${snippet}`);
+  }
+}
+
+if (existsSync(join(cwd, '.archon/commands/awk-groom-issue.md'))) {
+  const groomCommand = read('.archon/commands/awk-groom-issue.md');
+  if (!groomCommand.includes('## Human decision needed')) {
+    errors.push('awk-groom-issue command must include a machine-readable human decision field');
   }
 }
 

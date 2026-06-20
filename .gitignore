@@ -1,2 +1,5 @@
 .DS_Store
 
+# Agent Workflow Kit / Archon runtime
+.archon/artifacts/
+.archon/logs/

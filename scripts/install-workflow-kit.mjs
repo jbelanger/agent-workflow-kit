@@ -31,6 +31,11 @@ const archonEntries = [
   'scripts/validate-archon-pack.mjs',
 ];
 
+const archonGitignoreBlock = `# Agent Workflow Kit / Archon runtime
+.archon/artifacts/
+.archon/logs/
+`;
+
 function usage() {
   return `Usage: node scripts/install-workflow-kit.mjs --target <repo> [--with-archon] [--force] [--dry-run]
 
@@ -150,7 +155,39 @@ function install(options) {
     copyFile(file, options, result);
   }
 
+  if (options.withArchon) {
+    ensureArchonGitignore(options, result);
+  }
+
   return result;
+}
+
+function ensureArchonGitignore(options, result) {
+  const path = join(options.target, '.gitignore');
+  const block = archonGitignoreBlock.trimEnd();
+
+  if (!existsSync(path)) {
+    result.created.push('.gitignore');
+    if (!options.dryRun) {
+      writeFileSync(path, `${block}\n`);
+    }
+    return;
+  }
+
+  const current = readFileSync(path, 'utf8');
+  if (
+    current.includes('.archon/artifacts/') &&
+    current.includes('.archon/logs/')
+  ) {
+    result.unchanged.push('.gitignore');
+    return;
+  }
+
+  result.overwritten.push('.gitignore');
+  if (!options.dryRun) {
+    const separator = current.endsWith('\n') ? '\n' : '\n\n';
+    writeFileSync(path, `${current}${separator}${block}\n`);
+  }
 }
 
 function printList(label, values) {

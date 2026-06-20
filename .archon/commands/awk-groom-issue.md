@@ -57,6 +57,8 @@ Write this structure to `$ARTIFACTS_DIR/groom-issue.md`:
 
 ## Recommended issue fields, labels, or status
 
+## Human decision needed
+
 ## Next action
 
 ## Clarification question
@@ -70,6 +72,8 @@ Why:
 
 ## Process feedback
 ```
+
+`## Human decision needed` must be `YES` or `NO`, followed by a short reason.
 
 If no clarification question is needed, write `None` under `## Clarification question`.
 

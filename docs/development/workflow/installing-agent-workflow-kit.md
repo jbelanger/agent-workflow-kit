@@ -17,6 +17,7 @@ Optional:
   .archon/
   docs/development/workflow/archon-recovery-runbook.md
   scripts/validate-archon-pack.mjs
+  .gitignore entries for .archon/artifacts/ and .archon/logs/
 ```
 
 ## What The Parts Do
@@ -47,6 +48,9 @@ node scripts/install-workflow-kit.mjs --target /path/to/project --with-archon
 The installer refuses to overwrite existing different files by default. That is intentional: a
 project may already have `AGENTS.md` or local skills, and those should be merged deliberately instead
 of silently replaced.
+
+When `--with-archon` is used, the installer also ensures `.gitignore` ignores Archon runtime
+artifacts and logs. These are execution evidence, not source files.
 
 ## Validation
 
@@ -88,6 +92,10 @@ Archon dashboard or CLI in the project
   -> .archon command points Codex at the same .agents/skills procedure
   -> Archon stores run state and artifacts
 ```
+
+When the explicit goal is to test-drive Archon, project work after installation should happen through
+installed `awk-*` workflows. If a needed step cannot be expressed by the installed workflows, improve
+Agent Workflow Kit first, reinstall it, then continue in Archon.
 
 GitHub:
 

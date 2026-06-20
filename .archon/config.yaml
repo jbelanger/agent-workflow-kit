@@ -11,6 +11,9 @@ defaults:
   loadDefaultCommands: false
   loadDefaultWorkflows: false
 
+worktree:
+  baseBranch: main
+
 recommendedWorkflows:
   - awk-continue-work
   - awk-groom-issue

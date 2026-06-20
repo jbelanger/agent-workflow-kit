@@ -22,10 +22,13 @@ This command is an Archon adapter, not a second source of process truth.
 
 1. Read `AGENTS.md`.
 2. Read `docs/development/workflow/ai-dev-workflow.md`.
-3. Read `docs/development/workflow/adr-archon-portable-skills.md`.
-4. Read `docs/development/workflow/archon-route-tracker.md`.
-5. Read `docs/development/workflow/archon-recovery-runbook.md`.
+3. Read `docs/development/workflow/adr-archon-portable-skills.md` if present.
+4. Read `docs/development/workflow/archon-recovery-runbook.md` if present and runtime recovery is
+   relevant.
+5. Inspect local planning state under `docs/development/` and GitHub issue/PR context when
+   `$ARGUMENTS` names it or the local tools expose it.
 6. Read the relevant portable skill only after choosing the likely verb:
+   - `.agents/skills/process/triage-backlog/SKILL.md`
    - `.agents/skills/process/pick-next-item/SKILL.md`
    - `.agents/skills/process/groom-issue/SKILL.md`
    - `.agents/skills/process/prepare-implementation/SKILL.md`
@@ -56,8 +59,9 @@ If no other Archon run is active:
 2. If there are local changes, recommend `awk-review-local-changes` before new implementation work.
 3. If `$ARGUMENTS` names a specific issue, PR, brief, or goal, recommend the narrowest matching
    workflow verb.
-4. If no specific target is supplied, inspect the route tracker and recommend the next open,
-   read-only workflow step.
+4. If no specific target is supplied, inspect local planning state and recommend the next open,
+   read-only workflow step. Prefer GitHub issues/PRs when available; otherwise use repo-local specs,
+   ADRs, spikes, and workflow docs.
 5. Use `awk-groom-issue` when the next work needs clarification before preparation or
    implementation.
 6. Recommend `awk-work-issue-local` only when the next step is already prepared and it will still go

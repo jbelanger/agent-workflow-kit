@@ -1,6 +1,25 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+
+function parseArgs(argv) {
+  let cwd = process.cwd();
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--cwd') {
+      cwd = argv[i + 1];
+      i += 1;
+    } else if (arg === '--help' || arg === '-h') {
+      console.log('Usage: node scripts/validate-archon-pack.mjs [--cwd <repo>]');
+      process.exit(0);
+    } else {
+      throw new Error(`Unknown argument: ${arg}`);
+    }
+  }
+  return resolve(cwd);
+}
+
+const cwd = parseArgs(process.argv.slice(2));
 
 const requiredFiles = [
   '.archon/config.yaml',
@@ -16,24 +35,23 @@ const requiredFiles = [
   '.archon/commands/awk-implementation-preflight.md',
   '.archon/commands/awk-work-issue-local.md',
   '.archon/commands/awk-review-local-changes.md',
-  'docs/development/workflow/ai-dev-workflow-buy-vs-build.md',
+  'docs/development/workflow/ai-dev-workflow.md',
   'docs/development/workflow/adr-archon-portable-skills.md',
-  'docs/development/workflow/archon-route-tracker.md',
-  'docs/development/workflow/archon-concept-spikes.md',
   'docs/development/workflow/archon-recovery-runbook.md',
+  'scripts/validate-workflow.mjs',
 ];
 
 const errors = [];
 
 function read(path) {
-  return readFileSync(path, 'utf8');
+  return readFileSync(join(cwd, path), 'utf8');
 }
 
 for (const path of requiredFiles) {
-  if (!existsSync(path)) errors.push(`Missing required file: ${path}`);
+  if (!existsSync(join(cwd, path))) errors.push(`Missing required file: ${path}`);
 }
 
-if (existsSync('.archon/config.yaml')) {
+if (existsSync(join(cwd, '.archon/config.yaml'))) {
   const config = read('.archon/config.yaml');
   if (!config.includes('loadDefaultCommands: false')) {
     errors.push('.archon/config.yaml must disable bundled default commands for this spike');
@@ -55,8 +73,8 @@ if (existsSync('.archon/config.yaml')) {
   }
 }
 
-if (existsSync('.archon/workflows')) {
-  for (const file of readdirSync('.archon/workflows').filter(name => name.endsWith('.yaml'))) {
+if (existsSync(join(cwd, '.archon/workflows'))) {
+  for (const file of readdirSync(join(cwd, '.archon/workflows')).filter(name => name.endsWith('.yaml'))) {
     const path = join('.archon/workflows', file);
     const text = read(path);
     if (!/^name:/m.test(text)) errors.push(`${path} is missing a workflow name`);
@@ -65,7 +83,7 @@ if (existsSync('.archon/workflows')) {
 }
 
 for (const path of requiredFiles.filter(path => path.startsWith('.archon/commands/'))) {
-  if (!existsSync(path)) continue;
+  if (!existsSync(join(cwd, path))) continue;
   const text = read(path);
   if (!text.startsWith('---\n')) errors.push(`${path} must start with frontmatter`);
   if (!text.includes('$ARTIFACTS_DIR/')) {
@@ -85,13 +103,16 @@ const commandSkillRefs = new Map([
 ]);
 
 for (const [path, skillPath] of commandSkillRefs) {
-  if (!existsSync(path)) continue;
+  if (!existsSync(join(cwd, path))) continue;
+  if (!existsSync(join(cwd, skillPath))) {
+    errors.push(`${path} references missing owning skill ${skillPath}`);
+  }
   if (!read(path).includes(skillPath)) {
     errors.push(`${path} must reference owning skill ${skillPath}`);
   }
 }
 
-const implementationWorkflow = existsSync('.archon/workflows/awk-work-issue-local.yaml')
+const implementationWorkflow = existsSync(join(cwd, '.archon/workflows/awk-work-issue-local.yaml'))
   ? read('.archon/workflows/awk-work-issue-local.yaml')
   : '';
 const approvalIndex = implementationWorkflow.indexOf('approval:');
@@ -132,7 +153,7 @@ if (implementationWorkflow.includes('output_format:')) {
   errors.push('awk-work-issue-local workflow must route preflight through artifact parsing, not Codex output_format');
 }
 
-const continueWorkflow = existsSync('.archon/workflows/awk-continue-work.yaml')
+const continueWorkflow = existsSync(join(cwd, '.archon/workflows/awk-continue-work.yaml'))
   ? read('.archon/workflows/awk-continue-work.yaml')
   : '';
 
@@ -154,7 +175,7 @@ if (continueWorkflow.includes('worktree:\n  enabled: true')) {
   errors.push('awk-continue-work must stay read-only without a worktree');
 }
 
-const groomWorkflow = existsSync('.archon/workflows/awk-groom-issue.yaml')
+const groomWorkflow = existsSync(join(cwd, '.archon/workflows/awk-groom-issue.yaml'))
   ? read('.archon/workflows/awk-groom-issue.yaml')
   : '';
 
@@ -169,7 +190,7 @@ for (const snippet of [
   }
 }
 
-if (existsSync('.archon/commands/awk-implementation-preflight.md')) {
+if (existsSync(join(cwd, '.archon/commands/awk-implementation-preflight.md'))) {
   const preflightCommand = read('.archon/commands/awk-implementation-preflight.md');
   for (const snippet of ['READY', 'STOP', 'NEEDS_DECISION', 'JSON only']) {
     if (!preflightCommand.includes(snippet)) {
@@ -187,14 +208,30 @@ const mutatingPatterns = [
 ];
 
 for (const root of ['.archon/workflows', '.archon/commands']) {
-  if (!existsSync(root)) continue;
-  for (const file of readdirSync(root)) {
+  if (!existsSync(join(cwd, root))) continue;
+  for (const file of readdirSync(join(cwd, root))) {
     const path = join(root, file);
     if (!/\.(yaml|md)$/.test(file)) continue;
     const text = read(path);
     for (const pattern of mutatingPatterns) {
       if (pattern.test(text)) {
         errors.push(`${path} contains prohibited pattern ${pattern}`);
+      }
+    }
+  }
+}
+
+for (const forbidden of [
+  'docs/development/workflow/archon-route-tracker.md',
+  'docs/development/workflow/archon-concept-spikes.md',
+]) {
+  for (const root of ['.archon/workflows', '.archon/commands']) {
+    if (!existsSync(join(cwd, root))) continue;
+    for (const file of readdirSync(join(cwd, root))) {
+      const path = join(root, file);
+      if (!/\.(yaml|md)$/.test(file)) continue;
+      if (read(path).includes(forbidden)) {
+        errors.push(`${path} must not depend on kit-local file ${forbidden}`);
       }
     }
   }

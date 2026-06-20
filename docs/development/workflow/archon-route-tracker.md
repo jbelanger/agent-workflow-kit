@@ -110,6 +110,10 @@ route, not a mandatory source of workflow truth.
   dashboard while still using the portable `groom-issue` skill.
 - Completed `ARCHON-SPIKE-010`; Codex-backed Archon workflows must use explicit adapter prompt
   routing to `.agents/skills`, not workflow YAML `skills:` as a scoping mechanism.
+- Added a portable installer and clean-repo proof for two install profiles: portable skills only,
+  and portable skills plus the optional Archon adapter pack.
+- Removed the copied Archon adapter dependency on this branch's route tracker so installed projects
+  read their own local planning state instead of the kit experiment tracker.
 
 ## Open Work Items
 
@@ -187,15 +191,21 @@ outside Archon.
 Current local checks:
 
 ```bash
+node scripts/validate-workflow.mjs
+node scripts/prove-portable-install.mjs
 archon validate workflows --cwd /Users/joel/Dev/agent-workflow-kit --json
 archon validate commands --cwd /Users/joel/Dev/agent-workflow-kit --json
 archon workflow run awk-validate-process-pack --cwd /Users/joel/Dev/agent-workflow-kit
 node scripts/validate-archon-pack.mjs
 node --check scripts/validate-archon-pack.mjs
+node --check scripts/install-workflow-kit.mjs
+node --check scripts/validate-workflow.mjs
+node --check scripts/prove-portable-install.mjs
 git diff --check
 ```
 
 Remaining before broadening the Archon route beyond local dogfood:
 
 - Groom and run the next uncompleted Archon concept spike through `awk-groom-issue`.
+- Dogfood the installed profile in a real project checkout such as `exitbook`, read-only first.
 - Add Web UI and GitHub recovery details only after those surfaces are actually used.

@@ -10,6 +10,7 @@ auditable.
 ## Start Here
 
 - Workflow draft: `docs/development/workflow/ai-dev-workflow.md`
+- Install contract: `docs/development/workflow/installing-agent-workflow-kit.md`
 - Buy-vs-build mapping: `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`
 - Archon portability ADR: `docs/development/workflow/adr-archon-portable-skills.md`
 - Archon route tracker: `docs/development/workflow/archon-route-tracker.md`
@@ -47,4 +48,24 @@ The first planning fallback is also available in Archon:
 
 ```bash
 archon workflow run awk-groom-issue --cwd /Users/joel/Dev/agent-workflow-kit "Groom ARCHON-010"
+```
+
+## Install Into Another Repo
+
+Portable skills only:
+
+```bash
+node scripts/install-workflow-kit.mjs --target /path/to/project
+```
+
+Portable skills plus the optional Archon dashboard/runtime profile:
+
+```bash
+node scripts/install-workflow-kit.mjs --target /path/to/project --with-archon
+```
+
+Proof from clean temporary repos:
+
+```bash
+node scripts/prove-portable-install.mjs
 ```

@@ -151,8 +151,8 @@ Return:
 - Use `Blocked` only for a real unresolved dependency, missing access, or decision.
 - Keep normal clarification in grooming.
 - Prefer updating the current work item over creating a parallel planning item.
-- If the issue is clear enough for implementation, hand it to `breakdown-issue` so the orchestrator
-  can produce merge-safe executable task boundaries before `prepare-implementation`.
+- If the work item is clear enough for implementation, hand it to `breakdown-issue` so the
+  orchestrator can produce merge-safe executable task boundaries before `prepare-implementation`.
 
 ## Test-Drive Feedback
 

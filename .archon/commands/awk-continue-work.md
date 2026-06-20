@@ -31,6 +31,7 @@ This command is an Archon adapter, not a second source of process truth.
    - `.agents/skills/process/triage-backlog/SKILL.md`
    - `.agents/skills/process/pick-next-item/SKILL.md`
    - `.agents/skills/process/groom-issue/SKILL.md`
+   - `.agents/skills/process/draft-artifact/SKILL.md`
    - `.agents/skills/process/breakdown-issue/SKILL.md`
    - `.agents/skills/process/prepare-implementation/SKILL.md`
    - `.agents/skills/process/work-issue-local/SKILL.md`
@@ -65,12 +66,14 @@ If no other Archon run is active:
    include GitHub issues/PRs as optional mirrors when available.
 5. Use `awk-groom-issue` when the next work needs clarification before preparation or
    implementation.
-6. Use `awk-breakdown-work-item` when accepted direction exists but executable child work items do
+6. Use `awk-draft-spec` when grooming or accepted direction says the next durable artifact should be
+   a spec and no draft spec exists yet.
+7. Use `awk-breakdown-work-item` when accepted direction exists but executable child work items do
    not yet have merge-safe boundaries.
-7. Use `awk-prepare-implementation` only for one breakdown-shaped child work item.
-8. Recommend `awk-work-issue-local` only when the next step is already prepared and it will still go
+8. Use `awk-prepare-implementation` only for one breakdown-shaped child work item.
+9. Recommend `awk-work-issue-local` only when the next step is already prepared and it will still go
    through preflight and human approval.
-9. If the next step would decide architecture, ownership, board policy, public surface, storage, or
+10. If the next step would decide architecture, ownership, board policy, public surface, storage, or
    permission posture, return `HUMAN_DECISION`.
 
 ## Artifact Shape
@@ -116,6 +119,7 @@ Reason:
 - `PAUSED`
 - `FAILED_RECOVERY`
 - `REVIEW_LOCAL_CHANGES`
+- `DRAFT_SPEC`
 - `BREAKDOWN_WORK_ITEM`
 - `PREPARE_IMPLEMENTATION`
 - `WORK_ISSUE_LOCAL`

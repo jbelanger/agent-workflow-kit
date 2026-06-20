@@ -1,0 +1,18 @@
+name: awk-draft-spec
+description: |
+  Use after grooming recommends a spec, or when accepted direction needs a durable draft spec before
+  breakdown. The workflow runs the portable draft-artifact skill as a spec-only Archon adapter and
+  may create or update one draft spec under docs/development/specs/.
+
+provider: codex
+model: gpt-5.5
+modelReasoningEffort: high
+webSearchMode: disabled
+worktree:
+  enabled: false
+
+nodes:
+  - id: draft-spec
+    command: awk-draft-spec
+    context: fresh
+    output_type: draft-spec-report

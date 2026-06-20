@@ -69,6 +69,7 @@ Process: planning and orchestration:
 | `triage-backlog` | Review open work items and classify what needs attention. | No |
 | `pick-next-item` | Recommend the best next work item based on readiness, risk, dependencies, and value. | No |
 | `groom-issue` | Turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
+| `draft-artifact` | Draft or update one durable spec, ADR, or spike from groomed direction. | Docs only |
 | `breakdown-issue` | Decompose accepted direction into independent merge-safe child work items. | No |
 | `prepare-implementation` | Convert one Ready work item into an implementation brief. | Docs/issues only when asked |
 | `improve-workflow` | Triage dogfooding feedback and propose process improvements. | Docs/issues only when asked |
@@ -138,15 +139,16 @@ GitHub issue or project board
   -> optional collaboration and progress mirror
 ```
 
-Grooming classifies unclear work. Breakdown creates child work items. Preparation turns one
-breakdown-shaped child work item into an implementation brief.
+Grooming classifies unclear work. Drafting creates proposed specs, ADRs, or spikes. Breakdown
+creates child work items only after direction is accepted. Preparation turns one breakdown-shaped
+child work item into an implementation brief.
 
 ## Workflow
 
 ```text
 Backlog
   -> Grooming
-  -> Spec / ADR / Spike / Direct Direction
+  -> Draft Spec / ADR / Spike / Direct Direction
   -> Breakdown
   -> Ready
   -> In Progress
@@ -237,6 +239,16 @@ Specs and ADRs are durable planning records. They may be superseded, but they ar
 scratch artifacts. Spike notes are evidence unless their findings are promoted into a spec, ADR, or
 task.
 
+Use `draft-artifact` to create or update one durable artifact from groomed direction:
+
+- Draft specs go under `docs/development/specs/` with `Spec state: Draft`.
+- Draft ADRs go under `docs/development/adrs/` with `Status: Proposed`.
+- Spike plans or results go under `docs/development/spikes/`.
+
+Draft artifacts are reviewable proposals. They are not accepted truth until the human accepts them
+through review or an explicit decision. Do not create implementation child work items from a draft
+spec or proposed ADR.
+
 Spec state is separate from board status:
 
 | Spec State | Meaning |
@@ -246,9 +258,9 @@ Spec state is separate from board status:
 | `Implemented` | Merged code matches the accepted spec. |
 | `Superseded` | A newer spec or ADR replaced this one. |
 
-When a spec lives in the repo, acceptance happens through PR review of the spec document. After the
-direction is accepted, send it to `breakdown-issue` or the Archon `awk-breakdown-work-item`
-adapter.
+When a spec lives in the repo, acceptance happens through PR review of the spec document or an
+explicit human decision. After the direction is accepted, send it to `breakdown-issue` or the Archon
+`awk-breakdown-work-item` adapter.
 
 ### 5. Breakdown
 

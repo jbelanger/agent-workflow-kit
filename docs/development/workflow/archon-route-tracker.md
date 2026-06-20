@@ -120,6 +120,8 @@ route, not a mandatory source of workflow truth.
   need a default `worktree.baseBranch`.
 - Added `docs/development/work-items/` as the portable planning lane and `awk-breakdown-work-item`
   as the read-only Archon adapter between accepted direction and implementation preparation.
+- Added `draft-artifact` as the portable durable-artifact drafting skill and `awk-draft-spec` as the
+  spec-only Archon adapter between grooming and breakdown.
 
 ## Open Work Items
 
@@ -127,7 +129,7 @@ route, not a mandatory source of workflow truth.
 | --- | --- | --- | --- |
 | ARCHON-001 | Complete | Add a structured preflight gate. | Preflight writes `READY`, `STOP`, or `NEEDS_DECISION` to the artifact; a deterministic parser routes `STOP` and `NEEDS_DECISION` to cancellation and `READY` to approval. All three paths are dogfooded. |
 | ARCHON-002 | Complete | Add `awk-continue-work`. | Read-only workflow checks Archon runtime state first, then portable planning state, and writes a routing artifact. Dogfood run `366e5b663e69254be5de10fc681ee19e` completed with `GROOM_OR_TRIAGE`. |
-| ARCHON-003 | Accepted | Decide canonical planning state for the Archon route. | Portable repo surfaces are canonical: `AGENTS.md`, `.agents/skills`, `docs/development`, and GitHub issues/PRs when remote collaboration or audit trail is needed. Archon DB/artifacts remain runtime evidence. |
+| ARCHON-003 | Accepted | Decide canonical planning state for the Archon route. | Portable repo surfaces are canonical: `AGENTS.md`, `.agents/skills`, `docs/development/work-items`, `docs/development`, and optional GitHub issues/PRs when remote collaboration or audit trail is needed. Archon DB/artifacts remain runtime evidence. |
 | ARCHON-004 | Complete | Reduce duplicated policy in `.archon/commands`. | Commands are adapter prompts around owning skills/rules and Archon artifact shapes, not parallel procedural truth. |
 | ARCHON-005 | Complete | Dogfood one read-only prepare run. | `awk-prepare-implementation` produced a useful `READY` brief artifact without repo edits. |
 | ARCHON-006 | Complete | Dogfood one gated implementation run. | Source-complete worktree, `READY` preflight, approval pause, CLI resume, implementation report, and validation are proven. |
@@ -136,6 +138,7 @@ route, not a mandatory source of workflow truth.
 | ARCHON-009 | CLI proven | Add recovery docs for failed/paused runs. | `archon-recovery-runbook.md` covers the core recovery table, artifact rules, CLI approval/rejection, and failed-run recovery. Web UI and GitHub-comment details remain follow-up. |
 | ARCHON-010 | Open | Run concept spikes for Archon machinery. | Spikes 001, 003, and 007-014 are complete; 010 confirmed the Codex skills boundary. Spikes 002, 004, 005, and 006 remain proposed. |
 | ARCHON-011 | Complete | Add breakdown adapter for the local work-item model. | `awk-breakdown-work-item` runs the portable `breakdown-issue` skill and writes a read-only artifact for child work item proposals. |
+| ARCHON-012 | Complete | Add spec drafting adapter. | `awk-draft-spec` runs the portable `draft-artifact` skill in spec mode, writes one draft spec under `docs/development/specs/`, and records an Archon report artifact. |
 
 ## Spike Findings
 
@@ -164,7 +167,7 @@ continue work
   -> if running: report status
   -> if no active run: inspect portable planning state
   -> choose next workflow verb
-  -> run read-only step unless mutating work has an approval gate
+  -> run planning step or route mutating implementation through an approval gate
 ```
 
 This flow may be implemented in Archon, but the state it reads and writes must remain inspectable

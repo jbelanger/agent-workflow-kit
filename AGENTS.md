@@ -43,6 +43,7 @@ Use `process/` skills for repeated workflow work:
 - `triage-backlog`: classify backlog health and next actions.
 - `pick-next-item`: recommend the next work item.
 - `groom-issue`: turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer.
+- `draft-artifact`: draft or update one durable spec, ADR, or spike from groomed direction.
 - `breakdown-issue`: decompose accepted direction into independent merge-safe child work items.
 - `prepare-implementation`: produce an implementation brief for a ready work item.
 - `work-issue-local`: implement one prepared work item locally.
@@ -91,10 +92,12 @@ makes the decision easier.
 
 ## Implementation Policy
 
-- Work from one groomed issue at a time.
+- Work from one groomed work item at a time.
+- Use `draft-artifact` when groomed direction needs a durable spec, ADR, or spike before
+  implementation work is shaped.
 - Use `breakdown-issue` before implementation when accepted direction must become one or more
   executable child work items.
-- Use one branch or worktree per issue.
+- Use one branch or worktree per work item.
 - Keep slices narrow and reviewable.
 - Prefer the simplest model that stays honest.
 - Do not keep overlapping truths alive to avoid a harder boundary decision.

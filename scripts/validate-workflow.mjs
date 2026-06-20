@@ -20,6 +20,7 @@ const requiredSkills = [
   '.agents/skills/process/triage-backlog/SKILL.md',
   '.agents/skills/process/pick-next-item/SKILL.md',
   '.agents/skills/process/groom-issue/SKILL.md',
+  '.agents/skills/process/draft-artifact/SKILL.md',
   '.agents/skills/process/breakdown-issue/SKILL.md',
   '.agents/skills/process/prepare-implementation/SKILL.md',
   '.agents/skills/process/work-issue-local/SKILL.md',

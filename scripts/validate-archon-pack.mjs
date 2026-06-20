@@ -13,6 +13,7 @@ const requiredFiles = [
   '.archon/commands/awk-work-issue-local.md',
   '.archon/commands/awk-review-local-changes.md',
   'docs/development/workflow/ai-dev-workflow-buy-vs-build.md',
+  'docs/development/workflow/adr-archon-portable-skills.md',
   'docs/development/workflow/archon-route-tracker.md',
   'docs/development/workflow/archon-concept-spikes.md',
   'docs/development/workflow/archon-recovery-runbook.md',
@@ -59,6 +60,22 @@ for (const path of requiredFiles.filter(path => path.startsWith('.archon/command
   if (!text.startsWith('---\n')) errors.push(`${path} must start with frontmatter`);
   if (!text.includes('$ARTIFACTS_DIR/')) {
     errors.push(`${path} must write or name an artifact path under $ARTIFACTS_DIR`);
+  }
+  if (!text.includes('## Adapter Boundary')) {
+    errors.push(`${path} must name its Adapter Boundary so it does not become a parallel skill`);
+  }
+}
+
+const commandSkillRefs = new Map([
+  ['.archon/commands/awk-prepare-implementation.md', '.agents/skills/process/prepare-implementation/SKILL.md'],
+  ['.archon/commands/awk-work-issue-local.md', '.agents/skills/process/work-issue-local/SKILL.md'],
+  ['.archon/commands/awk-review-local-changes.md', '.agents/skills/process/review-local-changes/SKILL.md'],
+]);
+
+for (const [path, skillPath] of commandSkillRefs) {
+  if (!existsSync(path)) continue;
+  if (!read(path).includes(skillPath)) {
+    errors.push(`${path} must reference owning skill ${skillPath}`);
   }
 }
 

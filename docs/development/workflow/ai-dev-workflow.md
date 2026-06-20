@@ -21,6 +21,8 @@ Use the smallest durable surface that matches the job:
 - `.agents/skills/`: installed local Codex skills organized by category.
 - `docs/development/`: durable specs, ADRs, spike writeups, workflow docs, and planning records.
 - GitHub issues and PRs: current planning, discussion, review, and audit trail.
+- `.archon/`: optional execution profile for repos that want workflow runs, artifacts, worktrees,
+  approval gates, and recovery state around the same portable workflow verbs.
 - CI: deterministic checks such as tests, typecheck, lint, formatting, build, and architecture
   checks.
 
@@ -88,6 +90,30 @@ Specialist skills:
 Do not create one mega-skill for the whole workflow. Skills should match the verbs people actually
 say. Add specialist or domain skills when repeated work needs durable procedural knowledge that is
 not part of the process loop.
+
+## Optional Archon Execution Profile
+
+Archon is an optional runtime profile, not the workflow source of truth.
+
+Use this model:
+
+```text
+portable source:
+  AGENTS.md + .agents/skills + docs/development + GitHub issues/PRs
+
+optional runtime:
+  .archon/commands/awk-* + .archon/workflows/awk-*
+```
+
+`.archon/commands/awk-*` files are adapters. They should point Codex at the owning skill or rule
+document, define the artifact path Archon needs, and include only the output shape required for
+workflow routing. They should not become parallel skills.
+
+`.archon/workflows/awk-*` files own execution mechanics: node order, fresh context, worktree
+isolation, approval gates, deterministic routing, and recovery state.
+
+Use `docs/development/workflow/adr-archon-portable-skills.md` as the accepted boundary for the
+Archon profile.
 
 During dogfooding, installed skills ask agents to report process friction in a `Process feedback`
 note. Treat those notes as evidence for `improve-workflow`, not as automatic process changes.

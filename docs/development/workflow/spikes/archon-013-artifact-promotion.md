@@ -56,8 +56,9 @@ Conditional.
 
 Artifact promotion is viable only as a narrow, explicit bridge from runtime evidence to a canonical
 surface. It is not safe to let generic Archon artifacts update docs, decide issue readiness, or mutate
-a planning ledger automatically. The missing condition is the canonical planning-state decision:
-GitHub issues/project, repo-local ledger, or hybrid.
+a planning ledger automatically. Use the accepted portable planning surfaces from ARCHON-003:
+`AGENTS.md`, `.agents/skills`, `docs/development`, and GitHub issues/PRs when remote collaboration
+or audit trail is needed.
 
 ## What This Means For Agent Workflow Kit
 
@@ -105,7 +106,7 @@ Human-review-only:
 
 ## Follow-Up Work
 
-- Decide ARCHON-003: GitHub issues/project, repo-local ledger, or hybrid planning state.
+- Use the accepted ARCHON-003 portable planning surfaces when implementing artifact reporting.
 - If automatic reporting is implemented, add a small allowlist of promotable node outputs and require
   provenance fields.
 - ARCHON-SPIKE-014 should cover how humans recover from and inspect unpromoted runtime evidence.

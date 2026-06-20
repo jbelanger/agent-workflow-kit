@@ -11,27 +11,33 @@ argument-hint: <issue-number|issue-url|implementation-brief-path|description>
 
 ## Mission
 
-Perform a read-only preflight before code-changing work. Do not edit files. Do not stage, commit,
+Run the Archon-only safety gate before code-changing work. Do not edit files. Do not stage, commit,
 push, open a PR, or update issues.
 
-The output artifact is:
+## Adapter Boundary
+
+This command is an Archon adapter around the portable implementation rules. It exists because the
+`awk-work-issue-local` workflow needs deterministic `READY`, `STOP`, and `NEEDS_DECISION` routing
+before the approval node.
+
+1. Read `AGENTS.md`.
+2. Read `docs/development/workflow/ai-dev-workflow.md`.
+3. Read `.agents/skills/process/prepare-implementation/SKILL.md`.
+4. Read `.agents/skills/process/work-issue-local/SKILL.md`.
+5. Read the issue or implementation brief named by `$ARGUMENTS`.
+6. Inspect `git status --short`.
+7. Inspect only the source files needed to verify the planned boundary and test seam.
+8. Decide whether implementation may proceed after human approval.
+9. Write the artifact.
+10. Return the final structured JSON response.
+
+The output artifact path is:
 
 ```text
 $ARTIFACTS_DIR/implementation-preflight.md
 ```
 
-## Process
-
-1. Read `AGENTS.md`.
-2. Read `docs/development/workflow/ai-dev-workflow.md`.
-3. Read the issue or implementation brief named by `$ARGUMENTS`.
-4. Inspect `git status --short`.
-5. Inspect only the source files needed to verify the planned boundary and test seam.
-6. Decide whether implementation may proceed after human approval.
-7. Write the artifact.
-8. Return the final structured JSON response.
-
-## Stop Conditions
+## Routing Status
 
 Return `STOP` if implementation must not proceed because the work is not ready or the local state is
 unsafe, and no architecture decision would make this run safe as-is:

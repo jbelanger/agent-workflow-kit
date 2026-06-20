@@ -85,7 +85,6 @@ Repo-visible state should own:
 - portable procedures: `.agents/skills/`
 - workflow route decisions: `docs/development/workflow/`
 - issue/PR collaboration: GitHub issues and PRs
-- future local planning state, if chosen: a repo-local ledger
 
 Promotion should be explicit:
 

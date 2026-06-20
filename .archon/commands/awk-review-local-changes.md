@@ -11,44 +11,26 @@ argument-hint: [optional scope or issue reference]
 
 ## Mission
 
-Review the local diff before pushing or opening a PR. Do not edit files. Do not stage, commit, push,
-create a PR, or update issues.
+Run the portable `review-local-changes` workflow verb inside Archon. Do not edit files. Do not
+stage, commit, push, create a PR, or update issues.
 
-The output artifact is:
+## Adapter Boundary
+
+This command is an Archon adapter, not a second source of process truth.
+
+1. Read `AGENTS.md`.
+2. Read `docs/development/workflow/ai-dev-workflow.md`.
+3. Read `.agents/skills/process/review-local-changes/SKILL.md`.
+4. Follow that skill as the owning procedure.
+5. If the change touches architecture-sensitive surfaces or reveals a smell, use the skill's routing
+   rule to escalate to `review-revision-triage`.
+6. Use this command only to enforce the Archon artifact path and artifact shape below.
+
+The output artifact path is:
 
 ```text
 $ARTIFACTS_DIR/local-review.md
 ```
-
-## Required Context
-
-1. Read `AGENTS.md`.
-2. Read `docs/development/workflow/ai-dev-workflow.md`.
-3. Run `git status --short`.
-4. Inspect the local diff.
-5. If an issue or brief is referenced, read it and compare the diff against its goal, non-goals,
-   acceptance criteria, and architecture direction.
-
-## Review Order
-
-1. Architecture direction and boundary preservation.
-2. Scope drift.
-3. Correctness bugs or regressions.
-4. Feedback-loop quality and test gaps.
-5. Validation gaps.
-6. Naming issues.
-7. Taste-only notes.
-
-## Classification
-
-Classify each meaningful item:
-
-- `Accepted`: true, belongs before merge, and preserves the intended model.
-- `Rejected`: false, speculative, taste-only, over-broad, or worse than the current model.
-- `Deferred`: valid but outside this PR; include owner, boundary, and removal condition.
-- `Human decision needed`: architecture, ownership, public surface, storage, contracts, accepted
-  docs, debt risk, or meaningful disagreement.
-- `Taste-only`: subjective preference without clear correctness or maintenance gain.
 
 ## Artifact Shape
 

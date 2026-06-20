@@ -11,39 +11,27 @@ argument-hint: <issue-number|issue-url|description>
 
 ## Mission
 
-Prepare an implementation brief for one local Codex work session. Do not edit code. Do not create a
-branch, commit, PR, issue, or comment unless the user explicitly asked for that outside this
-workflow.
+Run the portable `prepare-implementation` workflow verb inside Archon. Do not edit code. Do not
+create a branch, commit, PR, issue, or comment unless the user explicitly asked for that outside
+this workflow.
 
-The output artifact is:
+## Adapter Boundary
+
+This command is an Archon adapter, not a second source of process truth.
+
+1. Read `AGENTS.md`.
+2. Read `docs/development/workflow/ai-dev-workflow.md`.
+3. Read `.agents/skills/process/prepare-implementation/SKILL.md`.
+4. Follow that skill as the owning procedure.
+5. Use this command only to enforce the Archon artifact path and artifact shape below.
+
+The output artifact path is:
 
 ```text
 $ARTIFACTS_DIR/implementation-brief.md
 ```
 
-## Required Context
-
-1. Read `AGENTS.md`.
-2. Read `docs/development/workflow/ai-dev-workflow.md`.
-3. If `$ARGUMENTS` references a GitHub issue, fetch it with `gh issue view`.
-4. Read any linked source docs, specs, ADRs, parent issues, or code references.
-5. Inspect nearby files only enough to verify boundaries, existing patterns, and validation seams.
-
-## Readiness Check
-
-Classify the work before writing the brief:
-
-- `READY`: It has goal, non-goals, source docs, owned area, allowed and forbidden files,
-  architecture boundary, contracts/APIs/storage touched, acceptance criteria, feedback loop,
-  required tests, validation command, merge risk, and parent resolution expectations when needed.
-- `NEEDS_BREAKDOWN`: Direction is accepted, but task boundaries are not one-agent/one-PR shaped.
-- `NEEDS_GROOMING`: Problem, scope, source evidence, or expected behavior is unclear.
-- `NEEDS_HUMAN_DECISION`: Public API, ownership, storage, migration, long-term abstraction, or
-  architecture fork needs human choice.
-
-Do not label an issue `READY` just because implementation looks easy.
-
-## Brief Shape
+## Artifact Shape
 
 Write exactly this structure to `$ARTIFACTS_DIR/implementation-brief.md`:
 

@@ -121,6 +121,6 @@ It should not be:
   a source-of-truth checklist.
 - Complete ARCHON-SPIKE-013 before enabling automatic promotion from run artifacts to issue comments
   or repo docs.
-- Implement `awk-continue-work` only after ARCHON-003 decides the canonical planning state.
+- Implement `awk-continue-work` against the accepted ARCHON-003 portable planning surfaces.
 - Add a recovery runbook for the failed/paused paths so the router can link to a durable procedure
   instead of improvising.

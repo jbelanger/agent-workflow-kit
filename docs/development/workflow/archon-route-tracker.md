@@ -14,7 +14,8 @@ The desired shape:
 
 ```text
 Canonical intent/state:
-  repo docs, skills, and an explicit planning ledger or GitHub issues
+  AGENTS.md, .agents/skills, docs/development, and GitHub issues/PRs when a remote
+  collaboration anchor is needed
 
 Execution:
   Archon workflows, runs, artifacts, worktrees, approval gates, and dashboard
@@ -22,13 +23,15 @@ Execution:
 Policy:
   AGENTS.md and .agents/skills/
 
-Bridge:
-  thin .archon commands/scripts that read and write the canonical sources
+Adapter:
+  thin .archon commands/scripts that invoke the portable workflow verbs and write Archon artifacts
 ```
 
 ## Working Decision
 
-Continue the Archon route, but only as an execution profile.
+Continue the Archon route, but only as an optional execution profile around the portable skills
+workflow. The accepted boundary is recorded in
+`docs/development/workflow/adr-archon-portable-skills.md`.
 
 Archon should own:
 
@@ -58,9 +61,11 @@ Accepted planning state must live in one of these durable surfaces:
 - `.agents/skills/` for portable process and specialist procedures.
 - `docs/development/` for durable workflow, spec, ADR, and spike records.
 - GitHub issues/PRs when the work item or review discussion needs a remote collaboration anchor.
-- A future repo-local planning ledger if the GitHub Project board becomes optional.
 
 Archon artifacts may feed these sources, but they do not replace them.
+
+GitHub Project fields may remain useful as a dashboard, but they are optional derived state for this
+route, not a mandatory source of workflow truth.
 
 ## Completed In This Branch
 
@@ -93,19 +98,23 @@ Archon artifacts may feed these sources, but they do not replace them.
   `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`.
 - Added `docs/development/workflow/archon-concept-spikes.md` to split Archon adoption into
   short evidence-gathering spikes.
+- Accepted `docs/development/workflow/adr-archon-portable-skills.md`: portable skills and standing
+  docs own workflow behavior; Archon commands are optional adapters.
+- Refactored `.archon/commands/awk-*` prompts to make adapter responsibilities explicit and avoid
+  competing with portable skills.
 
 ## Open Work Items
 
 | ID | Status | Item | Outcome |
 | --- | --- | --- | --- |
 | ARCHON-001 | Complete | Add a structured preflight gate. | Preflight writes `READY`, `STOP`, or `NEEDS_DECISION` to the artifact; a deterministic parser routes `STOP` and `NEEDS_DECISION` to cancellation and `READY` to approval. All three paths are dogfooded. |
-| ARCHON-002 | Open | Add `awk-continue-work`. | Workflow checks Archon runs first, then canonical planning state, and routes to resume, prepare, work, review, groom, or ask. |
-| ARCHON-003 | Open | Decide canonical planning state for the Archon route. | Pick GitHub issues/project, repo-local ledger, or hybrid; do not default to Archon DB/artifacts. |
-| ARCHON-004 | Open | Reduce duplicated policy in `.archon/commands`. | Commands become wrappers around the owning skill/rule documents instead of parallel procedural truth. |
+| ARCHON-002 | Open | Add `awk-continue-work`. | Workflow checks Archon runs first, then portable planning state, and routes to resume, prepare, work, review, groom, or ask. |
+| ARCHON-003 | Accepted | Decide canonical planning state for the Archon route. | Portable repo surfaces are canonical: `AGENTS.md`, `.agents/skills`, `docs/development`, and GitHub issues/PRs when remote collaboration or audit trail is needed. Archon DB/artifacts remain runtime evidence. |
+| ARCHON-004 | Complete | Reduce duplicated policy in `.archon/commands`. | Commands are adapter prompts around owning skills/rules and Archon artifact shapes, not parallel procedural truth. |
 | ARCHON-005 | Complete | Dogfood one read-only prepare run. | `awk-prepare-implementation` produced a useful `READY` brief artifact without repo edits. |
 | ARCHON-006 | Complete | Dogfood one gated implementation run. | Source-complete worktree, `READY` preflight, approval pause, CLI resume, implementation report, and validation are proven. |
 | ARCHON-007 | Complete | Validate real Archon CLI compatibility. | Archon's workflow and command validators pass, and the deterministic validation workflow executes; AI workflow smoke tests remain separate. |
-| ARCHON-008 | Open | Decide whether GitHub Project boards remain mandatory. | Either keep board state canonical, make it a derived mirror, or replace it with a repo-local ledger. |
+| ARCHON-008 | Accepted | Decide whether GitHub Project boards remain mandatory. | GitHub issues/PRs remain collaboration anchors. Project fields are optional derived dashboard state, not mandatory workflow truth. |
 | ARCHON-009 | CLI proven | Add recovery docs for failed/paused runs. | `archon-recovery-runbook.md` covers the core recovery table, artifact rules, CLI approval/rejection, and failed-run recovery. Web UI and GitHub-comment details remain follow-up. |
 | ARCHON-010 | Open | Run concept spikes for Archon machinery. | Each concept we may depend on has a short spike result before becoming durable workflow. |
 
@@ -119,7 +128,7 @@ Archon artifacts may feed these sources, but they do not replace them.
 | ARCHON-SPIKE-008 | Conditional | GitHub comments can approve/reject paused workflows, but this is not safe yet for `awk-work-issue-local`. | Do not expose mutating GitHub workflows until route allowlists, approval binding, raw response capture, and resume semantics are settled. |
 | ARCHON-SPIKE-009 | Pass with boundary | Archon run DB/dashboard state is useful runtime evidence, but not accepted planning truth. | Keep source-of-truth promotion explicit and repo/GitHub-visible. |
 | ARCHON-SPIKE-011 | Conditional | Codex nodes cannot be hard-restricted by Archon `allowed_tools`, `denied_tools`, or sandbox fields. | Treat Codex as broad-access trusted local execution; use Claude/Pi variants for workflows requiring enforced tool restrictions. |
-| ARCHON-SPIKE-012 | Conditional | `continue work` can inspect Archon active runs first, but must then read canonical planning state outside Archon. | Implement as a thin router only after canonical planning state is chosen. |
+| ARCHON-SPIKE-012 | Conditional | `continue work` can inspect Archon active runs first, but must then read canonical planning state outside Archon. | Implement as a thin router over the accepted portable planning surfaces. |
 | ARCHON-SPIKE-013 | Conditional | Artifact promotion is viable only through narrow, append-only, provenance-rich reporting paths. | Do not auto-promote planning, policy, architecture, readiness, or ledger truth without human review. |
 | ARCHON-SPIKE-014 | Pass with requirement | Archon has enough status, approval, resume, cancel, abandon, dashboard, and artifact primitives for recovery. CLI approval/rejection and failed-run recovery are dogfooded. | Keep expanding the recovery runbook before background or GitHub-triggered workflows become normal. |
 
@@ -133,7 +142,7 @@ continue work
   -> if paused: summarize gate and ask/route approval
   -> if failed: inspect artifact/log and recommend recovery
   -> if running: report status
-  -> if no active run: inspect canonical planning state
+  -> if no active run: inspect portable planning state
   -> choose next workflow verb
   -> run read-only step unless mutating work has an approval gate
 ```
@@ -146,7 +155,8 @@ outside Archon.
 - Do not use Archon's DB as the sole planning database.
 - Do not treat Archon run IDs as durable work item IDs.
 - Do not let artifacts become accepted specs, ADRs, or issue readiness without promotion.
-- Do not require GitHub Project boards if a repo-local ledger meets the same goals better.
+- Do not require GitHub Project boards as mandatory workflow truth.
+- Do not maintain `.archon/commands/awk-*` as second copies of the portable skills.
 - Do not add autonomous PR creation, branch pushes, or self-fix loops until the source-of-truth model
   and permission posture are settled.
 - Do not expose `awk-work-issue-local` through GitHub comments until route allowlisting, approval
@@ -159,10 +169,9 @@ outside Archon.
 
 ## Human Decisions Still Needed
 
-1. Is the canonical planning state GitHub issues/project fields, a repo-local ledger, or a hybrid?
-2. Should `main` get an orchestrator skill before or after the Archon route proves `continue work`?
-3. Should the Archon profile stay optional forever, or become a supported runtime once dogfooded?
-4. Which Archon artifacts, if any, should be promoted automatically into repo docs or issue comments?
+1. Should `main` get an orchestrator skill before or after the Archon route proves `continue work`?
+2. Should the Archon profile stay optional forever, or become a supported runtime once dogfooded?
+3. Which Archon artifacts, if any, should be promoted automatically into repo docs or issue comments?
 
 ## Validation
 
@@ -179,6 +188,5 @@ git diff --check
 
 Remaining before broadening the Archon route beyond local dogfood:
 
-- Choose the canonical planning-state model.
 - Implement and dogfood `awk-continue-work`.
 - Add Web UI and GitHub recovery details only after those surfaces are actually used.

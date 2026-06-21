@@ -29,8 +29,10 @@ Use the smallest durable surface that matches the job:
   checks.
 
 Development docs live in the single repo, but they must remain separate from user-facing docs and
-excluded from any published product surface when needed. Active agent instructions stay in
-`AGENTS.md` and `.agents/skills/`, not under `docs/development/`.
+excluded from any published product surface when needed. In an installed target repo, active agent
+instructions stay in `AGENTS.md` and `.agents/skills/`, not under `docs/development/`. In this kit
+source repo, the installable copies live under `kit/` so local dogfooding can happen in a separate
+target repo without self-applying the workflow.
 
 ## Core Rule
 

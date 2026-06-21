@@ -17,7 +17,10 @@ or packaged artifacts when end users should not see internal development materia
 - `specs/`: accepted or draft behavior, contract, and user-visible semantics specs.
 - `adrs/`: durable architecture, storage, public-surface, boundary, or workflow-policy decisions.
 - `spikes/`: preserved investigation outputs whose evidence is still useful.
-- `workflow/`: process, board, CI, review, and delivery-loop documentation.
+- `workflow/`: process, issue/PR coordination, CI, review, and delivery-loop documentation.
 
-Root `AGENTS.md` owns active repository guidance. `.agents/skills/` owns active local Codex skills.
+Installable `AGENTS.md` guidance lives at `kit/AGENTS.md`. Installable local Codex skills live under
+`kit/.agents/skills/`. Keeping them under `kit/` prevents this source repo from accidentally using
+the workflow it is packaging as its own active operating loop.
+
 Skill category folders are navigation only; each skill still owns its own `SKILL.md` instructions.

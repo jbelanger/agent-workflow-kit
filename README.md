@@ -3,9 +3,8 @@
 Status: seed repository.
 
 This repository is a working kit for building a GitHub-native, agent-assisted development workflow.
-It is intentionally being built with its own workflow: groom vague ideas, convert them into specs or
-ADRs when needed, discover product vision before vague specs, implement narrow slices, review
-locally with agents and humans, and keep decisions auditable.
+It is now treated as the source repo for installable guidance, not as an installed target of its own
+workflow.
 
 ## Start Here
 
@@ -13,37 +12,39 @@ locally with agents and humans, and keep decisions auditable.
 - GitHub-first flow: `docs/development/workflow/github-first-flow.md`
 - Install contract: `docs/development/workflow/installing-agent-workflow-kit.md`
 - GitHub-first orchestration ADR: `docs/development/adrs/github-first-orchestration.md`
-- Rebuild trace: `docs/development/workflow/rebuild-trace.md`
 - Development docs policy: `docs/development/README.md`
-- Active agent instructions: `AGENTS.md`
-- Local Codex skills: `.agents/skills/` category folders
+- Installable agent instructions: `kit/AGENTS.md`
+- Installable Codex skills: `kit/.agents/skills/` category folders
 
 ## Current Goal
 
-Dogfood a GitHub-first agent workflow before adding custom runtime automation. The active baseline
-is GitHub Issues, GitHub Projects, repo-local durable docs, PR review gates, and local agents.
+Dogfood the kit against a separate project instead of improving it through a self-referential
+workflow loop. The current playground is:
+
+```text
+/Users/joel/Dev/bullet-tetris-lab
+branch: codex/empty-start
+```
+
+Use that Tetris game repository to test what the kit should help a real project do from a clean
+state. Keep this repository focused on packaging the guidance, scripts, templates, and docs that
+prove useful there.
 
 The initial working assumption:
 
 - single repository by default
 - durable development artifacts under `docs/development/`
-- GitHub Issues and Projects as the active orchestration surface
+- GitHub Issues and PRs as collaboration and review surfaces
 - local-first Codex agents
-- repeated workflow verbs captured as local skills
-- `continue-work` as the GitHub-aware router for resuming from visible state
+- repeated workflow verbs captured as installable skills
 - high-interaction discovery for vague product/design direction before low-interaction execution
 - deterministic CI only for now
 - no Codex-in-CI baseline yet
 - no autonomous merge
 
-Plain Codex entry point:
-
-```text
-Continue work from the GitHub Project and issues.
-```
-
-Codex should read `AGENTS.md`, use `.agents/skills/process/continue-work/SKILL.md`, inspect GitHub
-issues/PRs/project fields and repo docs, then recommend the next safe workflow verb.
+This repo intentionally does not keep root `AGENTS.md` or root `.agents/skills/`. Those files live
+under `kit/` so local agents do not accidentally use the kit on itself. The installer copies them to
+the target repo root.
 
 ## Install Into Another Repo
 

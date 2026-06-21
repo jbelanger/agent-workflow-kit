@@ -13,7 +13,6 @@ const requiredPortableFiles = [
   'docs/development/workflow/github-first-flow.md',
   'docs/development/adrs/github-first-orchestration.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
-  'scripts/setup-github-project.mjs',
   '.github/ISSUE_TEMPLATE/adr.yml',
   '.github/ISSUE_TEMPLATE/discovery.yml',
   '.github/ISSUE_TEMPLATE/initiative.yml',
@@ -70,6 +69,16 @@ function read(cwd, path) {
   return readFileSync(join(cwd, path), 'utf8');
 }
 
+function sourcePath(cwd, path) {
+  if (
+    existsSync(join(cwd, 'kit/AGENTS.md')) &&
+    (path === 'AGENTS.md' || path.startsWith('.agents/'))
+  ) {
+    return join('kit', path);
+  }
+  return path;
+}
+
 function walkFiles(root) {
   if (!existsSync(root)) return [];
   const files = [];
@@ -114,22 +123,25 @@ function validate(cwd) {
   const errors = [];
 
   for (const path of requiredPortableFiles) {
-    if (!existsSync(join(cwd, path))) errors.push(`Missing required portable file: ${path}`);
+    const actualPath = sourcePath(cwd, path);
+    if (!existsSync(join(cwd, actualPath))) errors.push(`Missing required portable file: ${actualPath}`);
   }
 
   for (const path of requiredSkills) {
-    if (!existsSync(join(cwd, path))) errors.push(`Missing required skill: ${path}`);
+    const actualPath = sourcePath(cwd, path);
+    if (!existsSync(join(cwd, actualPath))) errors.push(`Missing required skill: ${actualPath}`);
   }
 
-  for (const file of walkFiles(join(cwd, '.agents/skills'))) {
+  for (const file of walkFiles(join(cwd, sourcePath(cwd, '.agents/skills')))) {
     const relativePath = file.slice(cwd.length + 1);
     if (relativePath.endsWith('/SKILL.md')) {
       validateSkill(cwd, relativePath, errors);
     }
   }
 
-  if (existsSync(join(cwd, '.agents/skills/process/groom-issue/SKILL.md'))) {
-    const groomSkill = read(cwd, '.agents/skills/process/groom-issue/SKILL.md');
+  const groomSkillPath = sourcePath(cwd, '.agents/skills/process/groom-issue/SKILL.md');
+  if (existsSync(join(cwd, groomSkillPath))) {
+    const groomSkill = read(cwd, groomSkillPath);
     for (const snippet of ['Interview And Research Mode', 'Grooming status', 'NEEDS_INTERVIEW', 'NEEDS_RESEARCH', 'discover-vision']) {
       if (!groomSkill.includes(snippet)) {
         errors.push(`groom-issue skill is missing interview/readiness snippet: ${snippet}`);
@@ -137,8 +149,9 @@ function validate(cwd) {
     }
   }
 
-  if (existsSync(join(cwd, '.agents/skills/process/discover-vision/SKILL.md'))) {
-    const discoverSkill = read(cwd, '.agents/skills/process/discover-vision/SKILL.md');
+  const discoverSkillPath = sourcePath(cwd, '.agents/skills/process/discover-vision/SKILL.md');
+  if (existsSync(join(cwd, discoverSkillPath))) {
+    const discoverSkill = read(cwd, discoverSkillPath);
     for (const snippet of ['product-strategy', 'technical-architecture', 'validation-strategy', 'ux-direction', 'creative-direction', 'READY_FOR_SPEC', 'DIRECT_TASK', 'real fork']) {
       if (!discoverSkill.includes(snippet)) {
         errors.push(`discover-vision skill is missing required snippet: ${snippet}`);
@@ -146,9 +159,10 @@ function validate(cwd) {
     }
   }
 
-  if (existsSync(join(cwd, '.agents/skills/process/continue-work/SKILL.md'))) {
-    const continueSkill = read(cwd, '.agents/skills/process/continue-work/SKILL.md');
-    for (const snippet of ['Next Actor', 'Decision Needed', 'GitHub Project', 'Next workflow verb', 'work-issue-local', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue']) {
+  const continueSkillPath = sourcePath(cwd, '.agents/skills/process/continue-work/SKILL.md');
+  if (existsSync(join(cwd, continueSkillPath))) {
+    const continueSkill = read(cwd, continueSkillPath);
+    for (const snippet of ['GitHub issues', 'Next workflow verb', 'work-issue-local', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue']) {
       if (!continueSkill.includes(snippet)) {
         errors.push(`continue-work skill is missing GitHub routing snippet: ${snippet}`);
       }
@@ -164,15 +178,6 @@ function validate(cwd) {
     }
   }
 
-  if (existsSync(join(cwd, 'scripts/setup-github-project.mjs'))) {
-    const setupScript = read(cwd, 'scripts/setup-github-project.mjs');
-    for (const snippet of ['Agent Workflow Kit v0', 'Decision Needed', 'Artifact State', '--verify-only', '--dry-run', 'gh auth refresh -s repo -s project']) {
-      if (!setupScript.includes(snippet)) {
-        errors.push(`setup-github-project script is missing required snippet: ${snippet}`);
-      }
-    }
-  }
-
   if (existsSync(join(cwd, '.github/PULL_REQUEST_TEMPLATE.md'))) {
     const prTemplate = read(cwd, '.github/PULL_REQUEST_TEMPLATE.md');
     for (const snippet of ['Issue Linkage', 'Closes #', 'Refs #', 'Reason:']) {
@@ -182,8 +187,9 @@ function validate(cwd) {
     }
   }
 
-  if (existsSync(join(cwd, '.agents/skills/process/draft-artifact/SKILL.md'))) {
-    const draftSkill = read(cwd, '.agents/skills/process/draft-artifact/SKILL.md');
+  const draftSkillPath = sourcePath(cwd, '.agents/skills/process/draft-artifact/SKILL.md');
+  if (existsSync(join(cwd, draftSkillPath))) {
+    const draftSkill = read(cwd, draftSkillPath);
     for (const snippet of ['NEEDS_INTERVIEW', 'Human decision needed: YES', 'thin rules-only spec']) {
       if (!draftSkill.includes(snippet)) {
         errors.push(`draft-artifact skill is missing unresolved-grooming guard snippet: ${snippet}`);

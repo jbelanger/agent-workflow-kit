@@ -23,6 +23,8 @@ const requiredPortableFiles = [
   'docs/development/adrs/.gitkeep',
   'docs/development/specs/.gitkeep',
   'docs/development/spikes/.gitkeep',
+  'scripts/workflow-labels.mjs',
+  'scripts/setup-github-labels.mjs',
   'scripts/validate-workflow.mjs',
 ];
 
@@ -47,6 +49,14 @@ const requiredSkills = [
   '.agents/skills/specialist/diagnose-bug/SKILL.md',
   '.agents/skills/specialist/tdd/SKILL.md',
 ];
+
+const issueTemplateLabels = new Map([
+  ['.github/ISSUE_TEMPLATE/adr.yml', 'adr'],
+  ['.github/ISSUE_TEMPLATE/discovery.yml', 'discovery'],
+  ['.github/ISSUE_TEMPLATE/initiative.yml', 'initiative'],
+  ['.github/ISSUE_TEMPLATE/spec.yml', 'spec'],
+  ['.github/ISSUE_TEMPLATE/task.yml', 'task'],
+]);
 
 function parseArgs(argv) {
   let cwd = process.cwd();
@@ -183,6 +193,21 @@ function validate(cwd) {
     for (const snippet of ['Issue Linkage', 'Closes #', 'Refs #', 'Reason:']) {
       if (!prTemplate.includes(snippet)) {
         errors.push(`pull request template is missing issue-linkage snippet: ${snippet}`);
+      }
+    }
+  }
+
+  for (const [path, label] of issueTemplateLabels) {
+    if (existsSync(join(cwd, path)) && !read(cwd, path).includes(`labels: ["${label}"]`)) {
+      errors.push(`${path} must assign the workflow label '${label}'`);
+    }
+  }
+
+  if (existsSync(join(cwd, 'scripts/workflow-labels.mjs'))) {
+    const workflowLabels = read(cwd, 'scripts/workflow-labels.mjs');
+    for (const snippet of ['initiative', 'discovery', 'spec', 'adr', 'task', 'revision-needed', 'needs-human-review']) {
+      if (!workflowLabels.includes(`'${snippet}'`)) {
+        errors.push(`workflow label contract is missing label: ${snippet}`);
       }
     }
   }

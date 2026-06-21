@@ -38,7 +38,9 @@ Optional:
 | `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Yes | Durable planning artifacts reviewed through PRs. |
 | `docs/development/workflow/ai-dev-workflow.md` | Yes | Durable explanation of the AWK process and operating surfaces. |
 | `docs/development/workflow/github-first-flow.md` | Yes | The v0 GitHub-first operating loop for mobile answers, resume behavior, and process feedback. |
+| `scripts/setup-github-labels.mjs` | Yes | Minimal GitHub setup for labels used by issue templates. Does not create a Project board. |
 | GitHub issues/PRs | Yes for the default profile | Active orchestration, human answers, remote planning, audit trail, and review. |
+| GitHub labels | Recommended setup | Lightweight issue type and review signals created by `scripts/setup-github-labels.mjs`. |
 | GitHub Projects | Optional | Useful when a repo has enough parallel work to need board state. Not installed or required by default. |
 | `docs/development/work-items/` | Optional fallback | Portable planning records only when GitHub is absent. |
 
@@ -54,12 +56,22 @@ The installer refuses to overwrite existing different files by default. That is 
 project may already have `AGENTS.md` or local skills, and those should be merged deliberately instead
 of silently replaced.
 
+After installing into a GitHub repo, create the lightweight labels used by issue templates:
+
+```bash
+cd /path/to/project
+node scripts/setup-github-labels.mjs
+```
+
+This creates labels only. It does not create a Project board.
+
 ## Validation
 
 In an installed project:
 
 ```bash
 node scripts/validate-workflow.mjs
+node scripts/setup-github-labels.mjs --verify-only
 ```
 
 From the kit repo, prove the install path against a clean temporary repository:

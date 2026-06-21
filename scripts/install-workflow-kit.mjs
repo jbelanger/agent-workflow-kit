@@ -26,6 +26,8 @@ const portableEntries = [
   ['docs/development/specs/.gitkeep', 'docs/development/specs/.gitkeep'],
   ['docs/development/adrs/.gitkeep', 'docs/development/adrs/.gitkeep'],
   ['docs/development/spikes/.gitkeep', 'docs/development/spikes/.gitkeep'],
+  ['scripts/workflow-labels.mjs', 'scripts/workflow-labels.mjs'],
+  ['scripts/setup-github-labels.mjs', 'scripts/setup-github-labels.mjs'],
   ['scripts/validate-workflow.mjs', 'scripts/validate-workflow.mjs'],
 ];
 
@@ -35,7 +37,7 @@ function usage() {
 Installs the GitHub-first Agent Workflow Kit into another repository.
 
 Installs:
-  AGENTS.md, .github templates, .agents/skills/, workflow docs, and scripts/validate-workflow.mjs
+  AGENTS.md, .github templates, .agents/skills/, workflow docs, and lightweight setup/validation scripts
 
 Safety:
   existing identical files are left alone

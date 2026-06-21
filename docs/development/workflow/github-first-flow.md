@@ -19,6 +19,9 @@ Human leaves the keyboard
 The setup script is supporting machinery. It should encode and reproduce this flow, but it is not
 the source of truth for the workflow.
 
+Use `scripts/setup-github-project.mjs` to create or verify the GitHub Project fields, labels, and
+root initiative once the flow is understood.
+
 ## Surfaces
 
 | Surface | Owns | Does not own |

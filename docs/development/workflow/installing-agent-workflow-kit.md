@@ -19,6 +19,7 @@ Required:
   docs/development/spikes/
   docs/development/workflow/ai-dev-workflow.md
   docs/development/workflow/github-first-flow.md
+  scripts/setup-github-project.mjs
   scripts/validate-workflow.mjs
 
 Optional:
@@ -43,6 +44,7 @@ Optional:
 | `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Yes | Durable planning artifacts reviewed through PRs. |
 | `docs/development/workflow/ai-dev-workflow.md` | Yes | Durable explanation of the AWK process and operating surfaces. |
 | `docs/development/workflow/github-first-flow.md` | Yes | The v0 GitHub-first operating loop for mobile answers, resume behavior, and process feedback. |
+| `scripts/setup-github-project.mjs` | Yes | Idempotent setup and verification for the GitHub Project fields, labels, and root initiative. |
 | GitHub issues/PRs/projects | Yes for the default profile | Active orchestration, human answers, remote planning, audit trail, and review. |
 | `docs/development/work-items/` | Optional fallback | Portable planning records only when GitHub is absent. |
 | `.archon/` | Optional | Runtime/dashboard adapters around the same portable skills. |
@@ -76,6 +78,23 @@ In an installed project:
 ```bash
 node scripts/validate-workflow.mjs
 ```
+
+For the GitHub-first Project board, first verify the planned setup contract:
+
+```bash
+node scripts/setup-github-project.mjs --dry-run
+```
+
+Then verify or apply it against GitHub:
+
+```bash
+gh auth refresh -s repo -s project
+node scripts/setup-github-project.mjs --repo OWNER/REPO --owner OWNER --verify-only
+node scripts/setup-github-project.mjs --repo OWNER/REPO --owner OWNER
+```
+
+The setup script creates missing labels, the Project, required single-select fields, and the root
+initiative. On an existing Project, mismatched fields are reported instead of silently rewritten.
 
 If the Archon profile is installed:
 

@@ -5,7 +5,7 @@ description: Use behavior-first test-driven development for implementation tasks
 
 # TDD
 
-Use this skill to create a tight feedback loop before implementation. TDD is not a board phase and
+Use this skill to create a tight feedback loop before implementation. TDD is not a lifecycle phase and
 not mandatory for every task. It is an implementation discipline for work where behavior can be
 pinned through a useful public seam.
 

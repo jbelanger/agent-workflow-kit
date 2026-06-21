@@ -20,8 +20,6 @@ Use the smallest durable surface that matches the job:
 - `AGENTS.md`: installed repository rules, quality bar, validation expectations, and boundaries.
 - `.agents/skills/`: installed local Codex skills organized by category.
 - GitHub issues: active work items, discussion, human answers, and collaboration state.
-- GitHub Projects: operating state for lifecycle, next actor, decision needed, artifact state,
-  merge risk, and area.
 - GitHub PRs: proposed durable docs or code changes and their review gates.
 - `docs/development/`: accepted durable truth such as vision briefs, specs, ADRs, spike writeups,
   workflow docs, and planning records.
@@ -30,7 +28,9 @@ Use the smallest durable surface that matches the job:
 
 Development docs live in the single repo, but they must remain separate from user-facing docs and
 excluded from any published product surface when needed. Active agent instructions stay in
-`AGENTS.md` and `.agents/skills/`, not under `docs/development/`.
+`AGENTS.md` and `.agents/skills/` in installed target repos. In this source repo, installable
+guidance is stored under `kit/` so Agent Workflow Kit does not run its own workflow on itself by
+default.
 
 ## Core Rule
 
@@ -45,11 +45,13 @@ Agents may not hide uncertainty.
 
 ## Local Skill Set
 
-Active skills use this shape:
+Installed skills use this shape:
 
 ```text
 .agents/skills/<category>/<skill-name>/SKILL.md
 ```
+
+In this source repo, the same files live under `kit/.agents/skills/`.
 
 The final folder must remain the skill name, and the frontmatter `name` is still the invocation
 name. Category folders are for navigation and install organization. Category READMEs may explain
@@ -69,7 +71,7 @@ Process: planning and orchestration:
 | --- | --- | --- |
 | `triage-backlog` | Review open work items and classify what needs attention. | No |
 | `pick-next-item` | Recommend the best next work item based on readiness, risk, dependencies, and value. | No |
-| `continue-work` | Inspect GitHub issues, project fields, PRs, and repo docs to choose the next safe workflow verb. | No |
+| `continue-work` | Inspect GitHub issues, PRs, and repo docs to choose the next safe workflow verb. | No |
 | `groom-issue` | Turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
 | `discover-vision` | Orchestrate early high-interaction product, UX, creative, platform, or architecture discovery before specs. | Docs only |
 | `draft-artifact` | Draft or update one durable spec, ADR, or spike from groomed direction. | Docs only |
@@ -113,9 +115,6 @@ The source-of-truth model is:
 GitHub issue
   -> active work item, discussion, human answers, and collaboration state
 
-GitHub Project
-  -> operating state for what should happen next
-
 GitHub PR
   -> proposed durable doc or code change plus review gate
 
@@ -127,8 +126,8 @@ repo docs under docs/development/
 ```
 
 Use `continue-work` when the human asks to resume without remembering the current state. It reads
-GitHub issues, project fields, linked PRs, comments, and repo docs, then routes to the next workflow
-verb. It may recommend comments and field updates; it must not silently mutate scope, accept
+GitHub issues, linked PRs, comments, and repo docs, then routes to the next workflow verb. It may
+recommend comments and labels; it must not silently mutate scope, accept
 artifacts, decide architecture, implement code, push, merge, or close work.
 
 Every meaningful dogfood pass should include process feedback when it notices workflow weakness.
@@ -145,12 +144,11 @@ Use draft only when work is knowingly incomplete, validation is missing, or the 
 diff without asking for attention.
 
 A linked PR is not automatically human-ready, whether GitHub marks it draft or ready for review. If
-the PR or issue does not record an agent `review-local-changes` result, keep the work `In Progress`,
-keep or set `Next Actor = Agent`, and route the next step to local review. After the agent fixes or
-classifies findings and records the result, ordinary cleanup can continue in the agent loop. The next
-human approval handoff is merge approval. If review finds architecture ambiguity, ownership drift,
-public-surface risk, storage risk, or an unclear long-term model, route to human architecture
-judgment before merge.
+the PR or issue does not record an agent `review-local-changes` result, route the next step to local
+review. After the agent fixes or classifies findings and records the result, ordinary cleanup can
+continue in the agent loop. The next human approval handoff is merge approval. If review finds
+architecture ambiguity, ownership drift, public-surface risk, storage risk, or an unclear long-term
+model, route to human architecture judgment before merge.
 
 PR bodies should use `Closes #issue` only when the PR fully satisfies the issue acceptance criteria
 and needs no post-merge reconciliation. Use `Refs #issue` for initiatives, parent work, partial
@@ -161,19 +159,19 @@ low-risk docs, process, or chore work when validation is clean and the human exp
 Meaningful review remains required for architecture-sensitive, ownership, storage, public-surface,
 or unclear model changes.
 
-The previous Project and issues from early dogfooding are stale. Restart active GitHub coordination
-with a fresh Project and fresh root initiative rather than repairing the old board.
+Do not treat stale dogfood Projects or issues as active workflow state. Start from fresh issues and
+PRs instead of repairing historical playground state.
 
 ## Work Items
 
-A work item is the workflow's unit of planning. In the default profile it is a GitHub issue on the
-active Project. A repo-local Markdown record under `docs/development/work-items/` is a fallback for
-projects that cannot use GitHub.
+A work item is the workflow's unit of planning. In the default profile it is a GitHub issue. A
+repo-local Markdown record under `docs/development/work-items/` is a fallback for projects that
+cannot use GitHub.
 
 Use this authority model:
 
 ```text
-GitHub issue / Project fields
+GitHub issue / PR comments
   -> active workflow state
 
 accepted vision brief / spec / ADR / spike under docs/development/
@@ -202,7 +200,7 @@ Inbox
 ```
 
 `Deferred` is an explicit parking state. `Blocked` is not a normal phase; represent blockers with
-`Next Actor`, `Decision Needed`, labels, and a clear issue comment.
+labels and a clear issue comment.
 
 ### 1. Triage Backlog
 
@@ -329,7 +327,7 @@ docs/development/discovery/<slug>/
 Avoid permanent specialist transcript files by default. Later workflow stages should read the
 accepted `vision-brief.md` and `decision-log.md`, not raw brainstorming.
 
-Vision state is separate from board status:
+Vision state is separate from issue lifecycle:
 
 | Vision State | Meaning |
 | --- | --- |
@@ -371,7 +369,7 @@ rules: intended audience, experience pillars, core loop or workflow, comparable 
 research evidence, differentiators, and design risks. If the source grooming record does not support
 that depth, do not draft a thin rules-only spec; return to interview or research.
 
-Spec state is separate from board status:
+Spec state is separate from issue lifecycle:
 
 | Spec State | Meaning |
 | --- | --- |
@@ -508,8 +506,7 @@ Strong review must:
 Either agent can force human review. Both agents must agree before skipping human review. A revision
 is agent-pickable only when both agents agree no human-review-worthy smell exists.
 
-Review details stay on the PR. Use `revision-needed` and `needs-human-review` as labels or fields,
-not required board statuses.
+Review details stay on the PR. Use `revision-needed` and `needs-human-review` as labels.
 
 ### 10. Refactor And Superseding PRs
 
@@ -550,62 +547,35 @@ Merge only when:
 
 Use squash merge by default so `main` keeps a readable history.
 
-## Board Model
+## Issue Model
 
-Recommended statuses:
+Recommended issue labels:
 
-| Status | Description | When to use |
+| Label | Description | When to use |
 | --- | --- | --- |
-| `Inbox` | Captured but not yet classified. | New ideas, raw requests, imported notes, and untriaged items. |
-| `Grooming` | Clarifying intent and classifying next output. | Use while deciding spec, ADR, spike, direct direction, drop, or defer. |
-| `Discovery` | High-interaction product, UX, creative, platform, or architecture direction is being clarified. | Use when a vague idea needs `discover-vision` before specification. |
-| `Drafting` | A durable vision brief, spec, ADR, or spike record is being drafted. | Use before the artifact is ready for review. |
-| `Breakdown` | Accepted direction is being decomposed into executable child work items. | Use before child work items are merge-safe and Ready. |
-| `Ready` | Scoped and safe for one agent to pick up. | Use after breakdown and implementation prep are sufficient. |
-| `In Progress` | An agent or human is actively working. | Branch/worktree work, spec drafting, active replacement path, or revision pass. |
-| `Review` | The PR, artifact, or result is ready for review. | Use when review should evaluate the work. |
-| `Done` | Done and no required work remains. | Use after merge, closure, or accepted completion for non-code artifacts. |
-| `Deferred` | Intentionally parked. | Use when the item remains valid but should not move now. |
-
-Recommended issue types:
-
-| Issue Type | Description | When to use |
-| --- | --- | --- |
-| `Initiative` | A large outcome grouping multiple work items. | Use for parent tracking, sequencing, and progress visibility. |
-| `Discovery` | A high-level vision work item. | Use for vague product, UX, creative, game, platform, or architecture direction before a spec. |
-| `Spec` | Durable behavior or contract definition. | Use when behavior or acceptance criteria need agreement. |
-| `ADR` | Durable architecture or operating decision. | Use when direction, ownership, storage, public surface, or policy changes. |
-| `Spike` | Time-boxed evidence gathering. | Use when production work would otherwise guess. |
-| `Task` | Concrete executable work. | Use when one branch or PR can complete the work. |
-| `Bug` | Actual behavior differs from expected behavior. | Use with reproduction evidence or a failing check. |
-| `Refactor` | Behavior-preserving structural improvement. | Use for ownership, boundary, naming, abstraction, or debt cleanup. |
-
-Core fields:
-
-| Field | Description | When to use |
-| --- | --- | --- |
-| `Status` | Coarse lifecycle state. | Always. |
-| `Issue Type` | Work or artifact type. | Always. |
-| `Next Actor` | Human, Agent, or Either. | Always for active items. |
-| `Decision Needed` | None, Question, Approval, Research, Architecture, or Access. | Always for active items. |
-| `Area` | Product, architecture, or code area. | Use for filtering and avoiding parallel work in the same area. |
-| `Merge Risk` | Parallel coordination risk. | Required before Ready. |
-| `Artifact State` | None, Draft, Accepted, Implemented, or Superseded. | Use when a vision brief, spec, ADR, or spike is linked. |
-
-Useful labels or secondary fields:
-
-| Label / Field | Description | When to use |
-| --- | --- | --- |
-| `revision-needed` | Actionable review work must be addressed before merge. | Use as a queue signal, not a board status. |
+| `initiative` | A large outcome grouping multiple work items. | Use for parent tracking, sequencing, and progress visibility. |
+| `discovery` | A high-level vision work item. | Use for vague product, UX, creative, game, platform, or architecture direction before a spec. |
+| `spec` | Durable behavior or contract definition. | Use when behavior or acceptance criteria need agreement. |
+| `adr` | Durable architecture or operating decision. | Use when direction, ownership, storage, public surface, or policy changes. |
+| `spike` | Time-boxed evidence gathering. | Use when production work would otherwise guess. |
+| `task` | Concrete executable work. | Use when one branch or PR can complete the work. |
+| `bug` | Actual behavior differs from expected behavior. | Use with reproduction evidence or a failing check. |
+| `refactor` | Behavior-preserving structural improvement. | Use for ownership, boundary, naming, abstraction, or debt cleanup. |
 | `needs-human-review` | Human architecture or product judgment is needed. | Use when either agent escalates. |
 | `needs-source-evidence` | Claims need code, docs, logs, or external evidence. | Use before planning or implementation can proceed. |
 | `human-only` | Should not be autonomously executed by an agent. | Credentials, subjective product decisions, finance/legal/privacy judgment, or merge approval. |
-| `target-phase` | Phase, milestone, or release. | Add only when planning across phases is useful. |
-| `estimate/budget` | Rough size, time, or cost. | Add only when timeline or agent-cost planning needs it. |
+| `revision-needed` | Actionable review work must be addressed before merge. | Use as a PR or issue queue signal. |
 
-Do not add `Blocked` or `Revision Needed` as required board statuses. Blocker state belongs in
-`Next Actor`, `Decision Needed`, labels, and issue comments. Revision state belongs on the PR and in
-labels or fields.
+Use issue comments to record:
+
+- Current status or handoff.
+- Human decisions and approvals.
+- The next concrete action.
+- Validation evidence.
+- Deferred work with owner, boundary, and removal condition.
+
+Do not add `Blocked` or `Revision Needed` as required lifecycle phases. Blocker state belongs in
+labels and issue comments. Revision state belongs on the PR and in labels.
 
 ## Definition Of Ready
 
@@ -662,7 +632,7 @@ Revisit these after the local workflow is stable:
 
 - Packaging skills as a plugin.
 - Codex-in-CI advisory review.
-- Structured issue or board automation.
+- Structured issue automation.
 - Dedicated refactor skill if refactor passes become frequent enough.
 - More detailed spec, ADR, and spike templates.
 

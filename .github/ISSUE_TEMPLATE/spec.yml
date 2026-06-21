@@ -5,7 +5,7 @@ labels: ["spec"]
 body:
   - type: markdown
     attributes:
-      value: "Use this when behavior or contracts need to be settled before implementation. After creating this issue, add it to the active Project and set Status, Issue Type, Next Actor, Decision Needed, Area, Artifact State, and Merge Risk when known."
+      value: "Use this when behavior or contracts need to be settled before implementation. Keep current state visible in issue comments and linked PRs."
   - type: textarea
     id: problem
     attributes:

@@ -5,7 +5,7 @@ labels: ["task"]
 body:
   - type: markdown
     attributes:
-      value: "After creating this issue, add it to the active Project and set Status, Issue Type, Next Actor, Decision Needed, Area, and Merge Risk."
+      value: "Use this issue for a concrete, bounded implementation or documentation task. Keep current state visible in issue comments and linked PRs."
   - type: textarea
     id: goal
     attributes:

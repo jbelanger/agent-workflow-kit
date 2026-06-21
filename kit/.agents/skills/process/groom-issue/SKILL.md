@@ -20,8 +20,7 @@ for durable planning work or `breakdown-issue`.
 - Repo-local work items under `docs/development/work-items/` are the portable default planning
   record when no external tracker is required.
 - GitHub issues and PRs may mirror current planning, discussion, review, and audit trail.
-- Recommend work item fields, labels, and board status changes, but do not depend on automatic
-  project board transitions.
+- Recommend issue labels and issue comments, but do not depend on automatic state transitions.
 - Ask one clarification question at a time.
 - Give options, a recommendation, and the reason.
 - Explain decisions in simple operational terms, assuming the human has not looked at the code

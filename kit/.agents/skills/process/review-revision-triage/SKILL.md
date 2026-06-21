@@ -15,7 +15,7 @@ accepted specs or ADRs, and nearby code before recommending or routing changes.
 - Challenge architecture direction before ordinary findings.
 - Either agent can force human review; both agents must agree before skipping it.
 - Keep review details on the PR. Use `revision-needed` or `needs-human-review` as labels or field
-  signals, not as required board statuses.
+  signals, not as required lifecycle phases.
 - Do not silently accept debt, duplicated truths, compatibility bridges, public-surface expansion, or
   cheap/minimal passes that worsen architecture.
 - Explain non-trivial issues for a human who has not looked at the codebase recently. Use a compact

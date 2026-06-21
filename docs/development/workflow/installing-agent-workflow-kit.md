@@ -4,10 +4,12 @@ Status: active install contract
 
 Agent Workflow Kit is a GitHub-first workflow pack.
 
-The adoption contract is:
+In this source repository, installable agent guidance lives under `kit/` so the kit does not operate
+on itself by default. The installer copies those files into the target repository root.
+
+The default install copies:
 
 ```text
-Required:
   AGENTS.md
   .github/ISSUE_TEMPLATE/
   .github/PULL_REQUEST_TEMPLATE.md
@@ -19,10 +21,9 @@ Required:
   docs/development/spikes/
   docs/development/workflow/ai-dev-workflow.md
   docs/development/workflow/github-first-flow.md
-  scripts/setup-github-project.mjs
   scripts/validate-workflow.mjs
 
-Optional:
+Optional repo-local records:
   docs/development/work-items/
 ```
 
@@ -30,17 +31,16 @@ Optional:
 
 | Part | Required? | Purpose |
 | --- | --- | --- |
-| `AGENTS.md` | Yes | Standing repository rules for local Codex work. |
+| `AGENTS.md` | Yes | Standing repository rules for local Codex work. Source path in this repo: `kit/AGENTS.md`. |
 | `.github/ISSUE_TEMPLATE/` | Yes | GitHub-first intake contracts for initiatives, specs, ADRs, and tasks. |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Yes | Review gate and validation summary for proposed docs or code. |
-| `.agents/skills/` | Yes | Portable workflow verbs and specialist lenses such as grooming, discovery, artifact drafting, breakdown, preparation, local work, and review. |
+| `.agents/skills/` | Yes | Portable workflow verbs and specialist lenses such as grooming, discovery, artifact drafting, breakdown, preparation, local work, and review. Source path in this repo: `kit/.agents/skills/`. |
 | `docs/development/adrs/github-first-orchestration.md` | Yes | Accepted source-of-truth decision for the GitHub-first operating model. |
 | `docs/development/discovery/` | Yes | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. |
 | `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Yes | Durable planning artifacts reviewed through PRs. |
 | `docs/development/workflow/ai-dev-workflow.md` | Yes | Durable explanation of the AWK process and operating surfaces. |
 | `docs/development/workflow/github-first-flow.md` | Yes | The v0 GitHub-first operating loop for mobile answers, resume behavior, and process feedback. |
-| `scripts/setup-github-project.mjs` | Yes | Idempotent setup and verification for the GitHub Project fields, labels, and root initiative. |
-| GitHub issues/PRs/projects | Yes for the default profile | Active orchestration, human answers, remote planning, audit trail, and review. |
+| GitHub issues/PRs | Yes for the default profile | Collaboration, human answers, remote planning, audit trail, and review. |
 | `docs/development/work-items/` | Optional fallback | Portable planning records only when GitHub is absent. |
 
 ## Install
@@ -63,23 +63,6 @@ In an installed project:
 node scripts/validate-workflow.mjs
 ```
 
-For the GitHub-first Project board, first verify the planned setup contract:
-
-```bash
-node scripts/setup-github-project.mjs --dry-run
-```
-
-Then verify or apply it against GitHub:
-
-```bash
-gh auth refresh -s repo -s project
-node scripts/setup-github-project.mjs --repo OWNER/REPO --owner OWNER --verify-only
-node scripts/setup-github-project.mjs --repo OWNER/REPO --owner OWNER
-```
-
-The setup script creates missing labels, the Project, required single-select fields, and the root
-initiative. On an existing Project, mismatched fields are reported instead of silently rewritten.
-
 From the kit repo, prove the install path against a clean temporary repository:
 
 ```bash
@@ -93,7 +76,7 @@ Plain Codex:
 ```text
 Codex chat in the project
   -> user asks "continue work"
-  -> Codex reads GitHub issues, project fields, PRs, and repo docs
+  -> Codex reads GitHub issues, PRs, and repo docs
   -> Codex uses .agents/skills/process/continue-work/SKILL.md to choose the next workflow verb
   -> Codex records process feedback when the workflow itself shows weakness
 ```
@@ -102,7 +85,6 @@ GitHub:
 
 ```text
 Issues and PRs hold collaboration and audit trail.
-Projects hold lifecycle, next actor, decision-needed, artifact-state, area, and merge-risk fields.
 PRs hold proposed durable docs or code and review gates.
 Repo docs remain the accepted durable truth after review.
 ```

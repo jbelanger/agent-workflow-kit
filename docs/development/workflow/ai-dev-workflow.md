@@ -141,6 +141,11 @@ For doc or code changes, `Status = Review` requires a linked GitHub PR. Local co
 remain `In Progress`; issue-only review is only for decisions or artifact text fully visible in the
 issue thread.
 
+GitHub draft state is not the default workflow holding pen. Open PRs as ready for review when the
+branch is pushed, validation has run, and the PR body records issue linkage and current review state.
+Use draft only when work is knowingly incomplete, validation is missing, or the PR is exposing a WIP
+diff without asking for attention.
+
 A linked PR is not automatically human-ready, whether GitHub marks it draft or ready for review. If
 the PR or issue does not record an agent `review-local-changes` result, keep the work `In Progress`,
 keep or set `Next Actor = Agent`, and route the next step to local review. After the agent fixes or

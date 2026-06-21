@@ -31,7 +31,7 @@ be inspected.
 - Improving Agent Workflow Kit is part of the work: identify process weakness when the workflow
   itself is confusing, too heavy, too loose, unsafe, or hard to resume.
 - For doc or code changes, `Status = Review` requires a linked PR. Local commits without a PR stay
-  `In Progress`; the next action is to open a draft PR or explain why review is issue-only.
+  `In Progress`; the next action is to open a PR or explain why review is issue-only.
 - A linked PR without a recorded agent review result is still agent-owned. Route it to
   `review-local-changes` before human merge approval.
 - Treat `Review` as a visible acceptance handoff, not mandatory ceremony. Low-risk docs, process, or
@@ -92,7 +92,12 @@ updates instead of pretending the board is complete.
 
 Do not recommend `Status = Review` for doc or code changes unless the issue has a linked PR. If the
 only evidence is a local commit, keep or recommend `In Progress`, record the commit in the issue,
-and make opening a draft PR the next workflow step.
+and make opening a PR the next workflow step.
+
+Do not use GitHub draft state as the default workflow holding pen. Open PRs as ready for review when
+the branch is pushed, validation has run, and the PR body records issue linkage and current review
+state. Use draft only when work is knowingly incomplete, validation is missing, or the PR is exposing
+a WIP diff without asking for attention.
 
 Do not treat PR draft/ready state as proof that the agent review gate is complete. If the issue or
 PR does not record a completed `review-local-changes` pass, keep or recommend `Status = In

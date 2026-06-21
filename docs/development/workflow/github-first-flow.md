@@ -53,7 +53,12 @@ a clear issue comment.
 
 For doc or code changes, `Status = Review` requires a linked GitHub PR that exposes the diff. Local
 commits without a PR stay `In Progress`; the issue comment should record the commit and make opening
-a draft PR the next action.
+a PR the next action.
+
+GitHub draft state is not the default workflow holding pen. Open PRs as ready for review when the
+branch is pushed, validation has run, and the PR body records issue linkage and current review state.
+Use draft only when work is knowingly incomplete, validation is missing, or the PR is exposing a WIP
+diff without asking for attention.
 
 A linked PR is the first review surface for the agent, whether GitHub marks it draft or ready for
 review. Until the issue or PR records a completed agent review pass, keep the item `In Progress`
@@ -91,9 +96,10 @@ When the human says "continue work," the agent should:
    prepare implementation, or implement only when the user has clearly authorized implementation.
 7. Keep doc/code work `In Progress` until a linked PR exists; do not mark local-only commits as
    `Review`.
-8. For a linked PR without a recorded agent review result, route to `review-local-changes` before
+8. Do not infer review completion from GitHub draft/ready state.
+9. For a linked PR without a recorded agent review result, route to `review-local-changes` before
    human merge approval.
-9. End with current state, next actor, decision needed, next step, and process feedback.
+10. End with current state, next actor, decision needed, next step, and process feedback.
 
 The expected reply shape is:
 
@@ -200,6 +206,9 @@ These weaknesses appeared during the first GitHub-first dogfood pass:
   recorded agent review stay `In Progress`, `Next Actor = Agent`, and route to
   `review-local-changes`, regardless of GitHub draft/ready state. Human approval means merge
   approval; architecture ambiguity still routes to the human before merge.
+- Draft PRs became ceremony after the agent-review gate moved into comments and fields. Accepted
+  rule: open ready PRs by default after validation; use draft only for known WIP, missing
+  validation, or intentionally exposed unfinished diffs.
 - Issue closure was left to human memory: #13 used `Refs #7`, so merging did not close a simple
   task after it became complete. Accepted rule: agents choose `Closes` only when the PR fully
   completes the issue; otherwise they use `Refs` and let `continue-work` reconcile after merge.

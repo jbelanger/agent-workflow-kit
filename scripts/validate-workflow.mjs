@@ -175,7 +175,7 @@ function validate(cwd) {
 
   if (existsSync(join(cwd, '.agents/skills/process/continue-work/SKILL.md'))) {
     const continueSkill = read(cwd, '.agents/skills/process/continue-work/SKILL.md');
-    for (const snippet of ['Next Actor', 'Decision Needed', 'GitHub Project', 'Next workflow verb', 'work-issue-local', 'linked PR', 'Local commits without a PR', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue']) {
+    for (const snippet of ['Next Actor', 'Decision Needed', 'GitHub Project', 'Next workflow verb', 'work-issue-local', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue']) {
       if (!continueSkill.includes(snippet)) {
         errors.push(`continue-work skill is missing GitHub routing snippet: ${snippet}`);
       }
@@ -184,7 +184,7 @@ function validate(cwd) {
 
   if (existsSync(join(cwd, 'docs/development/workflow/github-first-flow.md'))) {
     const githubFlow = read(cwd, 'docs/development/workflow/github-first-flow.md');
-    for (const snippet of ['Review Handoff Rule', 'Issue Linkage Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff', 'linked PRs without', 'draft/ready state', 'architecture ambiguity', 'merge approval', 'Closes #issue', 'Refs #issue']) {
+    for (const snippet of ['Review Handoff Rule', 'Issue Linkage Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff', 'ready PRs by default', 'linked PRs without', 'draft/ready state', 'architecture ambiguity', 'merge approval', 'Closes #issue', 'Refs #issue']) {
       if (!githubFlow.includes(snippet)) {
         errors.push(`GitHub-first flow is missing review handoff snippet: ${snippet}`);
       }

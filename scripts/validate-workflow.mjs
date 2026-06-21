@@ -13,6 +13,7 @@ const requiredPortableFiles = [
   'docs/development/workflow/github-first-flow.md',
   'docs/development/adrs/github-first-orchestration.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
+  'scripts/setup-github-project.mjs',
   '.github/ISSUE_TEMPLATE/adr.yml',
   '.github/ISSUE_TEMPLATE/discovery.yml',
   '.github/ISSUE_TEMPLATE/initiative.yml',
@@ -186,6 +187,15 @@ function validate(cwd) {
     for (const snippet of ['Review Handoff Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff']) {
       if (!githubFlow.includes(snippet)) {
         errors.push(`GitHub-first flow is missing review handoff snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, 'scripts/setup-github-project.mjs'))) {
+    const setupScript = read(cwd, 'scripts/setup-github-project.mjs');
+    for (const snippet of ['Agent Workflow Kit v0', 'Decision Needed', 'Artifact State', '--verify-only', '--dry-run', 'gh auth refresh -s repo -s project']) {
+      if (!setupScript.includes(snippet)) {
+        errors.push(`setup-github-project script is missing required snippet: ${snippet}`);
       }
     }
   }

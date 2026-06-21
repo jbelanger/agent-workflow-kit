@@ -22,6 +22,7 @@ const portableEntries = [
   'docs/development/workflow/ai-dev-workflow.md',
   'docs/development/workflow/github-first-flow.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
+  'scripts/setup-github-project.mjs',
   'docs/development/discovery/.gitkeep',
   'docs/development/specs/.gitkeep',
   'docs/development/adrs/.gitkeep',

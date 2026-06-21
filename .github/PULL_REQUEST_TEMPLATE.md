@@ -1,7 +1,12 @@
 ## Summary
 
-## Issue
-Closes #
+## Issue Linkage
+
+Choose one:
+- Closes #
+- Refs #
+
+Reason:
 
 ## Scope
 - In:

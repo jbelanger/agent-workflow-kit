@@ -31,7 +31,9 @@ be inspected.
 - Improving Agent Workflow Kit is part of the work: identify process weakness when the workflow
   itself is confusing, too heavy, too loose, unsafe, or hard to resume.
 - For doc or code changes, `Status = Review` requires a linked PR. Local commits without a PR stay
-  `In Progress`; the next action is to open a draft PR or explain why review is issue-only.
+  `In Progress`; the next action is to open a PR or explain why review is issue-only.
+- A linked PR without a recorded agent review result is still agent-owned. Route it to
+  `review-local-changes` before human merge approval.
 - Treat `Review` as a visible acceptance handoff, not mandatory ceremony. Low-risk docs, process, or
   chore PRs with clean validation may move to human-owned merge when the human explicitly approves.
 
@@ -39,8 +41,9 @@ be inspected.
 
 1. Check whether the user named a specific issue, PR, branch, artifact, or work item. If so, route
    that item before scanning the whole board.
-2. Inspect active PRs before starting new work. A reviewable or revision-needed PR usually beats new
-   planning work.
+2. Inspect active PRs before starting new work. A PR without recorded agent review usually
+   routes to `review-local-changes`; a reviewable or revision-needed PR usually beats new planning
+   work.
 3. Inspect Project items with `Next Actor = Agent` or `Either`.
 4. If several items are eligible, prefer:
    - review or revision work that unblocks merge,
@@ -89,7 +92,25 @@ updates instead of pretending the board is complete.
 
 Do not recommend `Status = Review` for doc or code changes unless the issue has a linked PR. If the
 only evidence is a local commit, keep or recommend `In Progress`, record the commit in the issue,
-and make opening a draft PR the next workflow step.
+and make opening a PR the next workflow step.
+
+Do not use GitHub draft state as the default workflow holding pen. Open PRs as ready for review when
+the branch is pushed, validation has run, and the PR body records issue linkage and current review
+state. Use draft only when work is knowingly incomplete, validation is missing, or the PR is exposing
+a WIP diff without asking for attention.
+
+Do not treat PR draft/ready state as proof that the agent review gate is complete. If the issue or
+PR does not record a completed `review-local-changes` pass, keep or recommend `Status = In
+Progress`, `Next Actor = Agent`, and `Decision Needed = None`, then make `review-local-changes` the
+next workflow verb. If review finds architecture ambiguity, ownership drift, public-surface risk,
+storage risk, or an unclear long-term model, route to `review-revision-triage` or human architecture
+review. After agent review is clean or ordinary findings are fixed/classified, the next human
+handoff is merge approval, not permission to continue the agent loop.
+
+When preparing or reviewing a PR body, choose issue linkage deliberately. Use `Closes #issue` only
+when the PR fully satisfies the issue acceptance criteria and no post-merge reconciliation is needed.
+Use `Refs #issue` for initiatives, parent work, partial completion, deferred work, review-triage
+follow-up, architecture ambiguity, or uncertainty.
 
 Do not keep routing low-risk docs, process, or chore PRs through extra review loops after the human
 has explicitly approved and validation is clean. Report that the next action is human-owned merge.

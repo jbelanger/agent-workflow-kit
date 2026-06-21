@@ -144,6 +144,22 @@ Local commits without a PR stay `In Progress`; record the commit and next action
 instead. Issue-only decisions may be reviewed in the issue thread when there is no repo diff to
 inspect.
 
+GitHub draft state is not the default workflow holding pen. Open PRs as ready for review when the
+branch is pushed, validation has run, and the PR body records issue linkage and current review
+state. Use draft only when work is knowingly incomplete, validation is missing, or the PR is exposing
+a WIP diff without asking for attention.
+
+A linked PR without a recorded agent review result is not yet a human approval handoff, regardless
+of GitHub draft/ready state. Keep it `In Progress` with `Next Actor = Agent`, run
+`review-local-changes`, fix or classify findings, and only then ask for human merge approval. Review
+must still escalate architecture ambiguity, ownership drift, public-surface risk, storage risk, or
+unclear long-term model concerns before merge.
+
+PR bodies must choose issue linkage intentionally. Use `Closes #issue` only when the PR fully
+satisfies the issue acceptance criteria and needs no post-merge reconciliation. Use `Refs #issue`
+for initiatives, parent work, partial completion, deferred work, review-triage follow-up,
+architecture ambiguity, or uncertainty.
+
 `Review` is a visible handoff, not a demand for heavyweight ceremony on every change. Low-risk
 docs, process, or chore PRs may proceed on explicit human approval after validation. Architecture,
 ownership, public surface, storage, or unclear model changes still require meaningful human review.

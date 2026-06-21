@@ -141,6 +141,23 @@ For doc or code changes, `Status = Review` requires a linked GitHub PR. Local co
 remain `In Progress`; issue-only review is only for decisions or artifact text fully visible in the
 issue thread.
 
+GitHub draft state is not the default workflow holding pen. Open PRs as ready for review when the
+branch is pushed, validation has run, and the PR body records issue linkage and current review state.
+Use draft only when work is knowingly incomplete, validation is missing, or the PR is exposing a WIP
+diff without asking for attention.
+
+A linked PR is not automatically human-ready, whether GitHub marks it draft or ready for review. If
+the PR or issue does not record an agent `review-local-changes` result, keep the work `In Progress`,
+keep or set `Next Actor = Agent`, and route the next step to local review. After the agent fixes or
+classifies findings and records the result, ordinary cleanup can continue in the agent loop. The next
+human approval handoff is merge approval. If review finds architecture ambiguity, ownership drift,
+public-surface risk, storage risk, or an unclear long-term model, route to human architecture
+judgment before merge.
+
+PR bodies should use `Closes #issue` only when the PR fully satisfies the issue acceptance criteria
+and needs no post-merge reconciliation. Use `Refs #issue` for initiatives, parent work, partial
+completion, deferred work, review-triage follow-up, architecture ambiguity, or uncertainty.
+
 `Review` means the change is visible for acceptance. It should not create heavyweight ceremony for
 low-risk docs, process, or chore work when validation is clean and the human explicitly approves.
 Meaningful review remains required for architecture-sensitive, ownership, storage, public-surface,
@@ -482,6 +499,8 @@ There are two review paths.
 Use `review-local-changes` for lightweight pre-PR local diff review. It checks blockers,
 architecture concerns, feedback-loop quality, test gaps, naming issues, scope drift, suggested
 fixes, and taste-only notes.
+When a PR already exists, this same review is still the next agent-owned step unless the PR or issue
+records that the agent review pass is complete.
 If the change touches architecture-sensitive surfaces or reveals a smell, switch to
 `review-revision-triage`.
 
@@ -540,6 +559,8 @@ Merge only when:
   accepted decisions changed.
 - The PR summary records validation, decisions, smells, naming issues, and review triage when
   applicable.
+- The PR body uses `Closes #issue` only for fully completed issues; otherwise it uses `Refs #issue`
+  and leaves issue closure to post-merge reconciliation.
 - The human approves.
 
 Use squash merge by default so `main` keeps a readable history.

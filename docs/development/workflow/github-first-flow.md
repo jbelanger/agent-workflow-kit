@@ -53,7 +53,20 @@ a clear issue comment.
 
 For doc or code changes, `Status = Review` requires a linked GitHub PR that exposes the diff. Local
 commits without a PR stay `In Progress`; the issue comment should record the commit and make opening
-a draft PR the next action.
+a PR the next action.
+
+GitHub draft state is not the default workflow holding pen. Open PRs as ready for review when the
+branch is pushed, validation has run, and the PR body records issue linkage and current review state.
+Use draft only when work is knowingly incomplete, validation is missing, or the PR is exposing a WIP
+diff without asking for attention.
+
+A linked PR is the first review surface for the agent, whether GitHub marks it draft or ready for
+review. Until the issue or PR records a completed agent review pass, keep the item `In Progress`
+with `Next Actor = Agent` and route the next `continue-work` pass to `review-local-changes`. The
+agent should fix accepted findings or classify them before asking the human for merge approval. If
+review finds architecture ambiguity, ownership drift, public-surface risk, storage risk, or an
+unclear long-term model, route to human architecture judgment instead of treating it as ordinary
+cleanup.
 
 `Review` is a visible acceptance handoff, not mandatory heavyweight ceremony. For low-risk docs,
 process, or chore changes, clean validation plus explicit human approval is enough to move to the
@@ -62,6 +75,13 @@ surface, storage, or an unclear long-term model.
 
 Issue-only decisions may be reviewed in the issue thread when there is no repo diff to inspect. In
 that case, the issue comment must name the exact question, artifact, or decision being reviewed.
+
+## Issue Linkage Rule
+
+PR bodies should use GitHub closing keywords only when the PR can close the work item by itself.
+Use `Closes #issue` when the PR fully satisfies the issue acceptance criteria and needs no
+post-merge reconciliation. Use `Refs #issue` for initiatives, parent work, partial completion,
+deferred work, review-triage follow-up, architecture ambiguity, or uncertainty.
 
 ## Continue-Work Loop
 
@@ -76,7 +96,10 @@ When the human says "continue work," the agent should:
    prepare implementation, or implement only when the user has clearly authorized implementation.
 7. Keep doc/code work `In Progress` until a linked PR exists; do not mark local-only commits as
    `Review`.
-8. End with current state, next actor, decision needed, next step, and process feedback.
+8. Do not infer review completion from GitHub draft/ready state.
+9. For a linked PR without a recorded agent review result, route to `review-local-changes` before
+   human merge approval.
+10. End with current state, next actor, decision needed, next step, and process feedback.
 
 The expected reply shape is:
 
@@ -178,6 +201,17 @@ These weaknesses appeared during the first GitHub-first dogfood pass:
   `Status = Review`.
 - Review handoff then became too ceremonious for low-risk chore/process work. Adjusted rule:
   `Review` means visible acceptance handoff; deeper review is reserved for meaningful risk.
+- PR handoff was still too early: #13 showed that PR state plus validation can accidentally ask the
+  human to review before the agent has run its own review pass. Accepted rule: linked PRs without
+  recorded agent review stay `In Progress`, `Next Actor = Agent`, and route to
+  `review-local-changes`, regardless of GitHub draft/ready state. Human approval means merge
+  approval; architecture ambiguity still routes to the human before merge.
+- Draft PRs became ceremony after the agent-review gate moved into comments and fields. Accepted
+  rule: open ready PRs by default after validation; use draft only for known WIP, missing
+  validation, or intentionally exposed unfinished diffs.
+- Issue closure was left to human memory: #13 used `Refs #7`, so merging did not close a simple
+  task after it became complete. Accepted rule: agents choose `Closes` only when the PR fully
+  completes the issue; otherwise they use `Refs` and let `continue-work` reconcile after merge.
 - Implementation permission is not fully represented in Project fields. A `Ready` issue with
   `Next Actor = Agent` still does not prove that the human authorized implementation in the current
   turn. Until the workflow has a better signal, the agent must rely on the current user request or a

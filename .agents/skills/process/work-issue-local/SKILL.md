@@ -122,6 +122,9 @@ When completing a child item, superseding refactor, or replacement PR:
 
 - Read the parent work item before finalizing.
 - Decide whether the completed work satisfies the parent acceptance criteria.
+- Use `Closes #issue` in the PR body only when the PR fully satisfies the issue acceptance criteria
+  and needs no post-merge reconciliation. Use `Refs #issue` when the work is partial, parent-level,
+  has deferred review items, needs reconciliation, or is uncertain.
 - If the parent is now resolved, close or recommend closing it with a reconciliation comment.
 - If the parent is only partly resolved, update the parent with what remains.
 - If the replacement changes the understanding of the parent, return the parent to grooming or

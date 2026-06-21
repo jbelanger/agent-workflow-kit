@@ -42,7 +42,8 @@ Use `process/` skills for repeated workflow work:
 
 - `triage-backlog`: classify backlog health and next actions.
 - `pick-next-item`: recommend the next work item.
-- `continue-work`: inspect GitHub issues, PRs, and repo docs to choose the next safe workflow step.
+- `continue-work`: inspect GitHub issues, project fields, PRs, and repo docs to choose the next
+  safe workflow step.
 - `groom-issue`: turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer.
 - `discover-vision`: orchestrate high-interaction early discovery for vague product, UX, creative,
   game, platform, or architecture direction before specs.
@@ -56,7 +57,7 @@ Use `process/` skills for repeated workflow work:
 - `review-revision-triage`: perform strong architecture-sensitive PR review, revision routing, and
   human-review escalation.
 - `improve-workflow`: triage dogfooding feedback and propose concrete process, skill, doc, label, or
-  template improvements.
+  board improvements.
 
 Use other category folders for repeated specialist work when it is not part of the process loop:
 
@@ -74,13 +75,15 @@ durable decisions and draft guidance.
 This repository uses GitHub as the active coordination surface:
 
 - GitHub Issues hold work items, discussion, human answers, and current collaboration state.
+- GitHub Projects hold operating state: lifecycle, next actor, decision needed, artifact state,
+  merge risk, and area.
 - GitHub PRs hold proposed durable docs or code changes and their review gates.
 - Repo docs under `docs/development/` hold accepted durable truth.
 
-Use `continue-work` when the human asks Codex to infer the next step from visible issue, PR, and
-repo-doc state. The orchestrator may recommend issue comments, but it must not silently mutate
-scope, accept artifacts, decide architecture, implement code, push, merge, or close work without
-an explicit instruction.
+Use `continue-work` when the human asks Codex to infer the next step from visible project state. The
+orchestrator may recommend issue comments and project field updates, but it must not silently mutate
+scope, accept artifacts, decide architecture, implement code, push, merge, or close work without an
+explicit instruction.
 
 ## Planning Policy
 
@@ -147,9 +150,10 @@ state. Use draft only when work is knowingly incomplete, validation is missing, 
 a WIP diff without asking for attention.
 
 A linked PR without a recorded agent review result is not yet a human approval handoff, regardless
-of GitHub draft/ready state. Run `review-local-changes`, fix or classify findings, and only then
-ask for human merge approval. Review must still escalate architecture ambiguity, ownership drift,
-public-surface risk, storage risk, or unclear long-term model concerns before merge.
+of GitHub draft/ready state. Keep it `In Progress` with `Next Actor = Agent`, run
+`review-local-changes`, fix or classify findings, and only then ask for human merge approval. Review
+must still escalate architecture ambiguity, ownership drift, public-surface risk, storage risk, or
+unclear long-term model concerns before merge.
 
 PR bodies must choose issue linkage intentionally. Use `Closes #issue` only when the PR fully
 satisfies the issue acceptance criteria and needs no post-merge reconciliation. Use `Refs #issue`
@@ -176,16 +180,16 @@ Review local changes before PR. Challenge architecture direction before ordinary
 - Did it choose a cheap/minimal pass that worsens the architecture?
 - Is there a cleaner model that should be used before merge?
 
-Use `revision-needed` and `needs-human-review` as issue or PR labels. Either agent can force human
-review when it detects architecture smell, debt risk, unclear ownership, spec drift, or meaningful
-non-trivial disagreement.
+Use `revision-needed` and `needs-human-review` as labels or field signals, not required board
+statuses. Either agent can force human review when it detects architecture smell, debt risk, unclear
+ownership, spec drift, or meaningful non-trivial disagreement.
 
 ## Test-Drive Feedback
 
 This workflow is currently being dogfooded. When a skill or process step is confusing, too heavy,
-too loose, unsafe for autonomy, or missing a label/template/state cue, include a brief
-`Process feedback` note in the reply, issue comment, or PR summary. Use `improve-workflow` when
-asked to turn that feedback into process changes.
+too loose, unsafe for autonomy, or missing a field/status/label, include a brief `Process feedback`
+note in the reply, issue comment, or PR summary. Use `improve-workflow` when asked to turn that
+feedback into process changes.
 
 ## CI Policy
 

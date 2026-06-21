@@ -13,20 +13,21 @@ import { fileURLToPath } from 'node:url';
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const portableEntries = [
-  ['kit/AGENTS.md', 'AGENTS.md'],
-  ['.github/ISSUE_TEMPLATE', '.github/ISSUE_TEMPLATE'],
-  ['.github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
-  ['kit/.agents/skills', '.agents/skills'],
-  ['docs/development/README.md', 'docs/development/README.md'],
-  ['docs/development/adrs/github-first-orchestration.md', 'docs/development/adrs/github-first-orchestration.md'],
-  ['docs/development/workflow/ai-dev-workflow.md', 'docs/development/workflow/ai-dev-workflow.md'],
-  ['docs/development/workflow/github-first-flow.md', 'docs/development/workflow/github-first-flow.md'],
-  ['docs/development/workflow/installing-agent-workflow-kit.md', 'docs/development/workflow/installing-agent-workflow-kit.md'],
-  ['docs/development/discovery/.gitkeep', 'docs/development/discovery/.gitkeep'],
-  ['docs/development/specs/.gitkeep', 'docs/development/specs/.gitkeep'],
-  ['docs/development/adrs/.gitkeep', 'docs/development/adrs/.gitkeep'],
-  ['docs/development/spikes/.gitkeep', 'docs/development/spikes/.gitkeep'],
-  ['scripts/validate-workflow.mjs', 'scripts/validate-workflow.mjs'],
+  'AGENTS.md',
+  '.github/ISSUE_TEMPLATE',
+  '.github/PULL_REQUEST_TEMPLATE.md',
+  '.agents/skills',
+  'docs/development/README.md',
+  'docs/development/adrs/github-first-orchestration.md',
+  'docs/development/workflow/ai-dev-workflow.md',
+  'docs/development/workflow/github-first-flow.md',
+  'docs/development/workflow/installing-agent-workflow-kit.md',
+  'scripts/setup-github-project.mjs',
+  'docs/development/discovery/.gitkeep',
+  'docs/development/specs/.gitkeep',
+  'docs/development/adrs/.gitkeep',
+  'docs/development/spikes/.gitkeep',
+  'scripts/validate-workflow.mjs',
 ];
 
 function usage() {
@@ -76,47 +77,46 @@ function parseArgs(argv) {
   };
 }
 
-function collectFiles(sourceEntry, targetEntry = sourceEntry) {
-  const source = join(kitRoot, sourceEntry);
+function collectFiles(entry) {
+  const source = join(kitRoot, entry);
   if (!existsSync(source)) {
-    throw new Error(`Install source is missing: ${sourceEntry}`);
+    throw new Error(`Install source is missing: ${entry}`);
   }
 
   const stat = statSync(source);
-  if (stat.isFile()) return [{ source: sourceEntry, target: targetEntry }];
+  if (stat.isFile()) return [entry];
 
   const files = [];
   for (const name of readdirSync(source)) {
-    const childSource = join(sourceEntry, name);
-    const childTarget = join(targetEntry, name);
-    const childStat = statSync(join(kitRoot, childSource));
+    const child = join(entry, name);
+    const childStat = statSync(join(kitRoot, child));
     if (childStat.isDirectory()) {
-      files.push(...collectFiles(childSource, childTarget));
+      files.push(...collectFiles(child));
     } else if (childStat.isFile()) {
-      files.push({ source: childSource, target: childTarget });
+      files.push(child);
     }
   }
   return files;
 }
 
-function copyFile(file, options, result) {
-  const source = join(kitRoot, file.source);
-  const target = join(options.target, file.target);
+function copyFile(relativePath, options, result) {
+  const source = join(kitRoot, relativePath);
+  const target = join(options.target, relativePath);
 
   if (existsSync(target)) {
     const sourceText = readFileSync(source);
     const targetText = readFileSync(target);
     if (sourceText.equals(targetText)) {
-      result.unchanged.push(file.target);
+      result.unchanged.push(relativePath);
       return;
     }
     if (!options.force) {
-      result.conflicts.push(file.target);
+      result.conflicts.push(relativePath);
       return;
     }
-    result.overwritten.push(file.target);
+    result.overwritten.push(relativePath);
   } else {
-    result.created.push(file.target);
+    result.created.push(relativePath);
   }
 
   if (!options.dryRun) {
@@ -130,13 +130,7 @@ function install(options) {
     throw new Error(`Target repository does not exist: ${options.target}`);
   }
 
-  const filesByTarget = new Map();
-  for (const [source, target] of portableEntries) {
-    for (const file of collectFiles(source, target)) {
-      filesByTarget.set(file.target, file);
-    }
-  }
-  const files = [...filesByTarget.values()].sort((a, b) => a.target.localeCompare(b.target));
+  const files = [...new Set(portableEntries.flatMap(collectFiles))].sort();
   const result = {
     created: [],
     overwritten: [],

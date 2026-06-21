@@ -12,40 +12,42 @@ Mobile and a local agent can later continue without chat memory.
 Human leaves the keyboard
   -> answers a question or approves direction in GitHub
   -> later asks Codex to continue work
-  -> Codex reads GitHub issues, PRs, and repo docs
+  -> Codex reads GitHub issues, Project fields, PRs, and repo docs
   -> Codex knows the next safe workflow step
 ```
 
 The setup script is supporting machinery. It should encode and reproduce this flow, but it is not
 the source of truth for the workflow.
 
-Issues and PRs are the default coordination surface. Keep current state visible in issue comments,
-linked PRs, labels, validation summaries, and repo docs.
+Use `scripts/setup-github-project.mjs` to create or verify the GitHub Project fields, labels, and
+root initiative once the flow is understood.
 
 ## Surfaces
 
 | Surface | Owns | Does not own |
 | --- | --- | --- |
 | GitHub Issue | Work item, discussion, human answers, process feedback, source links. | Accepted durable specs or architecture truth by itself. |
+| GitHub Project | Operating state: status, next actor, decision needed, area, merge risk, artifact state. | Full work description or evidence trail. |
 | GitHub PR | Proposed repo doc or code change, review discussion, validation summary. | Autonomous merge or hidden acceptance. |
 | `docs/development/` | Accepted durable truth after review: vision, specs, ADRs, spikes, workflow docs. | Raw scratch planning. |
 | `.agents/skills/` | Procedural rules for agents. | Project-specific accepted direction. |
 
-## Issue And PR State
+## Project Fields
 
-The active issue or PR should make the next move legible:
+The active Project must make the next move legible:
 
-| State Need | Where It Lives |
+| Field | Meaning |
 | --- | --- |
-| Work shape | Issue title, issue template, and labels such as `task`, `spec`, `adr`, `bug`, or `refactor`. |
-| Current status | Latest issue or PR comment, linked PR state, and labels such as `revision-needed`. |
-| Human decision needed | Explicit issue or PR comment that asks one question or names the needed approval. |
-| Accepted durable truth | Repo docs under `docs/development/` after review. |
-| Proposed doc/code change | Linked PR with validation and issue linkage. |
-| Merge readiness | PR review, checks, validation summary, and unresolved labels. |
+| `Status` | Coarse lifecycle: `Inbox`, `Grooming`, `Discovery`, `Drafting`, `Breakdown`, `Ready`, `In Progress`, `Review`, `Done`, or `Deferred`. |
+| `Issue Type` | The work shape: `Initiative`, `Discovery`, `Spec`, `ADR`, `Spike`, `Task`, `Bug`, or `Refactor`. |
+| `Next Actor` | Who should move next: `Human`, `Agent`, or `Either`. |
+| `Decision Needed` | Why work cannot continue automatically: `None`, `Question`, `Approval`, `Research`, `Architecture`, or `Access`. |
+| `Area` | The affected workflow, docs, CI, guidance, GitHub config, governance, or project area. |
+| `Merge Risk` | Coordination risk: `Parallel-safe`, `Needs coordination`, or `Serial only`. |
+| `Artifact State` | State of a linked durable artifact: `None`, `Draft`, `Accepted`, `Implemented`, or `Superseded`. |
 
-Avoid hidden blocker state. A blocker should be expressed as a clear issue or PR comment, with a
-label such as `needs-human-review` or `needs-source-evidence` when useful.
+Avoid `Blocked` as a status. A blocker should be expressed as `Next Actor`, `Decision Needed`, and
+a clear issue comment.
 
 ## Review Handoff Rule
 
@@ -59,11 +61,12 @@ Use draft only when work is knowingly incomplete, validation is missing, or the 
 diff without asking for attention.
 
 A linked PR is the first review surface for the agent, whether GitHub marks it draft or ready for
-review. Until the issue or PR records a completed agent review pass, route the next `continue-work`
-pass to `review-local-changes`. The agent should fix accepted findings or classify them before
-asking the human for merge approval. If review finds architecture ambiguity, ownership drift,
-public-surface risk, storage risk, or an unclear long-term model, route to human architecture
-judgment instead of treating it as ordinary cleanup.
+review. Until the issue or PR records a completed agent review pass, keep the item `In Progress`
+with `Next Actor = Agent` and route the next `continue-work` pass to `review-local-changes`. The
+agent should fix accepted findings or classify them before asking the human for merge approval. If
+review finds architecture ambiguity, ownership drift, public-surface risk, storage risk, or an
+unclear long-term model, route to human architecture judgment instead of treating it as ordinary
+cleanup.
 
 `Review` is a visible acceptance handoff, not mandatory heavyweight ceremony. For low-risk docs,
 process, or chore changes, clean validation plus explicit human approval is enough to move to the
@@ -85,9 +88,8 @@ deferred work, review-triage follow-up, architecture ambiguity, or uncertainty.
 When the human says "continue work," the agent should:
 
 1. Read open PRs first.
-2. Read open issues, preferring ones named by the user, recently updated, assigned, labeled, or
-   linked from docs.
-3. Prefer ready-looking items with clear acceptance criteria and validation.
+2. Read the active Project.
+3. Prefer `Ready` items where `Next Actor` is `Agent` or `Either`.
 4. Read the selected issue, comments, linked PRs, and named repo docs.
 5. Choose one workflow verb.
 6. Either ask one question, update or draft docs, review an artifact, break down accepted direction,
@@ -110,6 +112,13 @@ Next workflow verb:
 
 ## Current state
 
+Status:
+Issue Type:
+Next Actor:
+Decision Needed:
+Artifact State:
+Merge Risk:
+
 ## Next action
 
 ## Recommended GitHub updates
@@ -122,11 +131,11 @@ Next workflow verb:
 When an agent needs human input:
 
 1. The agent asks exactly one question in an issue comment.
-2. The comment explains why the answer matters and what happens next.
-3. The issue can use labels such as `needs-human-review`, `needs-source-evidence`, or `human-only`
-   when useful.
-4. The human answers in GitHub Mobile or GitHub web.
-5. The next `continue-work` run reads that answer and moves the item forward.
+2. The issue remains in the relevant planning state.
+3. `Next Actor` becomes `Human`.
+4. `Decision Needed` becomes `Question`, `Approval`, `Architecture`, `Research`, or `Access`.
+5. The human answers in GitHub Mobile or GitHub web.
+6. The next `continue-work` run reads that answer and moves the item forward.
 
 The answer should live in the issue thread. Chat-only answers are useful for the current session but
 are weak resume state. When a chat answer changes direction, record it in the issue before relying
@@ -141,7 +150,7 @@ groom issue
   -> discover vision when product/design/platform direction is vague
   -> draft artifact in docs/development/
   -> review through PR or explicit recorded human decision
-  -> mark the artifact accepted only after human acceptance
+  -> mark Artifact State = Accepted only after acceptance
   -> break down accepted direction into executable issues
 ```
 
@@ -158,11 +167,13 @@ Full agent execution is a later proof after the mobile-resumable loop is working
 For v0, implementation should happen only when:
 
 - the issue is `Ready`,
+- `Next Actor` is `Agent` or `Either`,
+- `Decision Needed` is `None`,
 - acceptance criteria and validation are clear,
 - merge risk is classified,
 - the user has asked the agent to implement in the current turn.
 
-Issue labels or comments do not by themselves prove implementation permission. That permission
+The current Project fields do not by themselves prove implementation permission. That permission
 still comes from the user instruction and should be visible in the issue or current thread.
 
 ## Process Feedback Loop
@@ -170,8 +181,8 @@ still comes from the user instruction and should be visible in the issue or curr
 Every meaningful dogfood pass must identify workflow weakness when it sees one. Keep this lightweight
 and close to the work:
 
-- missing or confusing labels or issue templates,
-- unclear next action or decision-needed state,
+- missing or confusing Project fields,
+- unclear next actor or decision-needed state,
 - issue comments that are insufficient for resume,
 - too much ceremony before useful work,
 - unsafe autonomy or unclear approval boundaries,
@@ -192,8 +203,8 @@ These weaknesses appeared during the first GitHub-first dogfood pass:
   `Review` means visible acceptance handoff; deeper review is reserved for meaningful risk.
 - PR handoff was still too early: #13 showed that PR state plus validation can accidentally ask the
   human to review before the agent has run its own review pass. Accepted rule: linked PRs without
-  recorded agent review route to `review-local-changes`, regardless of GitHub draft/ready state.
-  Human approval means merge
+  recorded agent review stay `In Progress`, `Next Actor = Agent`, and route to
+  `review-local-changes`, regardless of GitHub draft/ready state. Human approval means merge
   approval; architecture ambiguity still routes to the human before merge.
 - Draft PRs became ceremony after the agent-review gate moved into comments and fields. Accepted
   rule: open ready PRs by default after validation; use draft only for known WIP, missing
@@ -201,15 +212,22 @@ These weaknesses appeared during the first GitHub-first dogfood pass:
 - Issue closure was left to human memory: #13 used `Refs #7`, so merging did not close a simple
   task after it became complete. Accepted rule: agents choose `Closes` only when the PR fully
   completes the issue; otherwise they use `Refs` and let `continue-work` reconcile after merge.
-- Implementation permission is not fully represented by issue labels or issue wording. Until the
-  workflow has a better signal, the agent must rely on the current user request or a clear issue
-  comment before mutating code.
-- Ordering dependencies are not first-class. `continue-work` must read issue bodies, comments,
-  linked PRs, and source docs, not labels alone.
+- Implementation permission is not fully represented in Project fields. A `Ready` issue with
+  `Next Actor = Agent` still does not prove that the human authorized implementation in the current
+  turn. Until the workflow has a better signal, the agent must rely on the current user request or a
+  clear issue comment before mutating code.
+- Ordering dependencies are not first-class. The board showed both the flow documentation task and
+  the mobile-resume dogfood task as actionable, but the "dogfood depends on documentation first"
+  relationship lived in issue body text. `continue-work` must read issue bodies and comments, not
+  only Project fields, until dependency representation is improved.
 
-## Dogfood Path
+## First Dogfood Path
 
-Use a separate target repository for dogfooding so Agent Workflow Kit does not improve itself through
-the same workflow it is packaging. Start from a clean branch in the target project, record only the
-minimum issue or PR state needed to explain the direction, and promote lessons back into this repo
-after they prove useful.
+Use this order for the first GitHub-first learning run:
+
+1. Document this flow.
+2. Dogfood `continue-work` against Project #2 using issue #8.
+3. Adjust Project fields, templates, or skills based on process feedback.
+4. Only then build the setup script that reproduces the proven board shape.
+
+This keeps the setup script honest: it documents and automates a flow that has already been used.

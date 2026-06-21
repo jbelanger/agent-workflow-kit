@@ -89,15 +89,16 @@ When the human says "continue work," the agent should:
 3. Prefer `Ready` items where issue text, labels, comments, or Project fields show the next actor is
    `Agent` or `Either`.
 4. Read the selected issue, comments, linked PRs, and named repo docs.
-5. Choose one workflow verb.
-6. Either ask one question, update or draft docs, review an artifact, break down accepted direction,
+5. Route selected implementation work without a visible grooming result back to `groom-issue`.
+6. Choose one workflow verb.
+7. Either ask one question, update or draft docs, review an artifact, break down accepted direction,
    prepare implementation, or implement only when the user has clearly authorized implementation.
-7. Keep doc/code work `In Progress` until a linked PR exists; do not mark local-only commits as
+8. Keep doc/code work `In Progress` until a linked PR exists; do not mark local-only commits as
    `Review`.
-8. Do not infer review completion from GitHub draft/ready state.
-9. For a linked PR without a recorded agent review result, route to `review-local-changes` before
+9. Do not infer review completion from GitHub draft/ready state.
+10. For a linked PR without a recorded agent review result, route to `review-local-changes` before
    human merge approval.
-10. End with current state, next actor, decision needed, next step, and process feedback.
+11. End with current state, next actor, decision needed, next step, and process feedback.
 
 The expected reply shape is:
 

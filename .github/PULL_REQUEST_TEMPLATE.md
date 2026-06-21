@@ -8,6 +8,12 @@ Choose one:
 
 Reason:
 
+## Grooming / Readiness
+- Grooming result:
+- Human question asked:
+- Why direct implementation was safe:
+- Unclear assumption or challenge:
+
 ## Scope
 - In:
 - Out:

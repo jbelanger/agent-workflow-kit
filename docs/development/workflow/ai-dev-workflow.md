@@ -137,6 +137,19 @@ Every meaningful dogfood pass should include process feedback when it notices wo
 That feedback belongs in the issue comment or PR summary where it was observed, then routes through
 `improve-workflow` when it needs a durable change.
 
+### Visible Grooming Gate
+
+Do not start implementation from a fresh issue only because the issue has a goal and acceptance
+criteria. Before `work-issue-local`, the issue, comment thread, linked artifact, or implementation
+brief must record a visible grooming result:
+
+- `DIRECT_TASK` with why no spec, ADR, spike, discovery, or human question is needed.
+- Accepted spec, ADR, discovery, or spike direction plus breakdown/implementation boundaries.
+- Prepared implementation brief produced after grooming.
+
+If meaningful ambiguity remains, the grooming record must also capture the clarification question
+asked and answered, or explain why that ambiguity does not affect the next slice.
+
 For doc or code changes, `Status = Review` requires a linked GitHub PR. Local commits without a PR
 remain `In Progress`; issue-only review is only for decisions or artifact text fully visible in the
 issue thread.
@@ -394,8 +407,8 @@ Use `breakdown-issue` after accepted direction and before implementation readine
 
 Breakdown is the orchestration phase. Its job is to decompose accepted direction into independent,
 merge-safe child work items. This can be quick and can happen in the same planning session, but it
-is still a distinct step. No implementation work item is `Ready` until breakdown has produced or
-confirmed task boundaries.
+is still a distinct step. No implementation work item is `Ready` until visible grooming has happened
+and breakdown has produced or confirmed task boundaries.
 
 Breakdown must produce child work items that are:
 

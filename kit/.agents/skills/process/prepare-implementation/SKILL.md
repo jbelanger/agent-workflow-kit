@@ -12,6 +12,8 @@ not write production code.
 
 Before writing the brief, verify the work item has enough context:
 
+- Visible grooming result such as `DIRECT_TASK`, accepted spec/ADR/discovery, or accepted breakdown.
+- Human questions asked and answered, or a clear reason no human answer is needed.
 - Goal.
 - Non-goals.
 - Source docs or code.
@@ -27,6 +29,7 @@ Before writing the brief, verify the work item has enough context:
 - Parent work item link and resolution expectations, when this is a child item, superseding
   refactor, or replacement path.
 - Human decisions resolved, or clearly marked as required.
+- Meaningful ambiguities resolved, or explicitly bounded so they do not affect the next slice.
 
 If the work item is not ready, return it to grooming and explain the missing information.
 If the work item is clear but not decomposed into merge-safe implementation work, send it to
@@ -37,6 +40,10 @@ If the work item is clear but not decomposed into merge-safe implementation work
 Produce:
 
 ```md
+# Grooming result
+
+# Clarifying questions / challenges
+
 # Goal
 
 # Non-goals

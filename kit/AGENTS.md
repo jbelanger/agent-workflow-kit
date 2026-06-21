@@ -77,6 +77,7 @@ This repository uses GitHub as the active coordination surface:
 - GitHub Issues hold work items, discussion, human answers, and current collaboration state.
 - GitHub PRs hold proposed durable docs or code changes and their review gates.
 - Repo docs under `docs/development/` hold accepted durable truth.
+- GitHub labels are lightweight repo configuration for issue type and review signals.
 - GitHub Projects may add optional board state when the repository chooses to use one.
 
 Use `continue-work` when the human asks Codex to infer the next step from visible GitHub and repo
@@ -179,9 +180,10 @@ Review local changes before PR. Challenge architecture direction before ordinary
 - Did it choose a cheap/minimal pass that worsens the architecture?
 - Is there a cleaner model that should be used before merge?
 
-Use `revision-needed` and `needs-human-review` as labels or field signals, not required board
-statuses. Either agent can force human review when it detects architecture smell, debt risk, unclear
-ownership, spec drift, or meaningful non-trivial disagreement.
+Use `revision-needed` and `needs-human-review` as labels when available, or as explicit issue/PR
+comments when labels are not configured. They are not required board statuses. Either agent can force
+human review when it detects architecture smell, debt risk, unclear ownership, spec drift, or
+meaningful non-trivial disagreement.
 
 ## Test-Drive Feedback
 

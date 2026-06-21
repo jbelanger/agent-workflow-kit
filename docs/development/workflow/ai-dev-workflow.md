@@ -510,8 +510,9 @@ Strong review must:
 Either agent can force human review. Both agents must agree before skipping human review. A revision
 is agent-pickable only when both agents agree no human-review-worthy smell exists.
 
-Review details stay on the PR. Use `revision-needed` and `needs-human-review` as labels or fields,
-not required board statuses.
+Review details stay on the PR. Use `revision-needed` and `needs-human-review` as labels when
+available, or as issue comments/fields when labels are not configured. They are not required board
+statuses.
 
 ### 10. Refactor And Superseding PRs
 

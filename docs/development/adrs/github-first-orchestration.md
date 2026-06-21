@@ -23,6 +23,8 @@ Use GitHub as the active orchestration surface for normal Agent Workflow Kit wor
 - Local skills under `.agents/skills/` hold workflow procedure.
 - Local Codex, Claude, opencode, and humans are interchangeable workers that read the same issues,
   PRs, docs, and optional Project fields.
+- GitHub labels are lightweight repo configuration for issue type and review signals. The default
+  templates assign those labels after `scripts/setup-github-labels.mjs` creates them.
 - GitHub Projects are optional coordination surfaces for repos with enough parallel work to need
   board state. They are not installed, created, or required by default.
 
@@ -100,8 +102,9 @@ The kit stops competing with existing products on runtime machinery. It instead 
 existing products do not fully solve for this workflow: planning state, readiness, architecture
 guardrails, and agent-resumable next steps.
 
-The cost is that board fields are not available automatically in a fresh repo. Agents must read issue
-bodies and comments carefully until the repo adopts stronger coordination surfaces.
+The cost is that fresh repos need one small label setup command before issue-template labels apply:
+`node scripts/setup-github-labels.mjs`. Board fields are still unavailable unless the repo adopts a
+Project.
 
 ## Alternatives Considered
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
 
-const defaultProjectTitle = 'Agent Workflow Kit v0';
-const defaultRootTitle = '[Initiative] Build GitHub-first Agent Workflow Kit v0';
+const defaultProjectTitle = 'Agent Workflow';
+const defaultRootTitle = '[Initiative] Establish agent workflow';
 
 const projectFields = [
   ['Status', ['Inbox', 'Grooming', 'Discovery', 'Drafting', 'Breakdown', 'Ready', 'In Progress', 'Review', 'Done', 'Deferred']],
@@ -28,9 +28,10 @@ const requiredLabels = [
 ];
 
 function usage() {
-  return `Usage: node scripts/setup-github-project.mjs [options]
+  return `Usage: node scripts/optional/setup-github-project.mjs [options]
 
-Creates or verifies the GitHub-first Project board from the Agent Workflow Kit contract.
+Optional helper for repositories that want a GitHub Project board in addition to issues and PRs.
+This script is not part of the default installed kit.
 
 Options:
   --repo <owner/name>          Repository for labels and the root initiative.
@@ -116,9 +117,8 @@ function normalizeName(value) {
 function issueBody() {
   return `## Outcome
 
-Build a fresh GitHub-first workflow surface for Agent Workflow Kit v0: Project board, issue labels,
-root initiative, and a dogfood loop where Codex can resume from GitHub state without relying on chat
-memory.
+Set up an optional GitHub Project board, issue labels, and root initiative for agent-assisted work.
+Codex should still be able to resume from issues, PRs, and repo docs when no Project board is used.
 
 ## Source Docs
 
@@ -133,12 +133,12 @@ memory.
 
 ## First Useful Next Step
 
-Ask Codex to continue work. It should read GitHub issues, Project fields, PRs, and repo docs before
-choosing the next workflow verb.`;
+Ask Codex to continue work. It should read GitHub issues, PRs, repo docs, and Project fields when
+present before choosing the next workflow verb.`;
 }
 
 function printContract(options) {
-  console.log('GitHub-first Project setup contract');
+  console.log('Optional GitHub Project setup contract');
   console.log(`Project owner: ${options.owner ?? '<repo owner>'}`);
   console.log(`Repository: ${options.repo ?? '<inferred from gh repo view>'}`);
   console.log(`Project title: ${options.projectTitle}`);

@@ -3,9 +3,6 @@ description: Group related workflow-kit work under one outcome.
 title: "[Initiative] "
 labels: ["initiative"]
 body:
-  - type: markdown
-    attributes:
-      value: "After creating this issue, add it to the active Project and set Status, Issue Type, Next Actor, Decision Needed, Area, and Merge Risk when known."
   - type: textarea
     id: outcome
     attributes:

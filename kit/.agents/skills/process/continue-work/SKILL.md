@@ -1,6 +1,6 @@
 ---
 name: continue-work
-description: Inspect GitHub-first workflow state and choose the next safe workflow action. Use when the user says "continue work", "what next", "resume this project", or wants Codex to infer the next step from GitHub issues, project fields, PRs, and repo docs.
+description: Inspect GitHub-first workflow state and choose the next safe workflow action. Use when the user says "continue work", "what next", "resume this project", or wants Codex to infer the next step from GitHub issues, PRs, repo docs, and optional Project fields.
 ---
 
 # Continue Work
@@ -14,8 +14,8 @@ from visible state, not to perform every step yourself.
 - `docs/development/workflow/ai-dev-workflow.md`.
 - `docs/development/adrs/github-first-orchestration.md`.
 - The active GitHub Project when available.
-- Open GitHub issues, issue comments, labels, sub-issues, milestones, linked PRs, and project field
-  values.
+- Open GitHub issues, issue comments, labels, sub-issues, milestones, linked PRs, and Project field
+  values when present.
 - Repo-local durable docs named by those issues or PRs.
 
 If GitHub is unavailable, fall back to repo-local docs and explain that the project state could not
@@ -23,7 +23,7 @@ be inspected.
 
 ## Core Stance
 
-- GitHub Issues and Projects hold active workflow state.
+- GitHub Issues hold default workflow state. GitHub Projects may add optional coordination state.
 - Repo docs hold accepted durable truth.
 - PRs hold proposed doc/code changes and review gates.
 - Skills hold procedure.
@@ -40,17 +40,17 @@ be inspected.
 ## Routing Order
 
 1. Check whether the user named a specific issue, PR, branch, artifact, or work item. If so, route
-   that item before scanning the whole board.
+   that item before scanning broader workflow state.
 2. Inspect active PRs before starting new work. A PR without recorded agent review usually
    routes to `review-local-changes`; a reviewable or revision-needed PR usually beats new planning
    work.
-3. Inspect Project items with `Next Actor = Agent` or `Either`.
+3. If a Project exists, inspect items with `Next Actor = Agent` or `Either`.
 4. If several items are eligible, prefer:
    - review or revision work that unblocks merge,
    - accepted direction ready for breakdown,
    - narrow Ready work,
    - high-value grooming or discovery,
-   - stale cleanup only when it blocks the board.
+   - stale cleanup only when it blocks the workflow.
 5. If no item is actionable, report the blocker and the smallest human decision needed.
 
 ## Workflow Verbs
@@ -59,7 +59,7 @@ Route to one of these verbs:
 
 | Situation | Next skill |
 | --- | --- |
-| Board is noisy, stale, or unclear | `triage-backlog` |
+| Issues, PRs, or optional board state are noisy, stale, or unclear | `triage-backlog` |
 | Several items are plausible | `pick-next-item` |
 | Issue intent or type is unclear | `groom-issue` |
 | Product, UX, creative, game, platform, or architecture vision is unresolved | `discover-vision` |
@@ -76,7 +76,7 @@ implement or otherwise grant that action in the current turn.
 
 ## GitHub State Rules
 
-Interpret the recommended Project fields this way:
+When Project fields are present, interpret them this way:
 
 | Field | Meaning |
 | --- | --- |
@@ -87,8 +87,8 @@ Interpret the recommended Project fields this way:
 | `Artifact State` | Whether linked durable planning text is draft, accepted, implemented, or superseded. |
 | `Merge Risk` | Whether implementation can safely proceed in parallel. |
 
-If fields are missing, infer cautiously from issue text and comments, then recommend the field
-updates instead of pretending the board is complete.
+If fields are missing, infer cautiously from issue text and comments. Recommend field updates only
+when the repository actually uses a Project.
 
 Do not recommend `Status = Review` for doc or code changes unless the issue has a linked PR. If the
 only evidence is a local commit, keep or recommend `In Progress`, record the commit in the issue,
@@ -146,9 +146,9 @@ Merge Risk:
 ## Process feedback
 ```
 
-When recommending an issue comment, provide the exact Markdown body. When recommending Project field
-updates, list the target field/value pairs. Do not claim they were applied unless you actually apply
-them with an explicit user request.
+When recommending an issue comment, provide the exact Markdown body. When recommending optional
+Project field updates, list the target field/value pairs. Do not claim they were applied unless you
+actually apply them with an explicit user request.
 
 Use `Process feedback` to record weaknesses in the workflow itself, such as missing fields, unclear
 handoff state, chat-only decisions, unsafe implementation permission, or ceremony that makes the next

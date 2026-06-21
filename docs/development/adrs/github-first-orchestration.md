@@ -6,30 +6,29 @@ Status: Accepted
 
 Agent Workflow Kit needs a simple coordination surface that humans and local agents can both read.
 The workflow should stay resumable from durable state instead of depending on chat memory, local
-scratch files, or a custom runtime dashboard.
+scratch files, a custom runtime dashboard, or a mandatory board setup step.
 
-The current GitHub Project and early issues are stale dogfooding artifacts. They should be treated
-as historical evidence, not as active workflow state. The next workflow iteration should restart the
-GitHub coordination surface from a clean Project and fresh issues while keeping the portable skills
-and repo docs that are still useful.
+Early dogfooding used GitHub Projects as the main coordination surface. That proved useful, but it
+also made fresh repos feel like they needed tracker setup before doing real work. The default kit
+should copy only the guidance and templates needed to start work in an ordinary repository.
 
 ## Decision
 
 Use GitHub as the active orchestration surface for normal Agent Workflow Kit work:
 
 - GitHub Issues hold work items, conversation, human answers, and current collaboration state.
-- GitHub Projects hold operating state for "what should happen next."
 - GitHub PRs hold proposed durable docs or code changes and their review gates.
 - Repo docs under `docs/development/` hold accepted durable truth: vision briefs, specs, ADRs,
   spikes, workflow docs, and source evidence.
 - Local skills under `.agents/skills/` hold workflow procedure.
 - Local Codex, Claude, opencode, and humans are interchangeable workers that read the same issues,
-  docs, and project fields.
+  PRs, docs, and optional Project fields.
+- GitHub Projects are optional coordination surfaces for repos with enough parallel work to need
+  board state. They are not installed, created, or required by default.
 
-## Board Contract
+## Optional Board Contract
 
-A fresh GitHub Project should be created instead of repairing the stale board. The minimum useful
-fields are:
+If a repository adopts a GitHub Project, the minimum useful fields are:
 
 | Field | Options |
 | --- | --- |
@@ -41,16 +40,18 @@ fields are:
 | `Merge Risk` | `Parallel-safe`, `Needs coordination`, `Serial only` |
 | `Artifact State` | `None`, `Draft`, `Accepted`, `Implemented`, `Superseded` |
 
-`Status` is only the coarse lifecycle. `Next Actor` and `Decision Needed` are the memory layer that
-lets a human answer from GitHub Mobile and lets Codex resume without chat context.
+`Status` is only the coarse lifecycle. `Next Actor` and `Decision Needed` can be useful memory
+fields, but they are optional. Without a Project, agents should infer the same information from
+issue text, comments, labels, linked PRs, and repo docs.
 
-Do not use `Blocked` as a normal board phase. A blocked item should be represented by `Next Actor`
-and `Decision Needed`, plus a clear issue comment explaining the blocker.
+Do not use `Blocked` as a normal board phase. A blocked item should be represented by a clear issue
+comment, plus Project fields when a Project exists.
 
 ## Orchestrator Contract
 
-The `continue-work` skill is the read-only router for GitHub-first operation. It should inspect the
-Project, issues, comments, linked PRs, and repo docs, then choose the next workflow verb:
+The `continue-work` skill is the read-only router for GitHub-first operation. It should inspect
+issues, comments, linked PRs, repo docs, and Project fields when present, then choose the next
+workflow verb:
 
 - `triage-backlog`
 - `pick-next-item`
@@ -64,9 +65,9 @@ Project, issues, comments, linked PRs, and repo docs, then choose the next workf
 - `review-local-changes`
 - `review-revision-triage`
 
-It may recommend GitHub field updates and issue comments. It must not silently mutate scope, accept
-artifacts, decide architecture, implement code, push, merge, or close work without explicit human
-instruction.
+It may recommend issue comments and, when relevant, Project field updates. It must not silently
+mutate scope, accept artifacts, decide architecture, implement code, push, merge, or close work
+without explicit human instruction.
 
 Every planning reply should make the next state explicit:
 
@@ -77,15 +78,18 @@ Decision Needed:
 Next Step:
 ```
 
-## Migration
+## Packaging Boundary
 
-Restart the active GitHub coordination surface:
+The default installed kit includes:
 
-1. Close or archive stale dogfooding issues with a superseded/reset comment.
-2. Create a new GitHub Project with the board contract above.
-3. Create a new root initiative: `[Initiative] Build GitHub-first Agent Workflow Kit v0`.
-4. Create fresh child issues for the GitHub-first ADR, project setup script, workflow docs update,
-   `continue-work` skill, and first dogfood run.
+- `AGENTS.md`.
+- `.agents/skills/`.
+- GitHub issue and PR templates.
+- `docs/development/` workflow docs and artifact folders.
+- `scripts/validate-workflow.mjs`.
+
+Optional Project board setup tooling may live in the source repository, but it is not part of the
+default copied package.
 
 ## Consequences
 
@@ -96,15 +100,15 @@ The kit stops competing with existing products on runtime machinery. It instead 
 existing products do not fully solve for this workflow: planning state, readiness, architecture
 guardrails, and agent-resumable next steps.
 
-The cost is that GitHub Project setup becomes a first-class install concern. The kit needs scripts
-and validation for labels, templates, Project fields, and the reset procedure.
+The cost is that board fields are not available automatically in a fresh repo. Agents must read issue
+bodies and comments carefully until the repo adopts stronger coordination surfaces.
 
 ## Alternatives Considered
 
 | Alternative | Rejected because |
 | --- | --- |
 | Build or adopt a custom dashboard first | That would create runtime machinery before proving the simpler GitHub issue/PR coordination loop. |
-| Preserve the current Project and issues | The existing board and issues encode stale assumptions and would keep confusing state alive. |
+| Require Project setup by default | That creates setup work before the kit has proved useful in a fresh repo. |
 | Build a custom local runner first | That would recreate platform machinery before proving the simpler GitHub issue/PR coordination loop. |
 | Repo-local Markdown work items as primary state | Useful as a fallback, but weaker for mobile operation, comments, PR linkage, and agent handoff. |
 
@@ -113,6 +117,7 @@ and validation for labels, templates, Project fields, and the reset procedure.
 The decision is valid when:
 
 - `continue-work` exists as a process skill.
-- Workflow docs identify GitHub Issues/Projects/PRs as the active orchestration surface.
-- Install and validation scripts know about the GitHub-first profile.
-- A fresh Project can be created and dogfooded from an empty board to a reviewed PR.
+- Workflow docs identify GitHub Issues and PRs as the default orchestration surface.
+- Install and validation scripts copy only the default kit package.
+- A fresh repo can install the kit, create issues/PRs, and reach a reviewed change without a Project
+  board.

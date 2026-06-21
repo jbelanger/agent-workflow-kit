@@ -75,15 +75,14 @@ durable decisions and draft guidance.
 This repository uses GitHub as the active coordination surface:
 
 - GitHub Issues hold work items, discussion, human answers, and current collaboration state.
-- GitHub Projects hold operating state: lifecycle, next actor, decision needed, artifact state,
-  merge risk, and area.
 - GitHub PRs hold proposed durable docs or code changes and their review gates.
 - Repo docs under `docs/development/` hold accepted durable truth.
+- GitHub Projects may add optional board state when the repository chooses to use one.
 
-Use `continue-work` when the human asks Codex to infer the next step from visible project state. The
-orchestrator may recommend issue comments and project field updates, but it must not silently mutate
-scope, accept artifacts, decide architecture, implement code, push, merge, or close work without an
-explicit instruction.
+Use `continue-work` when the human asks Codex to infer the next step from visible GitHub and repo
+state. The orchestrator may recommend issue comments and optional Project field updates, but it must
+not silently mutate scope, accept artifacts, decide architecture, implement code, push, merge, or
+close work without an explicit instruction.
 
 ## Planning Policy
 

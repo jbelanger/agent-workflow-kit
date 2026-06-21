@@ -12,29 +12,26 @@ Mobile and a local agent can later continue without chat memory.
 Human leaves the keyboard
   -> answers a question or approves direction in GitHub
   -> later asks Codex to continue work
-  -> Codex reads GitHub issues, Project fields, PRs, and repo docs
+  -> Codex reads GitHub issues, PRs, repo docs, and Project fields when present
   -> Codex knows the next safe workflow step
 ```
 
-The setup script is supporting machinery. It should encode and reproduce this flow, but it is not
-the source of truth for the workflow.
-
-Use `scripts/setup-github-project.mjs` to create or verify the GitHub Project fields, labels, and
-root initiative once the flow is understood.
+GitHub Projects are optional coordination surfaces. The default installed kit should work with
+ordinary GitHub issues, PRs, and repo docs before any board setup exists.
 
 ## Surfaces
 
 | Surface | Owns | Does not own |
 | --- | --- | --- |
 | GitHub Issue | Work item, discussion, human answers, process feedback, source links. | Accepted durable specs or architecture truth by itself. |
-| GitHub Project | Operating state: status, next actor, decision needed, area, merge risk, artifact state. | Full work description or evidence trail. |
+| GitHub Project | Optional operating state: status, next actor, decision needed, area, merge risk, artifact state. | Required baseline workflow or full evidence trail. |
 | GitHub PR | Proposed repo doc or code change, review discussion, validation summary. | Autonomous merge or hidden acceptance. |
 | `docs/development/` | Accepted durable truth after review: vision, specs, ADRs, spikes, workflow docs. | Raw scratch planning. |
 | `.agents/skills/` | Procedural rules for agents. | Project-specific accepted direction. |
 
-## Project Fields
+## Optional Project Fields
 
-The active Project must make the next move legible:
+When a repository uses a Project, the Project should make the next move legible:
 
 | Field | Meaning |
 | --- | --- |
@@ -46,8 +43,8 @@ The active Project must make the next move legible:
 | `Merge Risk` | Coordination risk: `Parallel-safe`, `Needs coordination`, or `Serial only`. |
 | `Artifact State` | State of a linked durable artifact: `None`, `Draft`, `Accepted`, `Implemented`, or `Superseded`. |
 
-Avoid `Blocked` as a status. A blocker should be expressed as `Next Actor`, `Decision Needed`, and
-a clear issue comment.
+Avoid `Blocked` as a status. A blocker should always be expressed in a clear issue comment, with
+Project fields added only when a Project exists.
 
 ## Review Handoff Rule
 
@@ -88,8 +85,9 @@ deferred work, review-triage follow-up, architecture ambiguity, or uncertainty.
 When the human says "continue work," the agent should:
 
 1. Read open PRs first.
-2. Read the active Project.
-3. Prefer `Ready` items where `Next Actor` is `Agent` or `Either`.
+2. Read the active Project when one exists.
+3. Prefer `Ready` items where issue text, labels, comments, or Project fields show the next actor is
+   `Agent` or `Either`.
 4. Read the selected issue, comments, linked PRs, and named repo docs.
 5. Choose one workflow verb.
 6. Either ask one question, update or draft docs, review an artifact, break down accepted direction,
@@ -181,7 +179,7 @@ still comes from the user instruction and should be visible in the issue or curr
 Every meaningful dogfood pass must identify workflow weakness when it sees one. Keep this lightweight
 and close to the work:
 
-- missing or confusing Project fields,
+- missing or confusing Project fields when a repo uses a Project,
 - unclear next actor or decision-needed state,
 - issue comments that are insufficient for resume,
 - too much ceremony before useful work,
@@ -191,43 +189,3 @@ and close to the work:
 
 Record the weakness in the issue comment or PR summary where it was observed. Route durable changes
 through `improve-workflow` when the feedback is actionable.
-
-## Known V0 Weaknesses
-
-These weaknesses appeared during the first GitHub-first dogfood pass:
-
-- Review handoff was initially too loose: #11 moved to `Review` with only a local commit, so GitHub
-  Mobile could not inspect the diff. Accepted rule: doc/code work requires a linked PR before
-  `Status = Review`.
-- Review handoff then became too ceremonious for low-risk chore/process work. Adjusted rule:
-  `Review` means visible acceptance handoff; deeper review is reserved for meaningful risk.
-- PR handoff was still too early: #13 showed that PR state plus validation can accidentally ask the
-  human to review before the agent has run its own review pass. Accepted rule: linked PRs without
-  recorded agent review stay `In Progress`, `Next Actor = Agent`, and route to
-  `review-local-changes`, regardless of GitHub draft/ready state. Human approval means merge
-  approval; architecture ambiguity still routes to the human before merge.
-- Draft PRs became ceremony after the agent-review gate moved into comments and fields. Accepted
-  rule: open ready PRs by default after validation; use draft only for known WIP, missing
-  validation, or intentionally exposed unfinished diffs.
-- Issue closure was left to human memory: #13 used `Refs #7`, so merging did not close a simple
-  task after it became complete. Accepted rule: agents choose `Closes` only when the PR fully
-  completes the issue; otherwise they use `Refs` and let `continue-work` reconcile after merge.
-- Implementation permission is not fully represented in Project fields. A `Ready` issue with
-  `Next Actor = Agent` still does not prove that the human authorized implementation in the current
-  turn. Until the workflow has a better signal, the agent must rely on the current user request or a
-  clear issue comment before mutating code.
-- Ordering dependencies are not first-class. The board showed both the flow documentation task and
-  the mobile-resume dogfood task as actionable, but the "dogfood depends on documentation first"
-  relationship lived in issue body text. `continue-work` must read issue bodies and comments, not
-  only Project fields, until dependency representation is improved.
-
-## First Dogfood Path
-
-Use this order for the first GitHub-first learning run:
-
-1. Document this flow.
-2. Dogfood `continue-work` against Project #2 using issue #8.
-3. Adjust Project fields, templates, or skills based on process feedback.
-4. Only then build the setup script that reproduces the proven board shape.
-
-This keeps the setup script honest: it documents and automates a flow that has already been used.

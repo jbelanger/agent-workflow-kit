@@ -3,9 +3,6 @@ description: Clarify product, UX, creative, platform, or architecture vision bef
 title: "[Discovery] "
 labels: ["discovery"]
 body:
-  - type: markdown
-    attributes:
-      value: "After creating this issue, add it to the active Project and set Status, Issue Type, Next Actor, Decision Needed, Area, and Merge Risk when known."
   - type: textarea
     id: source
     attributes:

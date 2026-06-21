@@ -20,8 +20,8 @@ Use the smallest durable surface that matches the job:
 - `AGENTS.md`: installed repository rules, quality bar, validation expectations, and boundaries.
 - `.agents/skills/`: installed local Codex skills organized by category.
 - GitHub issues: active work items, discussion, human answers, and collaboration state.
-- GitHub Projects: operating state for lifecycle, next actor, decision needed, artifact state,
-  merge risk, and area.
+- GitHub Projects: optional operating state for lifecycle, next actor, decision needed, artifact
+  state, merge risk, and area.
 - GitHub PRs: proposed durable docs or code changes and their review gates.
 - `docs/development/`: accepted durable truth such as vision briefs, specs, ADRs, spike writeups,
   workflow docs, and planning records.
@@ -115,8 +115,8 @@ The source-of-truth model is:
 GitHub issue
   -> active work item, discussion, human answers, and collaboration state
 
-GitHub Project
-  -> operating state for what should happen next
+GitHub Project, optional
+  -> operating state for what should happen next when a repo uses a board
 
 GitHub PR
   -> proposed durable doc or code change plus review gate
@@ -129,9 +129,9 @@ repo docs under docs/development/
 ```
 
 Use `continue-work` when the human asks to resume without remembering the current state. It reads
-GitHub issues, project fields, linked PRs, comments, and repo docs, then routes to the next workflow
-verb. It may recommend comments and field updates; it must not silently mutate scope, accept
-artifacts, decide architecture, implement code, push, merge, or close work.
+GitHub issues, linked PRs, comments, repo docs, and Project fields when present, then routes to the
+next workflow verb. It may recommend comments and optional field updates; it must not silently
+mutate scope, accept artifacts, decide architecture, implement code, push, merge, or close work.
 
 Every meaningful dogfood pass should include process feedback when it notices workflow weakness.
 That feedback belongs in the issue comment or PR summary where it was observed, then routes through
@@ -163,19 +163,19 @@ low-risk docs, process, or chore work when validation is clean and the human exp
 Meaningful review remains required for architecture-sensitive, ownership, storage, public-surface,
 or unclear model changes.
 
-The previous Project and issues from early dogfooding are stale. Restart active GitHub coordination
-with a fresh Project and fresh root initiative rather than repairing the old board.
+The default installed kit should work in a fresh repo without Project setup. Add a Project only after
+ordinary issues, PRs, and repo docs prove insufficient for coordination.
 
 ## Work Items
 
-A work item is the workflow's unit of planning. In the default profile it is a GitHub issue on the
-active Project. A repo-local Markdown record under `docs/development/work-items/` is a fallback for
-projects that cannot use GitHub.
+A work item is the workflow's unit of planning. In the default profile it is a GitHub issue. A
+repo-local Markdown record under `docs/development/work-items/` is a fallback for projects that
+cannot use GitHub.
 
 Use this authority model:
 
 ```text
-GitHub issue / Project fields
+GitHub issue / optional Project fields
   -> active workflow state
 
 accepted vision brief / spec / ADR / spike under docs/development/
@@ -552,7 +552,10 @@ Merge only when:
 
 Use squash merge by default so `main` keeps a readable history.
 
-## Board Model
+## Optional Board Model
+
+Use this model when a repository adopts a GitHub Project. Without a Project, capture the same state
+in issue text, labels, comments, and linked PRs.
 
 Recommended statuses:
 
@@ -588,8 +591,8 @@ Core fields:
 | --- | --- | --- |
 | `Status` | Coarse lifecycle state. | Always. |
 | `Issue Type` | Work or artifact type. | Always. |
-| `Next Actor` | Human, Agent, or Either. | Always for active items. |
-| `Decision Needed` | None, Question, Approval, Research, Architecture, or Access. | Always for active items. |
+| `Next Actor` | Human, Agent, or Either. | Use for active Project items. |
+| `Decision Needed` | None, Question, Approval, Research, Architecture, or Access. | Use for active Project items. |
 | `Area` | Product, architecture, or code area. | Use for filtering and avoiding parallel work in the same area. |
 | `Merge Risk` | Parallel coordination risk. | Required before Ready. |
 | `Artifact State` | None, Draft, Accepted, Implemented, or Superseded. | Use when a vision brief, spec, ADR, or spike is linked. |
@@ -605,9 +608,9 @@ Useful labels or secondary fields:
 | `target-phase` | Phase, milestone, or release. | Add only when planning across phases is useful. |
 | `estimate/budget` | Rough size, time, or cost. | Add only when timeline or agent-cost planning needs it. |
 
-Do not add `Blocked` or `Revision Needed` as required board statuses. Blocker state belongs in
-`Next Actor`, `Decision Needed`, labels, and issue comments. Revision state belongs on the PR and in
-labels or fields.
+Do not add `Blocked` or `Revision Needed` as required board statuses. Blocker state belongs in issue
+comments, labels, and optional `Next Actor` / `Decision Needed` fields. Revision state belongs on
+the PR and in labels or fields.
 
 ## Definition Of Ready
 

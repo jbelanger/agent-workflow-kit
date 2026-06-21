@@ -276,10 +276,17 @@ function getIssues(repo) {
 }
 
 function ensureRootIssue(options, actions) {
-  let issue = getIssues(options.repo).find((candidate) => candidate.title === options.rootTitle);
+  const issues = getIssues(options.repo);
+  let issue = issues.find((candidate) => candidate.title === options.rootTitle && candidate.state === 'OPEN');
   if (issue) {
     actions.unchanged.push(`Root initiative: ${issue.url}`);
     return issue;
+  }
+
+  const inactiveIssue = issues.find((candidate) => candidate.title === options.rootTitle);
+  if (inactiveIssue) {
+    actions.mismatched.push(`Root initiative is ${inactiveIssue.state.toLowerCase()}: ${inactiveIssue.url}`);
+    return undefined;
   }
 
   if (options.verifyOnly) {
@@ -300,7 +307,7 @@ function ensureRootIssue(options, actions) {
     'initiative',
   ], { parseJson: false });
 
-  issue = getIssues(options.repo).find((candidate) => candidate.title === options.rootTitle);
+  issue = getIssues(options.repo).find((candidate) => candidate.title === options.rootTitle && candidate.state === 'OPEN');
   if (!issue) throw new Error(`Root initiative was created but could not be found: ${options.rootTitle}`);
   actions.created.push(`Root initiative: ${issue.url}`);
   return issue;

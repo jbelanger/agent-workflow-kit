@@ -1,6 +1,6 @@
 # AI-Oriented Development Workflow
 
-Status: local-skills baseline draft
+Status: GitHub-first baseline draft
 
 This repository is the working home for the workflow. Earlier planning notes from other repositories
 are source material only; durable decisions for this kit now belong here.
@@ -19,11 +19,14 @@ Use the smallest durable surface that matches the job:
 
 - `AGENTS.md`: installed repository rules, quality bar, validation expectations, and boundaries.
 - `.agents/skills/`: installed local Codex skills organized by category.
-- `docs/development/`: durable work items, specs, ADRs, spike writeups, workflow docs, and planning
-  records.
-- GitHub issues and PRs: optional collaboration, review, and remote audit mirrors.
-- `.archon/`: optional execution profile for repos that want workflow runs, artifacts, worktrees,
-  approval gates, and recovery state around the same portable workflow verbs.
+- GitHub issues: active work items, discussion, human answers, and collaboration state.
+- GitHub Projects: operating state for lifecycle, next actor, decision needed, artifact state,
+  merge risk, and area.
+- GitHub PRs: proposed durable docs or code changes and their review gates.
+- `docs/development/`: accepted durable truth such as vision briefs, specs, ADRs, spike writeups,
+  workflow docs, and planning records.
+- `.archon/`: experimental optional execution profile retained as evidence and a possible runtime
+  adapter, not the baseline planning interface.
 - CI: deterministic checks such as tests, typecheck, lint, formatting, build, and architecture
   checks.
 
@@ -68,9 +71,11 @@ Process: planning and orchestration:
 | --- | --- | --- |
 | `triage-backlog` | Review open work items and classify what needs attention. | No |
 | `pick-next-item` | Recommend the best next work item based on readiness, risk, dependencies, and value. | No |
+| `continue-work` | Inspect GitHub issues, project fields, PRs, and repo docs to choose the next safe workflow verb. | No |
 | `groom-issue` | Turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
 | `discover-vision` | Orchestrate early high-interaction product, UX, creative, platform, or architecture discovery before specs. | Docs only |
 | `draft-artifact` | Draft or update one durable spec, ADR, or spike from groomed direction. | Docs only |
+| `review-artifact` | Review and accept or route revision for a durable vision brief, spec, or ADR. | Docs only |
 | `breakdown-issue` | Decompose accepted direction into independent merge-safe child work items. | No |
 | `prepare-implementation` | Convert one Ready work item into an implementation brief. | Docs/issues only when asked |
 | `improve-workflow` | Triage dogfooding feedback and propose process improvements. | Docs/issues only when asked |
@@ -99,50 +104,81 @@ Do not create one mega-skill for the whole workflow. Skills should match the ver
 say. Add specialist or domain skills when repeated work needs durable procedural knowledge that is
 not part of the process loop.
 
-## Optional Archon Execution Profile
+## GitHub-First Orchestration
 
-Archon is an optional runtime profile, not the workflow source of truth.
+Use `docs/development/adrs/github-first-orchestration.md` as the accepted boundary for the active
+workflow model. Use `docs/development/workflow/github-first-flow.md` for the v0 operating flow.
 
-Use this model:
+The source-of-truth model is:
 
 ```text
-portable source:
-  AGENTS.md + .agents/skills + docs/development + optional GitHub issues/PRs
+GitHub issue
+  -> active work item, discussion, human answers, and collaboration state
 
-optional runtime:
-  .archon/commands/awk-* + .archon/workflows/awk-*
+GitHub Project
+  -> operating state for what should happen next
+
+GitHub PR
+  -> proposed durable doc or code change plus review gate
+
+repo docs under docs/development/
+  -> accepted durable truth after review
+
+.agents/skills/
+  -> workflow procedure
 ```
 
-`.archon/commands/awk-*` files are adapters. They should point Codex at the owning skill or rule
-document, define the artifact path Archon needs, and include only the output shape required for
-workflow routing. They should not become parallel skills.
+Use `continue-work` when the human asks to resume without remembering the current state. It reads
+GitHub issues, project fields, linked PRs, comments, and repo docs, then routes to the next workflow
+verb. It may recommend comments and field updates; it must not silently mutate scope, accept
+artifacts, decide architecture, implement code, push, merge, or close work.
 
-`.archon/workflows/awk-*` files own execution mechanics: node order, fresh context, worktree
-isolation, approval gates, deterministic routing, and recovery state.
+Every meaningful dogfood pass should include process feedback when it notices workflow weakness.
+That feedback belongs in the issue comment or PR summary where it was observed, then routes through
+`improve-workflow` when it needs a durable change.
 
-Use `docs/development/workflow/adr-archon-portable-skills.md` as the accepted boundary for the
-Archon profile.
+For doc or code changes, `Status = Review` requires a linked GitHub PR. Local commits without a PR
+remain `In Progress`; issue-only review is only for decisions or artifact text fully visible in the
+issue thread.
+
+`Review` means the change is visible for acceptance. It should not create heavyweight ceremony for
+low-risk docs, process, or chore work when validation is clean and the human explicitly approves.
+Meaningful review remains required for architecture-sensitive, ownership, storage, public-surface,
+or unclear model changes.
+
+The previous Project and issues from early dogfooding are stale. Restart active GitHub coordination
+with a fresh Project and fresh root initiative rather than repairing the old board.
+
+## Experimental Archon Profile
+
+Archon is experimental evidence and an optional runtime adapter, not the workflow source of truth.
+The existing `.archon/commands/awk-*`, `.archon/workflows/awk-*`, route tracker, and spikes remain
+useful evidence for execution primitives such as worktrees, run status, artifacts, and approval
+gates. They are not the baseline planning UX.
 
 During dogfooding, installed skills ask agents to report process friction in a `Process feedback`
 note. Treat those notes as evidence for `improve-workflow`, not as automatic process changes.
 
 ## Work Items
 
-A work item is the workflow's unit of planning. It can be a repo-local Markdown record under
-`docs/development/work-items/`, a GitHub issue, or another tracker item. Prefer repo-local work
-items when the project needs portability without depending on GitHub.
+A work item is the workflow's unit of planning. In the default profile it is a GitHub issue on the
+active Project. A repo-local Markdown record under `docs/development/work-items/` is a fallback for
+projects that cannot use GitHub.
 
 Use this authority model:
 
 ```text
-repo-local work item / accepted spec / accepted ADR
-  -> canonical planning state
+GitHub issue / Project fields
+  -> active workflow state
 
-Archon artifact
+accepted vision brief / spec / ADR / spike under docs/development/
+  -> durable planning truth
+
+PR
+  -> proposed change and review gate
+
+Archon artifact or run record
   -> execution evidence until promoted
-
-GitHub issue or project board
-  -> optional collaboration and progress mirror
 ```
 
 Grooming classifies unclear work. Drafting creates proposed specs, ADRs, or spikes. Breakdown
@@ -152,19 +188,19 @@ child work item into an implementation brief.
 ## Workflow
 
 ```text
-Backlog
+Inbox
   -> Grooming
   -> Discovery / Vision, when vague product direction needs it
-  -> Draft Spec / ADR / Spike / Direct Direction
+  -> Drafting Spec / ADR / Spike / Direct Direction
   -> Breakdown
   -> Ready
   -> In Progress
-  -> In Review
-  -> Complete
+  -> Review
+  -> Done
 ```
 
-`Blocked` is not a normal phase. Use it only when progress truly cannot continue because of a
-decision, dependency, access problem, failed prerequisite, or unresolved architecture fork.
+`Deferred` is an explicit parking state. `Blocked` is not a normal phase; represent blockers with
+`Next Actor`, `Decision Needed`, labels, and a clear issue comment.
 
 ### 1. Triage Backlog
 
@@ -343,13 +379,10 @@ Spec state is separate from board status:
 | `Superseded` | A newer spec or ADR replaced this one. |
 
 When a spec lives in the repo, acceptance happens through PR review of the spec document or an
-explicit human decision. For dashboard-first local review, use `review-artifact` or the Archon
-`awk-review-artifact` adapter to promote the artifact state and record the decision. After the
-direction is accepted, send it to `breakdown-issue` or the Archon `awk-breakdown-work-item` adapter.
-To request changes without accepting in the dashboard, run `awk-revise-artifact` with the artifact
-path and revision reason. It records a durable revision request while leaving the artifact in
-draft/proposed state. `awk-review-artifact` also keeps a `REVISE: <reason>` approval-response
-shortcut for compatibility, but the dedicated revision workflow is the preferred route.
+explicit human decision recorded in the issue or PR. Use `review-artifact` to promote the artifact
+state and record the decision. After the direction is accepted, send it to `breakdown-issue`. To
+request changes without accepting, keep the artifact in draft/proposed state and record the revision
+request in the issue, PR, or artifact decision history.
 
 ### 6. Breakdown
 
@@ -517,20 +550,23 @@ Recommended statuses:
 
 | Status | Description | When to use |
 | --- | --- | --- |
-| `Backlog` | Captured but not currently moving. | Ideas, future work, deferred items, and work not yet selected. |
+| `Inbox` | Captured but not yet classified. | New ideas, raw requests, imported notes, and untriaged items. |
 | `Grooming` | Clarifying intent and classifying next output. | Use while deciding spec, ADR, spike, direct direction, drop, or defer. |
+| `Discovery` | High-interaction product, UX, creative, platform, or architecture direction is being clarified. | Use when a vague idea needs `discover-vision` before specification. |
+| `Drafting` | A durable vision brief, spec, ADR, or spike record is being drafted. | Use before the artifact is ready for review. |
 | `Breakdown` | Accepted direction is being decomposed into executable child work items. | Use before child work items are merge-safe and Ready. |
 | `Ready` | Scoped and safe for one agent to pick up. | Use after breakdown and implementation prep are sufficient. |
 | `In Progress` | An agent or human is actively working. | Branch/worktree work, spec drafting, active replacement path, or revision pass. |
-| `In Review` | The author believes the PR or artifact is reviewable. | Use when review should evaluate the work. |
-| `Blocked` | Progress cannot continue. | Use only for real decisions, access, dependencies, failed prerequisites, or architecture forks. |
-| `Complete` | Done and no required work remains. | Use after merge, closure, or accepted completion for non-code artifacts. |
+| `Review` | The PR, artifact, or result is ready for review. | Use when review should evaluate the work. |
+| `Done` | Done and no required work remains. | Use after merge, closure, or accepted completion for non-code artifacts. |
+| `Deferred` | Intentionally parked. | Use when the item remains valid but should not move now. |
 
-Recommended work item types:
+Recommended issue types:
 
-| Work Item Type | Description | When to use |
+| Issue Type | Description | When to use |
 | --- | --- | --- |
 | `Initiative` | A large outcome grouping multiple work items. | Use for parent tracking, sequencing, and progress visibility. |
+| `Discovery` | A high-level vision work item. | Use for vague product, UX, creative, game, platform, or architecture direction before a spec. |
 | `Spec` | Durable behavior or contract definition. | Use when behavior or acceptance criteria need agreement. |
 | `ADR` | Durable architecture or operating decision. | Use when direction, ownership, storage, public surface, or policy changes. |
 | `Spike` | Time-boxed evidence gathering. | Use when production work would otherwise guess. |
@@ -543,11 +579,12 @@ Core fields:
 | Field | Description | When to use |
 | --- | --- | --- |
 | `Status` | Coarse lifecycle state. | Always. |
-| `Work Item Type` | Work or artifact type. | Always. |
+| `Issue Type` | Work or artifact type. | Always. |
+| `Next Actor` | Human, Agent, or Either. | Always for active items. |
+| `Decision Needed` | None, Question, Approval, Research, Architecture, or Access. | Always for active items. |
 | `Area` | Product, architecture, or code area. | Use for filtering and avoiding parallel work in the same area. |
 | `Merge Risk` | Parallel coordination risk. | Required before Ready. |
-| `Vision State` | Draft, Accepted, or Superseded. | Use for discovery/vision work. |
-| `Spec State` | Draft, Accepted, Implemented, or Superseded. | Use for spec work items. |
+| `Artifact State` | None, Draft, Accepted, Implemented, or Superseded. | Use when a vision brief, spec, ADR, or spike is linked. |
 
 Useful labels or secondary fields:
 
@@ -557,11 +594,11 @@ Useful labels or secondary fields:
 | `needs-human-review` | Human architecture or product judgment is needed. | Use when either agent escalates. |
 | `needs-source-evidence` | Claims need code, docs, logs, or external evidence. | Use before planning or implementation can proceed. |
 | `human-only` | Should not be autonomously executed by an agent. | Credentials, subjective product decisions, finance/legal/privacy judgment, or merge approval. |
-| `deferred` | Intentionally retained but not moving now. | Use on backlog items, not as status. |
 | `target-phase` | Phase, milestone, or release. | Add only when planning across phases is useful. |
 | `estimate/budget` | Rough size, time, or cost. | Add only when timeline or agent-cost planning needs it. |
 
-Do not add `Revision Needed` as a required board status. Revision state belongs on the PR and in
+Do not add `Blocked` or `Revision Needed` as required board statuses. Blocker state belongs in
+`Next Actor`, `Decision Needed`, labels, and issue comments. Revision state belongs on the PR and in
 labels or fields.
 
 ## Definition Of Ready

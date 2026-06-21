@@ -14,13 +14,15 @@ const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const portableEntries = [
   'AGENTS.md',
+  '.github/ISSUE_TEMPLATE',
+  '.github/PULL_REQUEST_TEMPLATE.md',
   '.agents/skills',
   'docs/development/README.md',
+  'docs/development/adrs/github-first-orchestration.md',
   'docs/development/workflow/ai-dev-workflow.md',
-  'docs/development/workflow/adr-archon-portable-skills.md',
+  'docs/development/workflow/github-first-flow.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
   'docs/development/discovery/.gitkeep',
-  'docs/development/work-items/.gitkeep',
   'docs/development/specs/.gitkeep',
   'docs/development/adrs/.gitkeep',
   'docs/development/spikes/.gitkeep',
@@ -29,6 +31,7 @@ const portableEntries = [
 
 const archonEntries = [
   '.archon',
+  'docs/development/workflow/adr-archon-portable-skills.md',
   'docs/development/workflow/archon-recovery-runbook.md',
   'scripts/validate-archon-pack.mjs',
 ];
@@ -41,10 +44,10 @@ const archonGitignoreBlock = `# Agent Workflow Kit / Archon runtime
 function usage() {
   return `Usage: node scripts/install-workflow-kit.mjs --target <repo> [--with-archon] [--force] [--dry-run]
 
-Installs Agent Workflow Kit into another repository.
+Installs the GitHub-first Agent Workflow Kit into another repository.
 
 Default install:
-  AGENTS.md, .agents/skills/, workflow docs, and scripts/validate-workflow.mjs
+  AGENTS.md, .github templates, .agents/skills/, workflow docs, and scripts/validate-workflow.mjs
 
 With --with-archon:
   also installs .archon/, the Archon recovery doc, and scripts/validate-archon-pack.mjs
@@ -210,7 +213,7 @@ try {
   }
 
   console.log(`Installed Agent Workflow Kit into ${relative(process.cwd(), options.target) || '.'}`);
-  console.log(`Profile: ${options.withArchon ? 'portable skills + Archon adapters' : 'portable skills'}`);
+  console.log(`Profile: ${options.withArchon ? 'GitHub-first workflow + Archon adapters' : 'GitHub-first workflow'}`);
   if (options.dryRun) console.log('Dry run: no files were written.');
   printList('Created', result.created);
   printList('Overwritten', result.overwritten);

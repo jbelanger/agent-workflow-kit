@@ -10,11 +10,14 @@ locally with agents and humans, and keep decisions auditable.
 ## Start Here
 
 - Workflow draft: `docs/development/workflow/ai-dev-workflow.md`
+- GitHub-first flow: `docs/development/workflow/github-first-flow.md`
 - Install contract: `docs/development/workflow/installing-agent-workflow-kit.md`
-- Buy-vs-build mapping: `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`
-- Archon portability ADR: `docs/development/workflow/adr-archon-portable-skills.md`
-- Archon route tracker: `docs/development/workflow/archon-route-tracker.md`
-- Archon concept spikes: `docs/development/workflow/archon-concept-spikes.md`
+- GitHub-first orchestration ADR: `docs/development/adrs/github-first-orchestration.md`
+- Buy-vs-build and Archon experiment evidence:
+  - `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`
+  - `docs/development/workflow/adr-archon-portable-skills.md`
+  - `docs/development/workflow/archon-route-tracker.md`
+  - `docs/development/workflow/archon-concept-spikes.md`
 - Rebuild trace: `docs/development/workflow/rebuild-trace.md`
 - Development docs policy: `docs/development/README.md`
 - Active agent instructions: `AGENTS.md`
@@ -22,66 +25,42 @@ locally with agents and humans, and keep decisions auditable.
 
 ## Current Goal
 
-Dogfood a stripped-down local Codex workflow before adding automation. The Archon branch tests an
-optional execution profile on top of the portable skills workflow instead of replacing the copied
-repo workflow with an Archon-only process.
+Dogfood a GitHub-first agent workflow before adding custom runtime automation. The Archon branch
+produced stronger portable skills, but the active baseline is now GitHub Issues, GitHub Projects,
+repo-local durable docs, PR review gates, and local agents.
 
 The initial working assumption:
 
 - single repository by default
 - durable development artifacts under `docs/development/`
-- GitHub Issues and Projects as the planning surface
+- GitHub Issues and Projects as the active orchestration surface
 - local-first Codex agents
 - repeated workflow verbs captured as local skills
+- `continue-work` as the GitHub-aware router for resuming from visible state
 - high-interaction discovery for vague product/design direction before low-interaction execution
 - deterministic CI only for now
 - no Codex-in-CI baseline yet
 - no autonomous merge
-- experimental optional `.archon/` execution profile with bundled Archon defaults disabled
+- optional `.archon/` execution profile retained as experiment evidence, not the default path
 
-Useful Archon entry point:
+Plain Codex entry point:
 
-```bash
-archon workflow run awk-continue-work --cwd /Users/joel/Dev/agent-workflow-kit "continue work"
+```text
+Continue work from the GitHub Project and issues.
 ```
 
-The first planning fallback is also available in Archon:
-
-```bash
-archon workflow run awk-groom-issue --cwd /Users/joel/Dev/agent-workflow-kit "Groom ARCHON-010"
-```
-
-Early product/design discovery is available when grooming reports unresolved vision work:
-
-```bash
-archon workflow run awk-discover-vision --cwd /Users/joel/Dev/agent-workflow-kit "Discover vision for <work item>"
-```
-
-Dashboard-first artifact review is available for draft vision briefs, specs, and ADRs:
-
-```bash
-archon workflow run awk-review-artifact --cwd /Users/joel/Dev/agent-workflow-kit "Review docs/development/specs/<spec>.md"
-```
-
-In the dashboard approval gate, approve normally to accept. To request changes without accepting,
-run the dedicated revision workflow with the artifact path and reason:
-
-```bash
-archon workflow run awk-revise-artifact --cwd /Users/joel/Dev/agent-workflow-kit "docs/development/specs/<spec>.md REVISE: <reason>"
-```
-
-`awk-review-artifact` also accepts an approval response starting with `REVISE:` for compatibility,
-but `awk-revise-artifact` is the cleaner dashboard route.
+Codex should read `AGENTS.md`, use `.agents/skills/process/continue-work/SKILL.md`, inspect GitHub
+issues/PRs/project fields and repo docs, then recommend the next safe workflow verb.
 
 ## Install Into Another Repo
 
-Portable skills only:
+GitHub-first workflow kit:
 
 ```bash
 node scripts/install-workflow-kit.mjs --target /path/to/project
 ```
 
-Portable skills plus the optional Archon dashboard/runtime profile:
+GitHub-first workflow kit plus the optional Archon runtime profile:
 
 ```bash
 node scripts/install-workflow-kit.mjs --target /path/to/project --with-archon

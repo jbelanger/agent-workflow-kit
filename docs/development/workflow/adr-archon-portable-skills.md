@@ -2,6 +2,10 @@
 
 Status: accepted
 
+Superseded for baseline workflow direction by
+`docs/development/adrs/github-first-orchestration.md`. This ADR remains accepted only as the boundary
+for the optional Archon execution profile.
+
 ## Context
 
 `agent-workflow-kit` is copied into other repositories. Those repositories may already have local

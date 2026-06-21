@@ -1,6 +1,9 @@
 # Archon Route Tracker
 
-Status: active tracker
+Status: superseded experiment tracker
+
+Superseded by `docs/development/adrs/github-first-orchestration.md`. This tracker is retained as
+evidence from the Archon experiment; it is not the active roadmap.
 
 This tracker records the experiment to take the Archon route as far as practical on the
 `archon-workflow-pack` branch while keeping `main` centered on portable skills.

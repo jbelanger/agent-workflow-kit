@@ -10,16 +10,26 @@ const requiredPortableFiles = [
   '.agents/skills/domain/README.md',
   'docs/development/README.md',
   'docs/development/workflow/ai-dev-workflow.md',
-  'docs/development/workflow/adr-archon-portable-skills.md',
+  'docs/development/workflow/github-first-flow.md',
+  'docs/development/adrs/github-first-orchestration.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
+  '.github/ISSUE_TEMPLATE/adr.yml',
+  '.github/ISSUE_TEMPLATE/discovery.yml',
+  '.github/ISSUE_TEMPLATE/initiative.yml',
+  '.github/ISSUE_TEMPLATE/spec.yml',
+  '.github/ISSUE_TEMPLATE/task.yml',
+  '.github/PULL_REQUEST_TEMPLATE.md',
   'docs/development/discovery/.gitkeep',
-  'docs/development/work-items/.gitkeep',
+  'docs/development/adrs/.gitkeep',
+  'docs/development/specs/.gitkeep',
+  'docs/development/spikes/.gitkeep',
   'scripts/validate-workflow.mjs',
 ];
 
 const requiredSkills = [
   '.agents/skills/process/triage-backlog/SKILL.md',
   '.agents/skills/process/pick-next-item/SKILL.md',
+  '.agents/skills/process/continue-work/SKILL.md',
   '.agents/skills/process/groom-issue/SKILL.md',
   '.agents/skills/process/discover-vision/SKILL.md',
   '.agents/skills/process/draft-artifact/SKILL.md',
@@ -120,6 +130,7 @@ function validate(cwd) {
   if (existsSync(join(cwd, '.archon'))) {
     for (const path of [
       '.archon/config.yaml',
+      'docs/development/workflow/adr-archon-portable-skills.md',
       'docs/development/workflow/archon-recovery-runbook.md',
       'scripts/validate-archon-pack.mjs',
     ]) {
@@ -157,6 +168,24 @@ function validate(cwd) {
     for (const snippet of ['product-strategy', 'technical-architecture', 'validation-strategy', 'ux-direction', 'creative-direction', 'READY_FOR_SPEC', 'DIRECT_TASK', 'real fork']) {
       if (!discoverSkill.includes(snippet)) {
         errors.push(`discover-vision skill is missing required snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, '.agents/skills/process/continue-work/SKILL.md'))) {
+    const continueSkill = read(cwd, '.agents/skills/process/continue-work/SKILL.md');
+    for (const snippet of ['Next Actor', 'Decision Needed', 'GitHub Project', 'Next workflow verb', 'work-issue-local', 'linked PR', 'Local commits without a PR']) {
+      if (!continueSkill.includes(snippet)) {
+        errors.push(`continue-work skill is missing GitHub routing snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, 'docs/development/workflow/github-first-flow.md'))) {
+    const githubFlow = read(cwd, 'docs/development/workflow/github-first-flow.md');
+    for (const snippet of ['Review Handoff Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff']) {
+      if (!githubFlow.includes(snippet)) {
+        errors.push(`GitHub-first flow is missing review handoff snippet: ${snippet}`);
       }
     }
   }

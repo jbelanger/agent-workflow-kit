@@ -141,6 +141,11 @@ For doc or code changes, `Status = Review` requires a linked GitHub PR. Local co
 remain `In Progress`; issue-only review is only for decisions or artifact text fully visible in the
 issue thread.
 
+`Review` means the change is visible for acceptance. It should not create heavyweight ceremony for
+low-risk docs, process, or chore work when validation is clean and the human explicitly approves.
+Meaningful review remains required for architecture-sensitive, ownership, storage, public-surface,
+or unclear model changes.
+
 The previous Project and issues from early dogfooding are stale. Restart active GitHub coordination
 with a fresh Project and fresh root initiative rather than repairing the old board.
 

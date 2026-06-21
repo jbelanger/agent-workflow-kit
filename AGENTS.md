@@ -144,6 +144,11 @@ Local commits without a PR stay `In Progress`; record the commit and next action
 instead. Issue-only decisions may be reviewed in the issue thread when there is no repo diff to
 inspect.
 
+`Review` is a visible handoff, not a demand for heavyweight ceremony on every change. Low-risk
+docs, process, or chore PRs may proceed on explicit human approval after validation. Architecture,
+ownership, public surface, storage, or unclear model changes still require meaningful human review.
+Agents still must not merge.
+
 Classify meaningful feedback as:
 
 - Accepted.

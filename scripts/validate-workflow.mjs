@@ -183,7 +183,7 @@ function validate(cwd) {
 
   if (existsSync(join(cwd, 'docs/development/workflow/github-first-flow.md'))) {
     const githubFlow = read(cwd, 'docs/development/workflow/github-first-flow.md');
-    for (const snippet of ['Review Handoff Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR']) {
+    for (const snippet of ['Review Handoff Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff']) {
       if (!githubFlow.includes(snippet)) {
         errors.push(`GitHub-first flow is missing review handoff snippet: ${snippet}`);
       }

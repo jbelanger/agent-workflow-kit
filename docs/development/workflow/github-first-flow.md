@@ -52,6 +52,11 @@ For doc or code changes, `Status = Review` requires a linked GitHub PR that expo
 commits without a PR stay `In Progress`; the issue comment should record the commit and make opening
 a draft PR the next action.
 
+`Review` is a visible acceptance handoff, not mandatory heavyweight ceremony. For low-risk docs,
+process, or chore changes, clean validation plus explicit human approval is enough to move to the
+human-owned merge step. Use deeper review when the change affects architecture, ownership, public
+surface, storage, or an unclear long-term model.
+
 Issue-only decisions may be reviewed in the issue thread when there is no repo diff to inspect. In
 that case, the issue comment must name the exact question, artifact, or decision being reviewed.
 
@@ -168,6 +173,8 @@ These weaknesses appeared during the first GitHub-first dogfood pass:
 - Review handoff was initially too loose: #11 moved to `Review` with only a local commit, so GitHub
   Mobile could not inspect the diff. Accepted rule: doc/code work requires a linked PR before
   `Status = Review`.
+- Review handoff then became too ceremonious for low-risk chore/process work. Adjusted rule:
+  `Review` means visible acceptance handoff; deeper review is reserved for meaningful risk.
 - Implementation permission is not fully represented in Project fields. A `Ready` issue with
   `Next Actor = Agent` still does not prove that the human authorized implementation in the current
   turn. Until the workflow has a better signal, the agent must rely on the current user request or a

@@ -3,11 +3,17 @@
 Status: seed repository.
 
 This repository is a working kit for building a GitHub-native, agent-assisted development workflow.
-It is now treated as the source repo for installable guidance, not as an installed target of its own
-workflow.
+It is the source repo for installable guidance, not an installed target of its own workflow.
+
+Root `AGENTS.md` is intentionally source-repo guidance. It tells local agents not to recursively run
+the kit workflow on this repository. The installable target-repo instructions live in
+`kit/AGENTS.md`.
+
+![Your loop vs. the kit today](docs/assets/your-loop-vs-kit-today.png)
 
 ## Start Here
 
+- Source-repo agent guidance: `AGENTS.md`
 - Workflow draft: `docs/development/workflow/ai-dev-workflow.md`
 - GitHub-first flow: `docs/development/workflow/github-first-flow.md`
 - Install contract: `docs/development/workflow/installing-agent-workflow-kit.md`
@@ -30,6 +36,10 @@ Use that Tetris game repository to test what the kit should help a real project 
 state. Keep this repository focused on packaging the guidance, scripts, templates, and docs that
 prove useful there.
 
+For this source repo, use direct collaboration instead of the installed workflow loop: clarify with
+the human, edit the source, run validation, and commit or push when asked. Do not create GitHub
+issues, PRs, Project fields, or workflow state here unless the human explicitly asks for that.
+
 The initial working assumption:
 
 - single repository by default
@@ -42,9 +52,9 @@ The initial working assumption:
 - no Codex-in-CI baseline yet
 - no autonomous merge
 
-This repo intentionally does not keep root `AGENTS.md` or root `.agents/skills/`. Those files live
-under `kit/` so local agents do not accidentally use the kit on itself. The installer copies them to
-the target repo root.
+The root repo keeps only source-specific `AGENTS.md`. The installed `AGENTS.md` and installed skills
+live under `kit/` so target repositories get the workflow while this source repo keeps its own
+lighter self-improvement rules.
 
 ## Install Into Another Repo
 

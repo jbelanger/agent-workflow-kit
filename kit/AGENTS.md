@@ -117,6 +117,12 @@ makes the decision easier.
 ## Implementation Policy
 
 - Work from one groomed work item at a time.
+- Do not begin implementation until the issue, comment thread, linked artifact, or implementation
+  brief records a visible grooming result such as `DIRECT_TASK`, accepted spec/ADR/discovery, or a
+  prepared implementation brief.
+- For greenfield product, UX, game, or browser-app work, direct implementation also requires a
+  recorded user/player, intended experience, core loop or workflow, design challenges considered,
+  and the human question asked or why no human answer was needed.
 - Use `draft-artifact` when groomed direction needs a durable spec, ADR, or spike before
   implementation work is shaped.
 - Use `breakdown-issue` before implementation when accepted direction must become one or more

@@ -36,6 +36,12 @@ be inspected.
   `review-local-changes` before human merge approval.
 - Treat `Review` as a visible acceptance handoff, not mandatory ceremony. Low-risk docs, process, or
   chore PRs with clean validation may move to human-owned merge when the human explicitly approves.
+- A fresh issue is not implementation-ready only because it has a goal and acceptance criteria.
+  Without a visible grooming result, route to `groom-issue`.
+- For product, UX, creative, game, platform, or greenfield browser-app work, route to grooming or
+  discovery unless the issue/comment history records the intended user or player, desired
+  experience, primary loop or workflow, design challenges, and the human question asked or why no
+  human answer was needed.
 
 ## Routing Order
 
@@ -61,6 +67,7 @@ Route to one of these verbs:
 | --- | --- |
 | Issues, PRs, or optional board state are noisy, stale, or unclear | `triage-backlog` |
 | Several items are plausible | `pick-next-item` |
+| Issue has no visible grooming result or direct-task rationale | `groom-issue` |
 | Issue intent or type is unclear | `groom-issue` |
 | Product, UX, creative, game, platform, or architecture vision is unresolved | `discover-vision` |
 | Accepted or groomed direction needs a spec, ADR, or spike record | `draft-artifact` |

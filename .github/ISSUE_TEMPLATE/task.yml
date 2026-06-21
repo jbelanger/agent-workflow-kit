@@ -23,6 +23,13 @@ body:
     validations:
       required: true
   - type: textarea
+    id: grooming_result
+    attributes:
+      label: Grooming result
+      description: Record DIRECT_TASK or link accepted direction; include human questions asked/answered, or why none were needed.
+    validations:
+      required: true
+  - type: textarea
     id: owned_area
     attributes:
       label: Owned area or module

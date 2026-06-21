@@ -99,6 +99,20 @@ Recommendation:
 Why:
 ```
 
+## Visible Grooming Record
+
+Before implementation, record the grooming result in the issue, a linked planning artifact, or the
+implementation brief. Even `DIRECT_TASK` must make the skipped planning visible:
+
+- Why direct implementation is safe.
+- Product, design, architecture, and validation challenges considered.
+- Human question asked and answered, or why no human answer was needed.
+- Next workflow verb.
+
+For product, UX, creative, game, platform, or greenfield browser-app work, absence of a visible
+human question is evidence that the work is still in grooming unless the record explains why the
+missing decision is not meaningful.
+
 ## Interview And Research Mode
 
 Use interview mode when the work is vague and the missing information is product, design, creative,

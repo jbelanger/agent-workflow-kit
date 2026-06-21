@@ -36,9 +36,28 @@ cross-module direction, and operating policy.
 - No untracked technical debt.
 - No PR is clean only because tests pass if the architecture direction is wrong.
 
+## Readiness Gate
+
+Before creating a branch, editing files, or writing code, verify that the issue, comment thread,
+linked artifact, or implementation brief contains a visible grooming result. Acceptable evidence is
+one of:
+
+- `DIRECT_TASK` with a clear rationale for why no spec, ADR, spike, discovery, or human question is
+  needed.
+- Accepted spec, ADR, discovery, or spike direction plus breakdown/implementation boundaries.
+- A prepared implementation brief produced after grooming.
+
+If this evidence is missing, stop before implementation and route back to `groom-issue`. Do not
+treat a well-written issue body as a substitute for grooming.
+
+For product, UX, creative, game, platform, or greenfield browser-app work, the visible grooming
+record must also include the intended user or player, desired experience, primary loop or workflow,
+design challenges considered, and the human question asked or why no human answer was needed.
+
 ## Process
 
-1. Read the work item, implementation brief, linked docs, nearby code, and tests.
+1. Read the work item, visible grooming result, implementation brief, linked docs, nearby code, and
+   tests.
 2. If this is a child item, superseding refactor, or replacement PR, read the parent work item and
    record how the child work relates to the parent acceptance criteria.
 3. Restate the goal, non-goals, owned area, allowed and forbidden files, validation command, merge

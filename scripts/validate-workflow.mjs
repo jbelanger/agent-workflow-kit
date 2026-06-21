@@ -162,16 +162,46 @@ function validate(cwd) {
   const continueSkillPath = sourcePath(cwd, '.agents/skills/process/continue-work/SKILL.md');
   if (existsSync(join(cwd, continueSkillPath))) {
     const continueSkill = read(cwd, continueSkillPath);
-    for (const snippet of ['GitHub issues', 'Next workflow verb', 'work-issue-local', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue']) {
+    for (const snippet of ['GitHub issues', 'Next workflow verb', 'work-issue-local', 'visible grooming result', 'direct-task rationale', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue']) {
       if (!continueSkill.includes(snippet)) {
         errors.push(`continue-work skill is missing GitHub routing snippet: ${snippet}`);
       }
     }
   }
 
+  const groomSkillVisiblePath = sourcePath(cwd, '.agents/skills/process/groom-issue/SKILL.md');
+  if (existsSync(join(cwd, groomSkillVisiblePath))) {
+    const groomSkill = read(cwd, groomSkillVisiblePath);
+    for (const snippet of ['Visible Grooming Record', 'Why direct implementation is safe', 'Human question asked']) {
+      if (!groomSkill.includes(snippet)) {
+        errors.push(`groom-issue skill is missing visible-grooming snippet: ${snippet}`);
+      }
+    }
+  }
+
+  const prepareSkillPath = sourcePath(cwd, '.agents/skills/process/prepare-implementation/SKILL.md');
+  if (existsSync(join(cwd, prepareSkillPath))) {
+    const prepareSkill = read(cwd, prepareSkillPath);
+    for (const snippet of ['Visible grooming result', 'Human questions / design challenges']) {
+      if (!prepareSkill.includes(snippet)) {
+        errors.push(`prepare-implementation skill is missing readiness snippet: ${snippet}`);
+      }
+    }
+  }
+
+  const workIssueSkillPath = sourcePath(cwd, '.agents/skills/process/work-issue-local/SKILL.md');
+  if (existsSync(join(cwd, workIssueSkillPath))) {
+    const workIssueSkill = read(cwd, workIssueSkillPath);
+    for (const snippet of ['Readiness Gate', 'visible grooming result', 'well-written issue body']) {
+      if (!workIssueSkill.includes(snippet)) {
+        errors.push(`work-issue-local skill is missing readiness-gate snippet: ${snippet}`);
+      }
+    }
+  }
+
   if (existsSync(join(cwd, 'docs/development/workflow/github-first-flow.md'))) {
     const githubFlow = read(cwd, 'docs/development/workflow/github-first-flow.md');
-    for (const snippet of ['Review Handoff Rule', 'Issue Linkage Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff', 'Open PRs as ready for review', 'completed agent review pass', 'draft/ready state', 'architecture ambiguity', 'merge approval', 'Closes #issue', 'Refs #issue']) {
+    for (const snippet of ['Review Handoff Rule', 'Issue Linkage Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff', 'visible grooming result', 'Open PRs as ready for review', 'completed agent review pass', 'draft/ready state', 'architecture ambiguity', 'merge approval', 'Closes #issue', 'Refs #issue']) {
       if (!githubFlow.includes(snippet)) {
         errors.push(`GitHub-first flow is missing review handoff snippet: ${snippet}`);
       }
@@ -180,9 +210,18 @@ function validate(cwd) {
 
   if (existsSync(join(cwd, '.github/PULL_REQUEST_TEMPLATE.md'))) {
     const prTemplate = read(cwd, '.github/PULL_REQUEST_TEMPLATE.md');
-    for (const snippet of ['Issue Linkage', 'Closes #', 'Refs #', 'Reason:']) {
+    for (const snippet of ['Issue Linkage', 'Closes #', 'Refs #', 'Reason:', 'Grooming / Readiness']) {
       if (!prTemplate.includes(snippet)) {
         errors.push(`pull request template is missing issue-linkage snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, '.github/ISSUE_TEMPLATE/task.yml'))) {
+    const taskTemplate = read(cwd, '.github/ISSUE_TEMPLATE/task.yml');
+    for (const snippet of ['Grooming result', 'human questions asked/answered']) {
+      if (!taskTemplate.includes(snippet)) {
+        errors.push(`task issue template is missing grooming snippet: ${snippet}`);
       }
     }
   }

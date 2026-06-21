@@ -2,9 +2,9 @@
 
 Status: draft
 
-This is the v0 operating flow for Agent Workflow Kit after the Archon experiment. The goal is not
-to build an agent platform first. The goal is to make work resumable from GitHub state so a human
-can answer from GitHub Mobile and a local agent can later continue without chat memory.
+This is the v0 operating flow for Agent Workflow Kit. The goal is not to build an agent platform
+first. The goal is to make work resumable from GitHub state so a human can answer from GitHub
+Mobile and a local agent can later continue without chat memory.
 
 ## Product Promise
 

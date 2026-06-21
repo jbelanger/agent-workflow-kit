@@ -30,28 +30,13 @@ const portableEntries = [
   'scripts/validate-workflow.mjs',
 ];
 
-const archonEntries = [
-  '.archon',
-  'docs/development/workflow/adr-archon-portable-skills.md',
-  'docs/development/workflow/archon-recovery-runbook.md',
-  'scripts/validate-archon-pack.mjs',
-];
-
-const archonGitignoreBlock = `# Agent Workflow Kit / Archon runtime
-.archon/artifacts/
-.archon/logs/
-`;
-
 function usage() {
-  return `Usage: node scripts/install-workflow-kit.mjs --target <repo> [--with-archon] [--force] [--dry-run]
+  return `Usage: node scripts/install-workflow-kit.mjs --target <repo> [--force] [--dry-run]
 
 Installs the GitHub-first Agent Workflow Kit into another repository.
 
-Default install:
+Installs:
   AGENTS.md, .github templates, .agents/skills/, workflow docs, and scripts/validate-workflow.mjs
-
-With --with-archon:
-  also installs .archon/, the Archon recovery doc, and scripts/validate-archon-pack.mjs
 
 Safety:
   existing identical files are left alone
@@ -61,7 +46,6 @@ Safety:
 function parseArgs(argv) {
   const options = {
     target: undefined,
-    withArchon: false,
     force: false,
     dryRun: false,
   };
@@ -71,8 +55,6 @@ function parseArgs(argv) {
     if (arg === '--target') {
       options.target = argv[i + 1];
       i += 1;
-    } else if (arg === '--with-archon') {
-      options.withArchon = true;
     } else if (arg === '--force') {
       options.force = true;
     } else if (arg === '--dry-run') {
@@ -148,8 +130,7 @@ function install(options) {
     throw new Error(`Target repository does not exist: ${options.target}`);
   }
 
-  const entries = options.withArchon ? [...portableEntries, ...archonEntries] : portableEntries;
-  const files = [...new Set(entries.flatMap(collectFiles))].sort();
+  const files = [...new Set(portableEntries.flatMap(collectFiles))].sort();
   const result = {
     created: [],
     overwritten: [],
@@ -161,39 +142,7 @@ function install(options) {
     copyFile(file, options, result);
   }
 
-  if (options.withArchon) {
-    ensureArchonGitignore(options, result);
-  }
-
   return result;
-}
-
-function ensureArchonGitignore(options, result) {
-  const path = join(options.target, '.gitignore');
-  const block = archonGitignoreBlock.trimEnd();
-
-  if (!existsSync(path)) {
-    result.created.push('.gitignore');
-    if (!options.dryRun) {
-      writeFileSync(path, `${block}\n`);
-    }
-    return;
-  }
-
-  const current = readFileSync(path, 'utf8');
-  if (
-    current.includes('.archon/artifacts/') &&
-    current.includes('.archon/logs/')
-  ) {
-    result.unchanged.push('.gitignore');
-    return;
-  }
-
-  result.overwritten.push('.gitignore');
-  if (!options.dryRun) {
-    const separator = current.endsWith('\n') ? '\n' : '\n\n';
-    writeFileSync(path, `${current}${separator}${block}\n`);
-  }
 }
 
 function printList(label, values) {
@@ -214,7 +163,7 @@ try {
   }
 
   console.log(`Installed Agent Workflow Kit into ${relative(process.cwd(), options.target) || '.'}`);
-  console.log(`Profile: ${options.withArchon ? 'GitHub-first workflow + Archon adapters' : 'GitHub-first workflow'}`);
+  console.log('Profile: GitHub-first workflow');
   if (options.dryRun) console.log('Dry run: no files were written.');
   printList('Created', result.created);
   printList('Overwritten', result.overwritten);

@@ -13,8 +13,7 @@ production code. Do not mark a proposal accepted unless the human explicitly acc
 - Drafting creates reviewable planning text, not implementation tasks.
 - The durable artifact lives in the repo under `docs/development/specs/`,
   `docs/development/adrs/`, or `docs/development/spikes/`.
-- Archon artifacts, chat notes, GitHub issues, and PR comments are source evidence until promoted
-  into a repo artifact.
+- Chat notes, GitHub issues, and PR comments are source evidence until promoted into a repo artifact.
 - Preserve provenance: link or name source artifacts, run IDs, work items, issues, and source docs.
 - Ask one clarification question when the artifact would otherwise invent product behavior,
   architecture direction, acceptance criteria, ownership, storage, or public surface.
@@ -28,7 +27,7 @@ production code. Do not mark a proposal accepted unless the human explicitly acc
 
 Read only the context needed to draft the artifact:
 
-- The groomed work item, issue, or Archon grooming artifact.
+- The groomed work item or issue.
 - Accepted discovery vision brief and decision log, when product/design discovery preceded drafting.
 - Existing specs, ADRs, or spike notes in the same area.
 - Relevant source docs or code references named by the work item.

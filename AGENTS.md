@@ -191,13 +191,6 @@ too loose, unsafe for autonomy, or missing a field/status/label, include a brief
 note in the reply, issue comment, or PR summary. Use `improve-workflow` when asked to turn that
 feedback into process changes.
 
-## Experimental Archon Profile
-
-Archon is experimental evidence and an optional runtime adapter. It is not the baseline planning
-interface or workflow source of truth. When the explicit goal is to test-drive Archon, project work
-in the target repo should still happen through installed `awk-*` workflows; otherwise use the
-GitHub-first flow above.
-
 ## CI Policy
 
 Run deterministic checks before claiming completion:

@@ -11,7 +11,7 @@ or worktree and one PR.
 
 A work item can be a repo-local Markdown record, a GitHub issue, or another tracker entry. Treat
 repo-local records under `docs/development/work-items/` as the portable default when no external
-tracker is required. Archon artifacts are execution evidence until a human or explicit workflow
+tracker is required. Scratch notes and tool output are evidence until a human or explicit workflow
 promotes them into a durable work item.
 
 ## Core Stance

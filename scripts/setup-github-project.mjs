@@ -128,7 +128,6 @@ memory.
 
 ## Non-goals
 
-- Do not make Archon the baseline planning UX.
 - Do not make the Project board the source of durable planning truth.
 - Do not auto-merge or silently accept durable artifacts.
 

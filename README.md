@@ -13,11 +13,6 @@ locally with agents and humans, and keep decisions auditable.
 - GitHub-first flow: `docs/development/workflow/github-first-flow.md`
 - Install contract: `docs/development/workflow/installing-agent-workflow-kit.md`
 - GitHub-first orchestration ADR: `docs/development/adrs/github-first-orchestration.md`
-- Buy-vs-build and Archon experiment evidence:
-  - `docs/development/workflow/ai-dev-workflow-buy-vs-build.md`
-  - `docs/development/workflow/adr-archon-portable-skills.md`
-  - `docs/development/workflow/archon-route-tracker.md`
-  - `docs/development/workflow/archon-concept-spikes.md`
 - Rebuild trace: `docs/development/workflow/rebuild-trace.md`
 - Development docs policy: `docs/development/README.md`
 - Active agent instructions: `AGENTS.md`
@@ -25,9 +20,8 @@ locally with agents and humans, and keep decisions auditable.
 
 ## Current Goal
 
-Dogfood a GitHub-first agent workflow before adding custom runtime automation. The Archon branch
-produced stronger portable skills, but the active baseline is now GitHub Issues, GitHub Projects,
-repo-local durable docs, PR review gates, and local agents.
+Dogfood a GitHub-first agent workflow before adding custom runtime automation. The active baseline
+is GitHub Issues, GitHub Projects, repo-local durable docs, PR review gates, and local agents.
 
 The initial working assumption:
 
@@ -41,7 +35,6 @@ The initial working assumption:
 - deterministic CI only for now
 - no Codex-in-CI baseline yet
 - no autonomous merge
-- optional `.archon/` execution profile retained as experiment evidence, not the default path
 
 Plain Codex entry point:
 
@@ -58,12 +51,6 @@ GitHub-first workflow kit:
 
 ```bash
 node scripts/install-workflow-kit.mjs --target /path/to/project
-```
-
-GitHub-first workflow kit plus the optional Archon runtime profile:
-
-```bash
-node scripts/install-workflow-kit.mjs --target /path/to/project --with-archon
 ```
 
 Proof from clean temporary repos:

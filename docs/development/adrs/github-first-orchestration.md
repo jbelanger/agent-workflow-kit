@@ -4,15 +4,14 @@ Status: Accepted
 
 ## Context
 
-Agent Workflow Kit started with a GitHub-native planning direction, then tested Archon as an
-optional execution profile. The Archon experiment produced stronger portable skills, especially for
-grooming, discovery, durable artifact drafting, artifact review, and specialist lenses. It also
-showed that dashboard/run-store state is not the right source of truth for human-centered planning.
+Agent Workflow Kit needs a simple coordination surface that humans and local agents can both read.
+The workflow should stay resumable from durable state instead of depending on chat memory, local
+scratch files, or a custom runtime dashboard.
 
 The current GitHub Project and early issues are stale dogfooding artifacts. They should be treated
 as historical evidence, not as active workflow state. The next workflow iteration should restart the
-GitHub coordination surface from a clean Project and fresh issues while keeping the better skills
-from the Archon branch.
+GitHub coordination surface from a clean Project and fresh issues while keeping the portable skills
+and repo docs that are still useful.
 
 ## Decision
 
@@ -26,9 +25,6 @@ Use GitHub as the active orchestration surface for normal Agent Workflow Kit wor
 - Local skills under `.agents/skills/` hold workflow procedure.
 - Local Codex, Claude, opencode, and humans are interchangeable workers that read the same issues,
   docs, and project fields.
-
-Archon remains experimental evidence and an optional runtime adapter. It is not the baseline
-planning interface, board source of truth, or required install profile.
 
 ## Board Contract
 
@@ -90,8 +86,6 @@ Restart the active GitHub coordination surface:
 3. Create a new root initiative: `[Initiative] Build GitHub-first Agent Workflow Kit v0`.
 4. Create fresh child issues for the GitHub-first ADR, project setup script, workflow docs update,
    `continue-work` skill, and first dogfood run.
-5. Leave Archon route trackers, spikes, and adapters in the repository as historical and optional
-   runtime evidence until a later cleanup decision removes or packages them.
 
 ## Consequences
 
@@ -109,8 +103,8 @@ and validation for labels, templates, Project fields, and the reset procedure.
 
 | Alternative | Rejected because |
 | --- | --- |
-| Continue with Archon as primary UX | The dashboard/run model is useful for execution but awkward for PM-style interview, issue discussion, and remote mobile answers. |
-| Preserve the current Project and issues | The existing board and issues encode stale assumptions from the Archon experiment and would keep confusing state alive. |
+| Build or adopt a custom dashboard first | That would create runtime machinery before proving the simpler GitHub issue/PR coordination loop. |
+| Preserve the current Project and issues | The existing board and issues encode stale assumptions and would keep confusing state alive. |
 | Build a custom local runner first | That would recreate platform machinery before proving the simpler GitHub issue/PR coordination loop. |
 | Repo-local Markdown work items as primary state | Useful as a fallback, but weaker for mobile operation, comments, PR linkage, and agent handoff. |
 

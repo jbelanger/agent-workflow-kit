@@ -10,7 +10,6 @@ const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 function parseArgs(argv) {
   return {
     keep: argv.includes('--keep'),
-    skipArchonCli: argv.includes('--skip-archon-cli'),
   };
 }
 
@@ -43,25 +42,11 @@ function proveGithubFirst(root) {
   run(process.execPath, [join(target, 'scripts/validate-workflow.mjs'), '--cwd', target]);
 }
 
-function proveGithubFirstWithArchon(root, skipArchonCli) {
-  const target = join(root, 'github-first-with-archon');
-  initRepo(target);
-  run(process.execPath, ['scripts/install-workflow-kit.mjs', '--target', target, '--with-archon']);
-  run(process.execPath, [join(target, 'scripts/validate-workflow.mjs'), '--cwd', target]);
-  run(process.execPath, [join(target, 'scripts/validate-archon-pack.mjs'), '--cwd', target]);
-
-  if (!skipArchonCli) {
-    run('archon', ['validate', 'workflows', '--cwd', target, '--json']);
-    run('archon', ['validate', 'commands', '--cwd', target, '--json']);
-  }
-}
-
 const options = parseArgs(process.argv.slice(2));
-const root = mkdtempSync(join(tmpdir(), 'awk-portable-install-'));
+const root = mkdtempSync(join(tmpdir(), 'agent-workflow-kit-install-'));
 
 try {
   proveGithubFirst(root);
-  proveGithubFirstWithArchon(root, options.skipArchonCli);
   console.log('GitHub-first install proof passed.');
   if (options.keep) {
     console.log(`Fixture root kept: ${root}`);

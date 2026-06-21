@@ -25,8 +25,6 @@ Use the smallest durable surface that matches the job:
 - GitHub PRs: proposed durable docs or code changes and their review gates.
 - `docs/development/`: accepted durable truth such as vision briefs, specs, ADRs, spike writeups,
   workflow docs, and planning records.
-- `.archon/`: experimental optional execution profile retained as evidence and a possible runtime
-  adapter, not the baseline planning interface.
 - CI: deterministic checks such as tests, typecheck, lint, formatting, build, and architecture
   checks.
 
@@ -166,16 +164,6 @@ or unclear model changes.
 The previous Project and issues from early dogfooding are stale. Restart active GitHub coordination
 with a fresh Project and fresh root initiative rather than repairing the old board.
 
-## Experimental Archon Profile
-
-Archon is experimental evidence and an optional runtime adapter, not the workflow source of truth.
-The existing `.archon/commands/awk-*`, `.archon/workflows/awk-*`, route tracker, and spikes remain
-useful evidence for execution primitives such as worktrees, run status, artifacts, and approval
-gates. They are not the baseline planning UX.
-
-During dogfooding, installed skills ask agents to report process friction in a `Process feedback`
-note. Treat those notes as evidence for `improve-workflow`, not as automatic process changes.
-
 ## Work Items
 
 A work item is the workflow's unit of planning. In the default profile it is a GitHub issue on the
@@ -193,9 +181,6 @@ accepted vision brief / spec / ADR / spike under docs/development/
 
 PR
   -> proposed change and review gate
-
-Archon artifact or run record
-  -> execution evidence until promoted
 ```
 
 Grooming classifies unclear work. Drafting creates proposed specs, ADRs, or spikes. Breakdown

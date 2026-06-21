@@ -128,33 +128,6 @@ function validate(cwd) {
     }
   }
 
-  if (existsSync(join(cwd, '.archon'))) {
-    for (const path of [
-      '.archon/config.yaml',
-      'docs/development/workflow/adr-archon-portable-skills.md',
-      'docs/development/workflow/archon-recovery-runbook.md',
-      'scripts/validate-archon-pack.mjs',
-    ]) {
-      if (!existsSync(join(cwd, path))) {
-        errors.push(`Archon profile is installed but missing: ${path}`);
-      }
-    }
-  }
-
-  if (existsSync(join(cwd, '.archon/commands'))) {
-    for (const file of walkFiles(join(cwd, '.archon/commands'))) {
-      if (!file.endsWith('.md')) continue;
-      const text = readFileSync(file, 'utf8');
-      const relativePath = file.slice(cwd.length + 1);
-      if (text.includes('docs/development/workflow/archon-route-tracker.md')) {
-        errors.push(`${relativePath} must not depend on the kit repo Archon route tracker`);
-      }
-      if (text.includes('docs/development/workflow/archon-concept-spikes.md')) {
-        errors.push(`${relativePath} must not depend on the kit repo Archon concept spike index`);
-      }
-    }
-  }
-
   if (existsSync(join(cwd, '.agents/skills/process/groom-issue/SKILL.md'))) {
     const groomSkill = read(cwd, '.agents/skills/process/groom-issue/SKILL.md');
     for (const snippet of ['Interview And Research Mode', 'Grooming status', 'NEEDS_INTERVIEW', 'NEEDS_RESEARCH', 'discover-vision']) {

@@ -1,6 +1,6 @@
 ---
 name: review-artifact
-description: "Review a durable planning artifact and record human acceptance or revision routing. Use after a vision brief, spec, or ADR is drafted and needs dashboard-first human approval before the workflow can move to spec drafting, breakdown, or implementation preparation."
+description: "Review a durable planning artifact and record human acceptance or revision routing. Use after a vision brief, spec, or ADR is drafted and needs human approval before the workflow can move to spec drafting, breakdown, or implementation preparation."
 ---
 
 # Review Artifact
@@ -51,11 +51,9 @@ Prefer an existing sibling decision log when present:
 - Specs and ADRs normally record review history in the artifact itself under
   `## Human decision history`.
 
-For revision requests, keep the artifact in its draft/proposed state and return to revision. In the
-Archon dashboard, prefer `awk-revise-artifact` with the artifact path and reason; it creates the
-same durable repo-local revision record without using the accept button. `awk-review-artifact` also
-keeps the `REVISE:` approval-response shortcut for compatibility. The dashboard Reject button is
-still a cancellation path, not a durable revision recorder.
+For revision requests, keep the artifact in its draft/proposed state and record the requested
+change where the next agent can find it. The revision request should name the artifact path, the
+requested change, and whether a human decision is still needed.
 
 ## Output
 
@@ -78,6 +76,5 @@ Decision: Accepted | Rejected | No-op | Blocked
 
 ## Test-Drive Feedback
 
-If review cannot be completed from the dashboard without manual file edits, record that as process
-feedback. Dashboard-first review should have an explicit accept/reject control and a durable
-decision record.
+If review cannot be completed from GitHub state or repo-local docs, record that as process feedback.
+Artifact review should have an explicit accept/revise decision and a durable decision record.

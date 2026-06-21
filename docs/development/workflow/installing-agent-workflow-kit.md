@@ -2,7 +2,7 @@
 
 Status: active install contract
 
-Agent Workflow Kit is a GitHub-first workflow pack, not an Archon requirement.
+Agent Workflow Kit is a GitHub-first workflow pack.
 
 The adoption contract is:
 
@@ -23,12 +23,7 @@ Required:
   scripts/validate-workflow.mjs
 
 Optional:
-  .archon/
   docs/development/work-items/
-  docs/development/workflow/adr-archon-portable-skills.md
-  docs/development/workflow/archon-recovery-runbook.md
-  scripts/validate-archon-pack.mjs
-  .gitignore entries for .archon/artifacts/ and .archon/logs/
 ```
 
 ## What The Parts Do
@@ -47,10 +42,8 @@ Optional:
 | `scripts/setup-github-project.mjs` | Yes | Idempotent setup and verification for the GitHub Project fields, labels, and root initiative. |
 | GitHub issues/PRs/projects | Yes for the default profile | Active orchestration, human answers, remote planning, audit trail, and review. |
 | `docs/development/work-items/` | Optional fallback | Portable planning records only when GitHub is absent. |
-| `.archon/` | Optional | Runtime/dashboard adapters around the same portable skills. |
-| Archon CLI/server | Optional | Workflow runs, artifacts, worktrees, approval gates, and dashboard state. |
 
-## Install Profiles
+## Install
 
 GitHub-first workflow kit:
 
@@ -58,18 +51,9 @@ GitHub-first workflow kit:
 node scripts/install-workflow-kit.mjs --target /path/to/project
 ```
 
-GitHub-first workflow kit plus optional Archon adapters:
-
-```bash
-node scripts/install-workflow-kit.mjs --target /path/to/project --with-archon
-```
-
 The installer refuses to overwrite existing different files by default. That is intentional: a
 project may already have `AGENTS.md` or local skills, and those should be merged deliberately instead
 of silently replaced.
-
-When `--with-archon` is used, the installer also ensures `.gitignore` ignores Archon runtime
-artifacts and logs. These are execution evidence, not source files.
 
 ## Validation
 
@@ -96,15 +80,7 @@ node scripts/setup-github-project.mjs --repo OWNER/REPO --owner OWNER
 The setup script creates missing labels, the Project, required single-select fields, and the root
 initiative. On an existing Project, mismatched fields are reported instead of silently rewritten.
 
-If the Archon profile is installed:
-
-```bash
-node scripts/validate-archon-pack.mjs
-archon validate workflows --cwd /path/to/project --json
-archon validate commands --cwd /path/to/project --json
-```
-
-From the kit repo, prove both install profiles against clean temporary repositories:
+From the kit repo, prove the install path against a clean temporary repository:
 
 ```bash
 node scripts/prove-portable-install.mjs
@@ -120,28 +96,6 @@ Codex chat in the project
   -> Codex reads GitHub issues, project fields, PRs, and repo docs
   -> Codex uses .agents/skills/process/continue-work/SKILL.md to choose the next workflow verb
   -> Codex records process feedback when the workflow itself shows weakness
-```
-
-Archon:
-
-```text
-Archon dashboard or CLI in the project
-  -> run awk-continue-work, awk-groom-issue, awk-discover-vision, awk-draft-spec, or awk-breakdown-work-item
-  -> .archon command points Codex at the same .agents/skills procedure
-  -> Archon stores run state and artifacts
-```
-
-When the explicit goal is to test-drive Archon, project work after installation should happen through
-installed `awk-*` workflows. If a needed step cannot be expressed by the installed workflows, improve
-Agent Workflow Kit first, reinstall it, then continue in Archon.
-
-Current limitation: for local-only repositories without a valid `origin/main`, the Archon dashboard
-may fail early while preparing a background worker even when an AWK planning workflow declares
-`worktree.enabled: false`. Use the Archon CLI as the canonical path for those planning runs until the
-dashboard path is verified:
-
-```bash
-archon workflow run awk-groom-issue --cwd /path/to/project "<work item>"
 ```
 
 GitHub:

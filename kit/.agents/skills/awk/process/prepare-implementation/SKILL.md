@@ -21,6 +21,8 @@ Before writing the brief, verify the work item has enough context:
 - Allowed files or directories.
 - Forbidden files or directories.
 - Contracts, records, APIs, storage, or user surfaces touched.
+- For UI-bearing work: accepted UX direction, or a clear recorded reason the slice touches no
+  user-facing workflow, screen/state model, or interaction surface.
 - Acceptance criteria.
 - Feedback loop or test seam.
 - Expected tests.
@@ -58,6 +60,8 @@ Produce:
 
 # Contracts/APIs/storage touched
 
+# UX direction / user surface
+
 # Parent/child context
 
 # Acceptance criteria
@@ -79,6 +83,9 @@ Produce:
 - Do not guess missing architecture decisions.
 - Make allowed and forbidden areas concrete.
 - Call out public surfaces, storage, migrations, and cross-module contracts.
+- For UI-bearing tasks, stop if the implementation brief lacks UX direction for the user journey,
+  screen/state model, information hierarchy, interaction constraints, and accessibility/usability
+  risks.
 - Stop if a real architecture fork needs human choice.
 
 ## Test-Drive Feedback

@@ -19,10 +19,6 @@ const requiredPortableFiles = [
   '.github/ISSUE_TEMPLATE/spec.yml',
   '.github/ISSUE_TEMPLATE/task.yml',
   '.github/PULL_REQUEST_TEMPLATE.md',
-  'docs/development/discovery/.gitkeep',
-  'docs/development/adrs/.gitkeep',
-  'docs/development/specs/.gitkeep',
-  'docs/development/spikes/.gitkeep',
   'scripts/workflow-labels.mjs',
   'scripts/setup-github-labels.mjs',
   'scripts/validate-workflow.mjs',
@@ -99,6 +95,13 @@ const flowAtGlanceSnippets = [
   'review-local-changes',
   'review-revision-triage',
   'Do not skip from vague idea or Inbox directly to implementation',
+];
+
+const uxGateSnippets = [
+  'UX direction is a readiness gate before implementation',
+  'target user, primary journey, key screens or states, information hierarchy',
+  'screen/state model',
+  'accessibility/usability risks',
 ];
 
 function parseArgs(argv) {
@@ -260,7 +263,13 @@ function validate(cwd) {
   const prepareSkillPath = sourcePath(cwd, '.agents/skills/awk/process/prepare-implementation/SKILL.md');
   if (existsSync(join(cwd, prepareSkillPath))) {
     const prepareSkill = read(cwd, prepareSkillPath);
-    for (const snippet of ['Visible grooming result', 'Clarifying questions / challenges']) {
+    for (const snippet of [
+      'Visible grooming result',
+      'Clarifying questions / challenges',
+      'UX direction / user surface',
+      'screen/state model',
+      'accessibility/usability',
+    ]) {
       if (!prepareSkill.includes(snippet)) {
         errors.push(`prepare-implementation skill is missing readiness snippet: ${snippet}`);
       }
@@ -270,7 +279,13 @@ function validate(cwd) {
   const workIssueSkillPath = sourcePath(cwd, '.agents/skills/awk/process/work-issue-local/SKILL.md');
   if (existsSync(join(cwd, workIssueSkillPath))) {
     const workIssueSkill = read(cwd, workIssueSkillPath);
-    for (const snippet of ['Readiness Gate', 'visible grooming result', 'well-written issue body']) {
+    for (const snippet of [
+      'Readiness Gate',
+      'visible grooming result',
+      'well-written issue body',
+      'accepted UX direction',
+      'screen/state model',
+    ]) {
       if (!workIssueSkill.includes(snippet)) {
         errors.push(`work-issue-local skill is missing readiness-gate snippet: ${snippet}`);
       }
@@ -318,6 +333,20 @@ function validate(cwd) {
     for (const snippet of ['Review Handoff Rule', 'Issue Linkage Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff', 'visible grooming result', 'Open PRs as ready for review', 'completed agent review pass', 'draft/ready state', 'architecture ambiguity', 'merge approval', 'Closes #issue', 'Refs #issue']) {
       if (!githubFlow.includes(snippet)) {
         errors.push(`GitHub-first flow is missing review handoff snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, 'docs/awk/workflow/ai-dev-workflow.md'))) {
+    const aiWorkflow = read(cwd, 'docs/awk/workflow/ai-dev-workflow.md');
+    for (const snippet of uxGateSnippets) {
+      if (!aiWorkflow.includes(snippet)) {
+        errors.push(`AI dev workflow is missing UX readiness snippet: ${snippet}`);
+      }
+    }
+    for (const snippet of ['Create artifact folders only when writing the first artifact', 'Do not keep empty']) {
+      if (!aiWorkflow.includes(snippet)) {
+        errors.push(`AI dev workflow is missing lazy artifact folder snippet: ${snippet}`);
       }
     }
   }

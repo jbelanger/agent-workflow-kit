@@ -20,6 +20,9 @@ or packaged artifacts when end users should not see internal development materia
 - `workflow/`: project-specific process notes when they are not part of the installable AWK docs.
 - `dogfood-runs/`: recorded workflow trials, outcomes, visuals, and lessons.
 
+Create these folders only when they contain real project artifacts. Do not keep empty artifact
+folders just to advertise the workflow shape.
+
 In target projects, AWK process docs live under `docs/awk/` and AWK skills live under
 `.agents/skills/awk/`. In the AWK source package, installable copies are stored under `kit/` before
 they are copied into target projects. Keeping AWK process assets outside this folder leaves

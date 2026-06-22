@@ -76,6 +76,18 @@ function proveGithubFirst(root) {
     !existsSync(join(target, 'docs/development/workflow')),
     'Install created old docs/development workflow docs.'
   );
+  for (const lazyPath of [
+    'docs/development/adrs',
+    'docs/development/discovery',
+    'docs/development/specs',
+    'docs/development/spikes',
+    'docs/development/work-items',
+  ]) {
+    assert(
+      !existsSync(join(target, lazyPath)),
+      `Install created unused development artifact folder: ${lazyPath}.`
+    );
+  }
 }
 
 const options = parseArgs(process.argv.slice(2));

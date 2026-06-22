@@ -87,7 +87,7 @@ The default installed kit includes:
 - `AGENTS.md`.
 - `.agents/skills/awk/`.
 - GitHub issue and PR templates.
-- `docs/development/` workflow docs and artifact folders.
+- `docs/development/` project artifacts, with subfolders created only when an artifact exists.
 - `scripts/validate-workflow.mjs`.
 
 Optional Project board setup tooling may live in the source repository, but it is not part of the

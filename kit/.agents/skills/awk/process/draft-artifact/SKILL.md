@@ -13,6 +13,8 @@ production code. Do not mark a proposal accepted unless the human explicitly acc
 - Drafting creates reviewable planning text, not implementation tasks.
 - The durable artifact lives in the repo under `docs/development/specs/`,
   `docs/development/adrs/`, or `docs/development/spikes/`.
+- Create the target artifact folder only when writing the artifact. Do not create empty
+  `docs/development/` subfolders as placeholders.
 - Chat notes, GitHub issues, and PR comments are source evidence until promoted into a repo artifact.
 - Preserve provenance: link or name source artifacts, run IDs, work items, issues, and source docs.
 - Ask one clarification question when the artifact would otherwise invent product behavior,
@@ -86,6 +88,9 @@ Rules:
   vision section before detailed behavior. Cover intended audience, experience pillars, core loop or
   workflow, comparable references or research evidence, differentiators, and design risks. If those
   are missing, stop and ask one interview question instead of producing a thin rules-only spec.
+- For UI-bearing products, include UX direction before implementation-facing details: target user,
+  primary journey, key screens or states, information hierarchy, interaction constraints,
+  accessibility/usability risks, and what is deliberately deferred.
 - If an accepted `vision-brief.md` exists for the work, use it as the source of product direction
   instead of reopening the vision silently.
 - For platform or architecture-sensitive specs, include the credible options and tradeoffs. If the

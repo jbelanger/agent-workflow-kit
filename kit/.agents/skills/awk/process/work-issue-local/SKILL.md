@@ -53,6 +53,12 @@ treat a well-written issue body as a substitute for grooming.
 If meaningful ambiguity remains, the visible grooming record must include the clarification question
 asked and answered, or explain why that ambiguity does not affect the next slice.
 
+For UI-bearing work, the readiness record must also include accepted UX direction or a clear reason
+the slice touches no user-facing workflow, screen/state model, or interaction surface. UX direction
+can live in an accepted discovery note, spec section, issue comment, or implementation brief. It
+should cover the target user, primary journey, key screens or states, information hierarchy,
+interaction constraints, accessibility/usability risks, and what is deliberately deferred.
+
 ## Process
 
 1. Read the work item, visible grooming result, implementation brief, linked docs, nearby code, and

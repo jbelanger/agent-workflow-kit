@@ -333,6 +333,14 @@ vision: who the work is for, what experience or operational outcome matters, whi
 distinctive or useful, which technical shape is credible, and what evidence will prove the direction
 is good enough to specify.
 
+For products with a UI, user-facing workflow, interaction model, screen/state model, or meaningful
+operator experience, UX direction is a readiness gate before implementation. This gate can be light,
+but it must exist: an accepted discovery note, spec section, issue comment, or implementation brief
+must record the target user, primary journey, key screens or states, information hierarchy,
+interaction constraints, accessibility/usability risks, and what is deliberately deferred. Backend
+or infrastructure-only slices may bypass the gate only by recording why no user-facing surface is
+touched.
+
 Discovery interviews should be interactive. The agent asks one highest-leverage question, then stops
 unless the human answers in the same turn. In an async GitHub run, the question lives in the issue
 and the next actor is `Human`; in live chat, the agent asks in chat and waits. The agent must not
@@ -397,6 +405,9 @@ Use `draft-artifact` to create or update one durable artifact from groomed direc
 - Draft specs go under `docs/development/specs/` with `Spec state: Draft`.
 - Draft ADRs go under `docs/development/adrs/` with `Status: Proposed`.
 - Spike plans or results go under `docs/development/spikes/`.
+
+Create artifact folders only when writing the first artifact in that folder. Do not keep empty
+`docs/development/` subfolders as workflow placeholders.
 
 Draft artifacts are reviewable proposals. They are not accepted truth until the human accepts them
 through review or an explicit decision. Do not create implementation child work items from a draft

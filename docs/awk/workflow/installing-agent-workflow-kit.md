@@ -17,16 +17,16 @@ Required:
   docs/awk/workflow/github-first-flow.md
   docs/awk/workflow/installing-agent-workflow-kit.md
   docs/development/README.md
-  docs/development/discovery/
-  docs/development/specs/
-  docs/development/adrs/
-  docs/development/spikes/
   scripts/validate-workflow.mjs
   pushed GitHub repository
   initial GitHub issues before workflow execution
 
 Optional:
-  docs/development/work-items/
+  docs/development/discovery/      # create only when used
+  docs/development/specs/          # create only when used
+  docs/development/adrs/           # create only when used
+  docs/development/spikes/         # create only when used
+  docs/development/work-items/     # fallback only when GitHub is unavailable
 ```
 
 ## What The Parts Do
@@ -40,8 +40,8 @@ Optional:
 | `docs/awk/adrs/github-first-orchestration.md` | Yes | Accepted source-of-truth decision for the GitHub-first operating model. |
 | `docs/awk/workflow/` | Yes | AWK process docs. |
 | `docs/development/README.md` | Yes | Project artifact folder contract for durable project-specific docs. |
-| `docs/development/discovery/` | Yes | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. |
-| `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Yes | Durable planning artifacts reviewed through PRs. |
+| `docs/development/discovery/` | Lazy | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. Create only when a discovery artifact exists. |
+| `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Lazy | Durable planning artifacts reviewed through PRs. Create only when that artifact type exists. |
 | `scripts/setup-github-labels.mjs` | Yes | Minimal GitHub setup for labels used by issue templates. Does not create a Project board. |
 | GitHub issues/PRs | Yes for workflow execution | Active orchestration, human answers, remote planning, audit trail, and review. |
 | GitHub labels | Recommended setup | Lightweight issue type and review signals created by `scripts/setup-github-labels.mjs`. |

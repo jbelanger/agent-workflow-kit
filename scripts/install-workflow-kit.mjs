@@ -18,10 +18,6 @@ const portableEntries = [
   ['.github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
   ['kit/.agents/skills/awk', '.agents/skills/awk'],
   ['docs/development/README.md', 'docs/development/README.md'],
-  ['docs/development/discovery/.gitkeep', 'docs/development/discovery/.gitkeep'],
-  ['docs/development/specs/.gitkeep', 'docs/development/specs/.gitkeep'],
-  ['docs/development/adrs/.gitkeep', 'docs/development/adrs/.gitkeep'],
-  ['docs/development/spikes/.gitkeep', 'docs/development/spikes/.gitkeep'],
   ['docs/awk/adrs/github-first-orchestration.md', 'docs/awk/adrs/github-first-orchestration.md'],
   ['docs/awk/workflow/ai-dev-workflow.md', 'docs/awk/workflow/ai-dev-workflow.md'],
   ['docs/awk/workflow/github-first-flow.md', 'docs/awk/workflow/github-first-flow.md'],
@@ -41,7 +37,7 @@ Installs the GitHub-first Agent Workflow Kit into another repository.
 
 Installs:
   a minimal AWK block in AGENTS.md, .github templates, .agents/skills/awk/, docs/awk/,
-  docs/development/ artifact folders, and lightweight setup/validation scripts
+  docs/development/README.md, and lightweight setup/validation scripts
 
 Safety:
   AGENTS.md is merged by replacing or appending the marked AWK block

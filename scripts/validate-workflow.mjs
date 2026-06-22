@@ -103,6 +103,7 @@ const uxGateSnippets = [
   'The human should review direction, not create it from a blank page',
   'sample assets or mockups',
   'docs/development/discovery/<slug>/mockups/',
+  'rendered-preview validation',
   'target user, primary journey, key screens or states, information hierarchy',
   'screen/state model',
   'accessibility/usability risks',

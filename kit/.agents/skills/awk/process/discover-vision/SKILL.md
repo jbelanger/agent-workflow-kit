@@ -188,6 +188,11 @@ wireframes, or sample asset studies. Keep them scoped to the discovery bundle, n
 state they represent, and mark them as non-production until accepted. Record the assumptions each
 visual is testing in `vision-brief.md` or `decision-log.md`.
 
+When tooling is available, render or screenshot generated visuals before declaring them ready. Check
+that important text, controls, and panels are visible without clipping or overlap; XML or file-format
+syntax validation alone is not enough. Record the preview command or tool in the issue comment or
+PR summary.
+
 ## Output
 
 Return:

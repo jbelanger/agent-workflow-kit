@@ -102,6 +102,9 @@ Rules:
   review. Use `docs/development/specs/<slug>-assets/` for generated wireframes, screenshots,
   bitmap mockups, HTML/CSS previews, or sample asset studies. Mark each visual as illustrative,
   accepted direction, or assumption needing human review.
+- Render or screenshot generated visuals when tooling is available. Check for clipping, overlapping
+  text, unreadable labels, and missing panels before declaring the draft ready. Record the preview
+  command or tool in the output or PR summary.
 - If an accepted `vision-brief.md` exists for the work, use it as the source of product direction
   instead of reopening the vision silently.
 - For platform or architecture-sensitive specs, include the credible options and tradeoffs. If the

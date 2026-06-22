@@ -100,7 +100,8 @@ The worker created six initial issues before implementation:
 | `#4 Review spec scope for first contracts and sanitized fixture` | Spec | `review-artifact` | Reviews minimum contract/fixture semantics before breakdown. |
 | `#5 Break down the first walking skeleton into prepared task candidates` | Task | `breakdown-issue` | Blocked on artifact/ADR/spec/UX review; does not route to implementation. |
 | `#6 Prepare implementation brief for the first approved skeleton task` | Task | `prepare-implementation` | Blocked on breakdown and UX readiness for any UI-bearing work; does not route to implementation. |
-| `#7 Define UX direction for the first investor review workflow` | Discovery | `discover-vision` | Added after bootstrap when the user pointed out that a UI-bearing product needs UX direction before coding. |
+| `#7 Define UX direction for the first investor review workflow` | Discovery | `discover-vision` | Reframed as agent-owned UX draft work with generated mockups before human review. |
+| `#8 Review UX direction and mockups` | Discovery review | `review-artifact` | Human review gate for accepting or revising the UX direction and visual aids produced by `#7`. |
 
 ```mermaid
 flowchart LR
@@ -110,12 +111,14 @@ flowchart LR
   I2 --> I5["#5 Breakdown"]
   I3 --> I5
   I4 --> I5
-  I7["#7 UX direction"] --> I5
+  I7["#7 UX direction draft"] --> I8["#8 UX review"]
+  I8 --> I5
   I5 --> I6["#6 Prepare implementation"]
   I2 --> R["review-artifact"]
   I3 --> R
   I4 --> R
   I7 --> D["discover-vision"]
+  I8 --> R
   I5 --> B["breakdown-issue"]
   I6 --> P["prepare-implementation"]
 ```
@@ -130,6 +133,8 @@ flowchart LR
 - The previous failed local checkout was preserved.
 - The remote has the intended canonical name `investor-review`.
 - A UX gate was added before breakdown/preparation because the product will have a UI.
+- The later `#7` test drive successfully produced a PR-visible UX discovery bundle before human
+  review, which better matches the lazy-human path.
 
 ## What Was Weak
 
@@ -148,6 +153,10 @@ flowchart LR
   when the better flow is for a discovery or UX-direction agent to draft direction for human review.
 - UX direction needs visual aids for UI products. Text-only UX direction leaves too much for the
   human to imagine and makes it harder to compare assumptions before implementation starts.
+- Visual artifact QA needs rendered-preview checks. The delegated worker's SVGs passed XML and
+  whitespace validation while the first rendered previews still clipped important content.
+- The issue chain needed a separate review issue. Keeping `needs-human-review` on the drafting issue
+  made the human look like the blocker before an agent had produced anything to review.
 
 ## Lessons Promoted
 
@@ -171,9 +180,14 @@ Promoted back into the source kit during this run:
   while UX specs can keep linked visuals under `docs/development/specs/<slug>-assets/`.
 - Pushed the target repo update as commit `67305e8` and commented on `#7` to request mockups for
   the investor review queue, review detail, and loading/error/replay states.
+- Added rendered-preview validation guidance to AWK discovery and drafting instructions after the
+  UX worker needed two visual revisions for right-edge clipping.
+- Reframed `#7` as agent-owned discovery, created `#8` as the human `review-artifact` gate, and
+  opened target PR `#9` with the UX discovery bundle and mockups.
 
 ## Current State
 
-The investor-review repo is ready for the next supervised dogfood step. The next natural route is
-`review-artifact` on issue `#2`, followed by `#3` and `#4`, `discover-vision` on `#7`, then
-`breakdown-issue` on `#5`.
+The investor-review repo has target PR `#9` open for UX artifact review. The next natural route is
+`review-artifact` on issue `#8` for PR `#9`, alongside artifact review on issues `#2`, `#3`, and
+`#4`. UI-bearing `breakdown-issue` on `#5` remains blocked until the UX direction is accepted or
+explicitly scoped out of the first slice.

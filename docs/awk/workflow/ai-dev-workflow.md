@@ -356,6 +356,11 @@ inside `docs/development/discovery/<slug>/mockups/` or beside a UX spec in
 which assumptions the visual is testing. Do not let polished visuals substitute for unresolved
 product or interaction decisions.
 
+Visual artifacts need rendered-preview validation when tooling is available. Syntax checks such as
+SVG XML validation are not enough: the worker or reviewer should render the artifact or screenshot
+the preview and check that important text, controls, and panels are visible without clipping or
+overlap. Record the preview command or tool in the PR or issue comment.
+
 Discovery interviews should be interactive. The agent asks one highest-leverage question, then stops
 unless the human answers in the same turn. In an async GitHub run, the question lives in the issue
 and the next actor is `Human`; in live chat, the agent asks in chat and waits. The agent must not

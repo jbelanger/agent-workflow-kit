@@ -33,9 +33,15 @@ migration.
    - preserve project artifacts in `docs/development/`;
    - reduce root `AGENTS.md` to project-owned guidance plus the marked AWK block.
 4. Run the installer or apply a targeted repair.
-5. Run `node scripts/validate-workflow.mjs`.
-6. Verify GitHub label setup when GitHub is available.
-7. Report changed files and any required follow-up issues.
+5. Remove legacy AWK-owned files after replacement:
+   - old AWK process skill files under `.agents/skills/process/`;
+   - old AWK specialist skill files under `.agents/skills/specialist/`;
+   - old AWK workflow docs under `docs/development/workflow/`;
+   - old AWK GitHub-first ADR at `docs/development/adrs/github-first-orchestration.md`.
+6. Do not delete arbitrary project-owned skills or docs just because they live outside `.agents/skills/awk/`.
+7. Run `node scripts/validate-workflow.mjs`.
+8. Verify GitHub label setup when GitHub is available.
+9. Report changed files and any required follow-up issues.
 
 ## Hard Stops
 

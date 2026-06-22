@@ -52,6 +52,34 @@ const requiredSkills = [
   '.agents/skills/awk/specialist/tdd/SKILL.md',
 ];
 
+const legacyAwkOwnedPaths = [
+  '.agents/skills/process/init-awk/SKILL.md',
+  '.agents/skills/process/maintain-awk/SKILL.md',
+  '.agents/skills/process/triage-backlog/SKILL.md',
+  '.agents/skills/process/pick-next-item/SKILL.md',
+  '.agents/skills/process/continue-work/SKILL.md',
+  '.agents/skills/process/groom-issue/SKILL.md',
+  '.agents/skills/process/discover-vision/SKILL.md',
+  '.agents/skills/process/draft-artifact/SKILL.md',
+  '.agents/skills/process/breakdown-issue/SKILL.md',
+  '.agents/skills/process/prepare-implementation/SKILL.md',
+  '.agents/skills/process/work-issue-local/SKILL.md',
+  '.agents/skills/process/review-local-changes/SKILL.md',
+  '.agents/skills/process/review-revision-triage/SKILL.md',
+  '.agents/skills/process/improve-workflow/SKILL.md',
+  '.agents/skills/specialist/product-strategy/SKILL.md',
+  '.agents/skills/specialist/technical-architecture/SKILL.md',
+  '.agents/skills/specialist/validation-strategy/SKILL.md',
+  '.agents/skills/specialist/ux-direction/SKILL.md',
+  '.agents/skills/specialist/creative-direction/SKILL.md',
+  '.agents/skills/specialist/diagnose-bug/SKILL.md',
+  '.agents/skills/specialist/tdd/SKILL.md',
+  'docs/development/workflow/ai-dev-workflow.md',
+  'docs/development/workflow/github-first-flow.md',
+  'docs/development/workflow/installing-agent-workflow-kit.md',
+  'docs/development/adrs/github-first-orchestration.md',
+];
+
 const issueTemplateLabels = new Map([
   ['.github/ISSUE_TEMPLATE/adr.yml', 'adr'],
   ['.github/ISSUE_TEMPLATE/discovery.yml', 'discovery'],
@@ -155,6 +183,19 @@ function validate(cwd) {
   for (const path of requiredSkills) {
     const actualPath = sourcePath(cwd, path);
     if (!existsSync(join(cwd, actualPath))) errors.push(`Missing required skill: ${actualPath}`);
+  }
+
+  for (const path of legacyAwkOwnedPaths) {
+    const candidates = [path];
+    if (existsSync(join(cwd, 'kit/AGENTS.md')) && path.startsWith('.agents/')) {
+      candidates.push(join('kit', path));
+    }
+
+    for (const candidate of candidates) {
+      if (existsSync(join(cwd, candidate))) {
+        errors.push(`Legacy AWK-owned path should be migrated or removed: ${candidate}`);
+      }
+    }
   }
 
   for (const path of ['AGENTS.md', '.agents/skills/awk/README.md']) {

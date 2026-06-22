@@ -12,7 +12,7 @@ edit the relevant files, run validation, and commit or push only when asked.
 - `kit/AGENTS.md`: minimal AWK usage block merged into target repository guidance.
 - `kit/.agents/skills/awk/`: namespaced installable workflow and specialist skills.
 - `.github/`: issue and PR templates copied into target repositories.
-- `docs/awk/`: installable AWK process docs copied into target repositories.
+- `docs/awk/`: installable AWK process and reference docs copied into target repositories.
 - `docs/development/`: durable source-repo decisions, dogfood results, specs, and spikes.
 - `scripts/`: installer, validation, label setup, and optional setup helpers.
 

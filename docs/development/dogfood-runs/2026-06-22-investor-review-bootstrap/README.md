@@ -141,6 +141,11 @@ flowchart LR
   `.gitkeep`, even though those folders should exist only after real project artifacts exist.
 - The first issue surface did not initially include a UX-direction gate, even though the product is
   expected to have a UI.
+- The boundary between `.agents/skills/awk/`, `docs/awk/`, and `docs/development/` needed to be
+  explicit. Moving all process docs into skill folders would hide human-readable workflow docs and
+  make skills carry too much reference material.
+- The first UX-gate wording could sound like the human had to produce UX direction from scratch,
+  when the better flow is for a discovery or UX-direction agent to draft direction for human review.
 
 ## Lessons Promoted
 
@@ -154,6 +159,11 @@ Promoted back into the source kit during this run:
   readiness skills.
 - Added issue `#7` and comments on `#1`, `#5`, and `#6` so future agents know UX direction gates
   any UI-bearing implementation.
+- Kept AWK process references under `docs/awk/`, added `docs/awk/README.md`, and clarified that
+  executable AWK skills stay under `.agents/skills/awk/` while project-specific artifacts stay under
+  `docs/development/`.
+- Clarified that UX discovery should prepare a compact direction draft for human review, asking one
+  blocking question only when the next direction cannot be drafted responsibly.
 
 ## Current State
 

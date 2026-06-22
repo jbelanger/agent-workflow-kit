@@ -25,7 +25,7 @@ Use the smallest durable surface that matches the job:
 - GitHub PRs: proposed durable docs or code changes and their review gates.
 - `docs/development/`: accepted durable project truth such as vision briefs, specs, ADRs, spike
   writeups, and planning records.
-- `docs/awk/`: AWK process docs and workflow decisions.
+- `docs/awk/`: AWK process references and workflow decisions.
 - CI: deterministic checks such as tests, typecheck, lint, formatting, build, and architecture
   checks.
 
@@ -340,6 +340,13 @@ must record the target user, primary journey, key screens or states, information
 interaction constraints, accessibility/usability risks, and what is deliberately deferred. Backend
 or infrastructure-only slices may bypass the gate only by recording why no user-facing surface is
 touched.
+
+The human should review direction, not create it from a blank page. For UI-bearing work, discovery
+or a UX-direction specialist should prepare a compact UX direction draft from the plan, existing
+screens, comparable references, and stated constraints. The draft can be a discovery bundle,
+issue comment, or spec section, but it must distinguish recommendations from assumptions and open
+questions. Ask the human one blocking question only when the next direction cannot be drafted
+responsibly.
 
 Discovery interviews should be interactive. The agent asks one highest-leverage question, then stops
 unless the human answers in the same turn. In an async GitHub run, the question lives in the issue

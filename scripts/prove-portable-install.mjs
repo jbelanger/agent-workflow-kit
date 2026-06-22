@@ -69,6 +69,7 @@ function proveGithubFirst(root) {
   );
   assert(!existsSync(join(target, '.agents/skills/process')), 'Install created old root skill paths.');
   assert(
+    existsSync(join(target, 'docs/awk/README.md')) &&
     existsSync(join(target, 'docs/awk/workflow/ai-dev-workflow.md')),
     'Install did not create namespaced AWK process docs.'
   );

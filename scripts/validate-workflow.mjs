@@ -9,6 +9,7 @@ const requiredPortableFiles = [
   '.agents/skills/awk/specialist/README.md',
   '.agents/skills/awk/domain/README.md',
   'docs/development/README.md',
+  'docs/awk/README.md',
   'docs/awk/workflow/ai-dev-workflow.md',
   'docs/awk/workflow/github-first-flow.md',
   'docs/awk/adrs/github-first-orchestration.md',
@@ -99,6 +100,7 @@ const flowAtGlanceSnippets = [
 
 const uxGateSnippets = [
   'UX direction is a readiness gate before implementation',
+  'The human should review direction, not create it from a blank page',
   'target user, primary journey, key screens or states, information hierarchy',
   'screen/state model',
   'accessibility/usability risks',

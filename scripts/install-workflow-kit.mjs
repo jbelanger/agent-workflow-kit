@@ -18,6 +18,7 @@ const portableEntries = [
   ['.github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
   ['kit/.agents/skills/awk', '.agents/skills/awk'],
   ['docs/development/README.md', 'docs/development/README.md'],
+  ['docs/awk/README.md', 'docs/awk/README.md'],
   ['docs/awk/adrs/github-first-orchestration.md', 'docs/awk/adrs/github-first-orchestration.md'],
   ['docs/awk/workflow/ai-dev-workflow.md', 'docs/awk/workflow/ai-dev-workflow.md'],
   ['docs/awk/workflow/github-first-flow.md', 'docs/awk/workflow/github-first-flow.md'],

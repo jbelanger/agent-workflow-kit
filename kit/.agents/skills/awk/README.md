@@ -1,7 +1,8 @@
 # Agent Workflow Kit Skills
 
 AWK skills are installed under `.agents/skills/awk/` so they are visible as kit-provided workflow
-tools rather than project-owned domain skills.
+tools rather than project-owned domain skills. Human-readable AWK process references live under
+`docs/awk/`; project-specific artifacts live under `docs/development/`.
 
 ## Flow At A Glance
 

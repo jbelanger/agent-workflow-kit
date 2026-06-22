@@ -18,8 +18,9 @@ Use GitHub as the active orchestration surface for normal Agent Workflow Kit wor
 
 - GitHub Issues hold work items, conversation, human answers, and current collaboration state.
 - GitHub PRs hold proposed durable docs or code changes and their review gates.
-- Repo docs under `docs/development/` hold accepted durable truth: vision briefs, specs, ADRs,
-  spikes, workflow docs, and source evidence.
+- Repo docs under `docs/development/` hold accepted durable project truth: vision briefs, specs,
+  ADRs, spikes, project-specific workflow notes, and source evidence.
+- AWK docs under `docs/awk/` hold workflow procedure references and accepted AWK process decisions.
 - Local skills under `.agents/skills/awk/` hold workflow procedure.
 - Local Codex, Claude, opencode, and humans are interchangeable workers that read the same issues,
   PRs, docs, and optional Project fields.
@@ -86,6 +87,7 @@ The default installed kit includes:
 
 - `AGENTS.md`.
 - `.agents/skills/awk/`.
+- `docs/awk/`.
 - GitHub issue and PR templates.
 - `docs/development/` project artifacts, with subfolders created only when an artifact exists.
 - `scripts/validate-workflow.mjs`.

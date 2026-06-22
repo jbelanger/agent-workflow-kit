@@ -16,7 +16,8 @@ for interactive discovery, durable planning work, or `breakdown-issue`.
 - Grooming classifies unclear work before implementation.
 - Grooming produces direction; `breakdown-issue` creates child implementation work items.
 - Prefer updating the current work item over creating a parallel planning item.
-- Durable specs, ADRs, spikes, and workflow guidance belong under `docs/development/`.
+- Durable project specs, ADRs, spikes, and discovery bundles belong under `docs/development/`.
+- AWK workflow references and process decisions belong under `docs/awk/`.
 - Repo-local work items under `docs/development/work-items/` are the portable default planning
   record when no external tracker is required.
 - GitHub issues and PRs may mirror current planning, discussion, review, and audit trail.

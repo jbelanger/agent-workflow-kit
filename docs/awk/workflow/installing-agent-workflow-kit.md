@@ -12,6 +12,7 @@ Required:
   .github/ISSUE_TEMPLATE/
   .github/PULL_REQUEST_TEMPLATE.md
   .agents/skills/awk/
+  docs/awk/README.md
   docs/awk/adrs/github-first-orchestration.md
   docs/awk/workflow/ai-dev-workflow.md
   docs/awk/workflow/github-first-flow.md
@@ -37,8 +38,9 @@ Optional:
 | `.github/ISSUE_TEMPLATE/` | Yes | GitHub-first intake contracts for initiatives, specs, ADRs, and tasks. |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Yes | Review gate and validation summary for proposed docs or code. |
 | `.agents/skills/awk/` | Yes | Namespaced AWK workflow verbs and specialist lenses such as initialization, grooming, discovery, artifact drafting, breakdown, preparation, local work, and review. |
+| `docs/awk/` | Yes | Visible AWK documentation root for process references and workflow decisions. |
 | `docs/awk/adrs/github-first-orchestration.md` | Yes | Accepted source-of-truth decision for the GitHub-first operating model. |
-| `docs/awk/workflow/` | Yes | AWK process docs. |
+| `docs/awk/workflow/` | Yes | AWK flow and install docs. |
 | `docs/development/README.md` | Yes | Project artifact folder contract for durable project-specific docs. |
 | `docs/development/discovery/` | Lazy | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. Create only when a discovery artifact exists. |
 | `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Lazy | Durable planning artifacts reviewed through PRs. Create only when that artifact type exists. |

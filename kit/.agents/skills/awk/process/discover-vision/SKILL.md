@@ -16,6 +16,8 @@ accepted without explicit human acceptance.
   directly.
 - Discovery owns the interactive interview after grooming routes a vague product, UX, creative,
   game, platform, or architecture idea to `discover-vision`.
+- For UI-bearing work, discovery or the `ux-direction` lens prepares a compact UX direction draft
+  for human review. The human should review direction, not create it from a blank page.
 - Ask the human exactly one highest-leverage question at a time, then stop unless the human answers
   in the same turn.
 - Prefer a small accepted vision over a large speculative spec.
@@ -23,14 +25,14 @@ accepted without explicit human acceptance.
 
 ## Inputs To Read
 
-- `AGENTS.md` and `docs/development/workflow/ai-dev-workflow.md`.
+- `AGENTS.md` and `docs/awk/workflow/ai-dev-workflow.md`.
 - The grooming artifact, work item, issue, prompt, or prior discovery bundle.
 - Existing specs, ADRs, spikes, research notes, or source docs named by the work item.
 - Relevant specialist skills only after selecting the needed lenses.
 
 ## Lens Selection
 
-Select lenses from `.agents/skills/specialist/`. Record which lenses were used and why.
+Select lenses from `.agents/skills/awk/specialist/`. Record which lenses were used and why.
 
 Default lenses for vague product or platform work:
 
@@ -140,6 +142,7 @@ Vision state: Draft
 ## Problem / opportunity
 ## Experience pillars
 ## Core loop or primary workflow
+## UX direction / screen-state model
 ## Product and creative direction
 ## Technical direction
 ## Validation direction

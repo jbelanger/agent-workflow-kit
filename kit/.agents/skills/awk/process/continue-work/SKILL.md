@@ -11,8 +11,8 @@ from visible state, not to perform every step yourself.
 ## Inputs To Read
 
 - `AGENTS.md`.
-- `docs/development/workflow/ai-dev-workflow.md`.
-- `docs/development/adrs/github-first-orchestration.md`.
+- `docs/awk/workflow/ai-dev-workflow.md`.
+- `docs/awk/adrs/github-first-orchestration.md`.
 - The active GitHub Project when available.
 - Open GitHub issues, issue comments, labels, sub-issues, milestones, linked PRs, and Project field
   values when present.

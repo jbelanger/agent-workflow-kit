@@ -3,9 +3,9 @@
 This folder is the single-repo home for durable development artifacts that should guide future
 implementation, review, and agent behavior.
 
-Use this area for discovery bundles, specs, ADRs, spike writeups worth preserving, workflow rules,
-and repo-local work items only when GitHub is unavailable. GitHub issues and PRs hold active
-collaboration state; promote accepted durable truth into this folder.
+Use this area for discovery bundles, specs, ADRs, spike writeups worth preserving, project-specific
+workflow notes, and repo-local work items only when GitHub is unavailable. GitHub issues and PRs
+hold active collaboration state; promote accepted durable truth into this folder.
 
 This folder is intentionally separate from user-facing docs. Exclude it from published documentation
 or packaged artifacts when end users should not see internal development material.

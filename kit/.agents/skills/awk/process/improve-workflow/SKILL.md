@@ -14,7 +14,7 @@ architecture authority, board lifecycle, public agent behavior, or long-term pol
 - The reported friction or improvement idea.
 - The skill, workflow doc, issue template, PR template, label, or board field involved.
 - Recent examples where the process was confusing, too heavy, too loose, or unsafe.
-- `AGENTS.md` and `docs/development/workflow/ai-dev-workflow.md` when the change affects standing
+- `AGENTS.md` and `docs/awk/workflow/ai-dev-workflow.md` when the change affects standing
   rules or durable workflow.
 
 ## Classify Feedback

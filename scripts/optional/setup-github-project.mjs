@@ -110,9 +110,9 @@ Codex should still be able to resume from issues, PRs, and repo docs when no Pro
 
 ## Source Docs
 
-- \`docs/development/adrs/github-first-orchestration.md\`
-- \`docs/development/workflow/ai-dev-workflow.md\`
-- \`docs/development/workflow/github-first-flow.md\`
+- \`docs/awk/adrs/github-first-orchestration.md\`
+- \`docs/awk/workflow/ai-dev-workflow.md\`
+- \`docs/awk/workflow/github-first-flow.md\`
 
 ## Non-goals
 

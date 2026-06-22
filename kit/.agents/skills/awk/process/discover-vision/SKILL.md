@@ -14,7 +14,10 @@ accepted without explicit human acceptance.
 - Discovery decides what we are making and why, not every detail of how it works.
 - Specialists are advisory lenses. They do not create accepted truth and do not ask the human
   directly.
-- Ask the human exactly one highest-leverage question at a time.
+- Discovery owns the interactive interview after grooming routes a vague product, UX, creative,
+  game, platform, or architecture idea to `discover-vision`.
+- Ask the human exactly one highest-leverage question at a time, then stop unless the human answers
+  in the same turn.
 - Prefer a small accepted vision over a large speculative spec.
 - After the vision is accepted, later workflow stages should interrupt only for real forks.
 
@@ -64,6 +67,25 @@ Use progressive elaboration:
 
 Use an iteration cap for L0/L1: after three unanswered or unresolved rounds, recommend
 `NEEDS_DECISION`, `NEEDS_RESEARCH`, `DEFER`, or human-led workshop instead of continuing to ask.
+
+## Interactive Interview Protocol
+
+When discovery needs human judgment, conduct the interview interactively:
+
+1. Synthesize specialist evidence into the smallest decision map needed for the next answer.
+2. Ask exactly one question with options, a recommendation, and why the answer matters.
+3. If the human has not answered that exact question in the current turn, stop. Do not draft the
+   vision, create child tasks, write implementation briefs, or proceed as if the recommendation was
+   accepted.
+4. If using GitHub as the async surface, record the question in the issue and set the next actor to
+   `Human`; the next `continue-work` or `discover-vision` run should read the answer and continue.
+5. If using live chat, ask the question in chat and wait for the answer before updating durable
+   discovery artifacts.
+6. After the human answers, record the answer in the issue or discovery bundle before relying on it
+   for later workflow steps.
+
+Discovery may create an intake or decision log before the answer only when doing so helps preserve
+state. It must clearly mark the vision as blocked on the human answer.
 
 ## Real Forks
 

@@ -27,7 +27,7 @@ ordinary GitHub issues, PRs, and repo docs before any board setup exists.
 | GitHub Project | Optional operating state: status, next actor, decision needed, area, merge risk, artifact state. | Required baseline workflow or full evidence trail. |
 | GitHub PR | Proposed repo doc or code change, review discussion, validation summary. | Autonomous merge or hidden acceptance. |
 | `docs/development/` | Accepted durable truth after review: vision, specs, ADRs, spikes, workflow docs. | Raw scratch planning. |
-| `.agents/skills/` | Procedural rules for agents. | Project-specific accepted direction. |
+| `.agents/skills/awk/` | Procedural rules for agents. | Project-specific accepted direction. |
 
 ## Optional Project Fields
 

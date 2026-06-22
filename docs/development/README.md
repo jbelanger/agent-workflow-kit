@@ -17,10 +17,12 @@ or packaged artifacts when end users should not see internal development materia
 - `specs/`: accepted or draft behavior, contract, and user-visible semantics specs.
 - `adrs/`: durable architecture, storage, public-surface, boundary, or workflow-policy decisions.
 - `spikes/`: preserved investigation outputs whose evidence is still useful.
-- `workflow/`: process, issue/PR coordination, CI, review, and delivery-loop documentation.
+- `workflow/`: project-specific process notes when they are not part of the installable AWK docs.
+- `dogfood-runs/`: recorded workflow trials, outcomes, visuals, and lessons.
 
-Installable `AGENTS.md` guidance lives at `kit/AGENTS.md`. Installable local Codex skills live under
-`kit/.agents/skills/`. Keeping them under `kit/` prevents this source repo from accidentally using
-the workflow it is packaging as its own active operating loop.
+The installable AWK usage block lives at `kit/AGENTS.md`. Installable local Codex skills live under
+`kit/.agents/skills/awk/`, and installable process docs live under `docs/awk/`. Keeping active kit
+assets outside this folder prevents this source repo from accidentally using the workflow it is
+packaging as its own operating loop.
 
 Skill category folders are navigation only; each skill still owns its own `SKILL.md` instructions.

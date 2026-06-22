@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -35,11 +35,47 @@ function initRepo(path) {
   run('git', ['init', '--quiet', path]);
 }
 
+function assert(condition, message) {
+  if (!condition) throw new Error(message);
+}
+
 function proveGithubFirst(root) {
   const target = join(root, 'github-first');
   initRepo(target);
+  writeFileSync(
+    join(target, 'AGENTS.md'),
+    '# Project Agents\n\nPreserve this project-owned guidance.\n'
+  );
+  writeFileSync(join(target, 'README.md'), '# Project README\n');
+
   run(process.execPath, ['scripts/install-workflow-kit.mjs', '--target', target]);
   run(process.execPath, [join(target, 'scripts/validate-workflow.mjs'), '--cwd', target]);
+
+  const agents = readFileSync(join(target, 'AGENTS.md'), 'utf8');
+  const readme = readFileSync(join(target, 'README.md'), 'utf8');
+  assert(
+    agents.includes('Preserve this project-owned guidance.'),
+    'Install did not preserve existing project AGENTS.md guidance.'
+  );
+  assert(
+    agents.includes('<!-- BEGIN_AGENT_WORKFLOW_KIT -->') &&
+      agents.includes('<!-- END_AGENT_WORKFLOW_KIT -->'),
+    'Install did not merge the marked AWK block into AGENTS.md.'
+  );
+  assert(readme === '# Project README\n', 'Install overwrote the project-owned README.md.');
+  assert(
+    existsSync(join(target, '.agents/skills/awk/process/init-awk/SKILL.md')),
+    'Install did not create namespaced AWK skills.'
+  );
+  assert(!existsSync(join(target, '.agents/skills/process')), 'Install created old root skill paths.');
+  assert(
+    existsSync(join(target, 'docs/awk/workflow/ai-dev-workflow.md')),
+    'Install did not create namespaced AWK process docs.'
+  );
+  assert(
+    !existsSync(join(target, 'docs/development/workflow')),
+    'Install created old docs/development workflow docs.'
+  );
 }
 
 const options = parseArgs(process.argv.slice(2));

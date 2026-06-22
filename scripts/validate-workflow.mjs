@@ -4,15 +4,15 @@ import { join, resolve } from 'node:path';
 
 const requiredPortableFiles = [
   'AGENTS.md',
-  '.agents/skills/README.md',
-  '.agents/skills/process/README.md',
-  '.agents/skills/specialist/README.md',
-  '.agents/skills/domain/README.md',
+  '.agents/skills/awk/README.md',
+  '.agents/skills/awk/process/README.md',
+  '.agents/skills/awk/specialist/README.md',
+  '.agents/skills/awk/domain/README.md',
   'docs/development/README.md',
-  'docs/development/workflow/ai-dev-workflow.md',
-  'docs/development/workflow/github-first-flow.md',
-  'docs/development/adrs/github-first-orchestration.md',
-  'docs/development/workflow/installing-agent-workflow-kit.md',
+  'docs/awk/workflow/ai-dev-workflow.md',
+  'docs/awk/workflow/github-first-flow.md',
+  'docs/awk/adrs/github-first-orchestration.md',
+  'docs/awk/workflow/installing-agent-workflow-kit.md',
   '.github/ISSUE_TEMPLATE/adr.yml',
   '.github/ISSUE_TEMPLATE/discovery.yml',
   '.github/ISSUE_TEMPLATE/initiative.yml',
@@ -29,25 +29,27 @@ const requiredPortableFiles = [
 ];
 
 const requiredSkills = [
-  '.agents/skills/process/triage-backlog/SKILL.md',
-  '.agents/skills/process/pick-next-item/SKILL.md',
-  '.agents/skills/process/continue-work/SKILL.md',
-  '.agents/skills/process/groom-issue/SKILL.md',
-  '.agents/skills/process/discover-vision/SKILL.md',
-  '.agents/skills/process/draft-artifact/SKILL.md',
-  '.agents/skills/process/breakdown-issue/SKILL.md',
-  '.agents/skills/process/prepare-implementation/SKILL.md',
-  '.agents/skills/process/work-issue-local/SKILL.md',
-  '.agents/skills/process/review-local-changes/SKILL.md',
-  '.agents/skills/process/review-revision-triage/SKILL.md',
-  '.agents/skills/process/improve-workflow/SKILL.md',
-  '.agents/skills/specialist/product-strategy/SKILL.md',
-  '.agents/skills/specialist/technical-architecture/SKILL.md',
-  '.agents/skills/specialist/validation-strategy/SKILL.md',
-  '.agents/skills/specialist/ux-direction/SKILL.md',
-  '.agents/skills/specialist/creative-direction/SKILL.md',
-  '.agents/skills/specialist/diagnose-bug/SKILL.md',
-  '.agents/skills/specialist/tdd/SKILL.md',
+  '.agents/skills/awk/process/init-awk/SKILL.md',
+  '.agents/skills/awk/process/maintain-awk/SKILL.md',
+  '.agents/skills/awk/process/triage-backlog/SKILL.md',
+  '.agents/skills/awk/process/pick-next-item/SKILL.md',
+  '.agents/skills/awk/process/continue-work/SKILL.md',
+  '.agents/skills/awk/process/groom-issue/SKILL.md',
+  '.agents/skills/awk/process/discover-vision/SKILL.md',
+  '.agents/skills/awk/process/draft-artifact/SKILL.md',
+  '.agents/skills/awk/process/breakdown-issue/SKILL.md',
+  '.agents/skills/awk/process/prepare-implementation/SKILL.md',
+  '.agents/skills/awk/process/work-issue-local/SKILL.md',
+  '.agents/skills/awk/process/review-local-changes/SKILL.md',
+  '.agents/skills/awk/process/review-revision-triage/SKILL.md',
+  '.agents/skills/awk/process/improve-workflow/SKILL.md',
+  '.agents/skills/awk/specialist/product-strategy/SKILL.md',
+  '.agents/skills/awk/specialist/technical-architecture/SKILL.md',
+  '.agents/skills/awk/specialist/validation-strategy/SKILL.md',
+  '.agents/skills/awk/specialist/ux-direction/SKILL.md',
+  '.agents/skills/awk/specialist/creative-direction/SKILL.md',
+  '.agents/skills/awk/specialist/diagnose-bug/SKILL.md',
+  '.agents/skills/awk/specialist/tdd/SKILL.md',
 ];
 
 const issueTemplateLabels = new Map([
@@ -57,6 +59,19 @@ const issueTemplateLabels = new Map([
   ['.github/ISSUE_TEMPLATE/spec.yml', 'spec'],
   ['.github/ISSUE_TEMPLATE/task.yml', 'task'],
 ]);
+
+const flowAtGlanceSnippets = [
+  'Flow At A Glance',
+  'Inbox -> Grooming -> Discovery/Vision or Drafting -> Breakdown -> Ready -> In Progress -> Review -> Done',
+  'continue-work',
+  'groom-issue',
+  'breakdown-issue',
+  'prepare-implementation',
+  'work-issue-local',
+  'review-local-changes',
+  'review-revision-triage',
+  'Do not skip from vague idea or Inbox directly to implementation',
+];
 
 function parseArgs(argv) {
   let cwd = process.cwd();
@@ -82,7 +97,7 @@ function read(cwd, path) {
 function sourcePath(cwd, path) {
   if (
     existsSync(join(cwd, 'kit/AGENTS.md')) &&
-    (path === 'AGENTS.md' || path.startsWith('.agents/'))
+    (path === 'AGENTS.md' || path.startsWith('.agents/skills/awk/'))
   ) {
     return join('kit', path);
   }
@@ -142,14 +157,26 @@ function validate(cwd) {
     if (!existsSync(join(cwd, actualPath))) errors.push(`Missing required skill: ${actualPath}`);
   }
 
-  for (const file of walkFiles(join(cwd, sourcePath(cwd, '.agents/skills')))) {
+  for (const path of ['AGENTS.md', '.agents/skills/awk/README.md']) {
+    const actualPath = sourcePath(cwd, path);
+    if (existsSync(join(cwd, actualPath))) {
+      const text = read(cwd, actualPath);
+      for (const snippet of flowAtGlanceSnippets) {
+        if (!text.includes(snippet)) {
+          errors.push(`${actualPath} is missing flow-at-a-glance snippet: ${snippet}`);
+        }
+      }
+    }
+  }
+
+  for (const file of walkFiles(join(cwd, sourcePath(cwd, '.agents/skills/awk')))) {
     const relativePath = file.slice(cwd.length + 1);
     if (relativePath.endsWith('/SKILL.md')) {
       validateSkill(cwd, relativePath, errors);
     }
   }
 
-  const groomSkillPath = sourcePath(cwd, '.agents/skills/process/groom-issue/SKILL.md');
+  const groomSkillPath = sourcePath(cwd, '.agents/skills/awk/process/groom-issue/SKILL.md');
   if (existsSync(join(cwd, groomSkillPath))) {
     const groomSkill = read(cwd, groomSkillPath);
     for (const snippet of ['Interview And Research Mode', 'Grooming status', 'NEEDS_INTERVIEW', 'NEEDS_RESEARCH', 'discover-vision']) {
@@ -159,7 +186,7 @@ function validate(cwd) {
     }
   }
 
-  const discoverSkillPath = sourcePath(cwd, '.agents/skills/process/discover-vision/SKILL.md');
+  const discoverSkillPath = sourcePath(cwd, '.agents/skills/awk/process/discover-vision/SKILL.md');
   if (existsSync(join(cwd, discoverSkillPath))) {
     const discoverSkill = read(cwd, discoverSkillPath);
     for (const snippet of ['product-strategy', 'technical-architecture', 'validation-strategy', 'ux-direction', 'creative-direction', 'READY_FOR_SPEC', 'DIRECT_TASK', 'real fork']) {
@@ -169,7 +196,7 @@ function validate(cwd) {
     }
   }
 
-  const continueSkillPath = sourcePath(cwd, '.agents/skills/process/continue-work/SKILL.md');
+  const continueSkillPath = sourcePath(cwd, '.agents/skills/awk/process/continue-work/SKILL.md');
   if (existsSync(join(cwd, continueSkillPath))) {
     const continueSkill = read(cwd, continueSkillPath);
     for (const snippet of ['GitHub issues', 'Next workflow verb', 'work-issue-local', 'visible grooming result', 'direct-task rationale', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue']) {
@@ -179,7 +206,7 @@ function validate(cwd) {
     }
   }
 
-  const groomSkillVisiblePath = sourcePath(cwd, '.agents/skills/process/groom-issue/SKILL.md');
+  const groomSkillVisiblePath = sourcePath(cwd, '.agents/skills/awk/process/groom-issue/SKILL.md');
   if (existsSync(join(cwd, groomSkillVisiblePath))) {
     const groomSkill = read(cwd, groomSkillVisiblePath);
     for (const snippet of ['Visible Grooming Record', 'Why direct implementation is safe', 'Human question asked']) {
@@ -189,7 +216,7 @@ function validate(cwd) {
     }
   }
 
-  const prepareSkillPath = sourcePath(cwd, '.agents/skills/process/prepare-implementation/SKILL.md');
+  const prepareSkillPath = sourcePath(cwd, '.agents/skills/awk/process/prepare-implementation/SKILL.md');
   if (existsSync(join(cwd, prepareSkillPath))) {
     const prepareSkill = read(cwd, prepareSkillPath);
     for (const snippet of ['Visible grooming result', 'Clarifying questions / challenges']) {
@@ -199,7 +226,7 @@ function validate(cwd) {
     }
   }
 
-  const workIssueSkillPath = sourcePath(cwd, '.agents/skills/process/work-issue-local/SKILL.md');
+  const workIssueSkillPath = sourcePath(cwd, '.agents/skills/awk/process/work-issue-local/SKILL.md');
   if (existsSync(join(cwd, workIssueSkillPath))) {
     const workIssueSkill = read(cwd, workIssueSkillPath);
     for (const snippet of ['Readiness Gate', 'visible grooming result', 'well-written issue body']) {
@@ -209,8 +236,44 @@ function validate(cwd) {
     }
   }
 
-  if (existsSync(join(cwd, 'docs/development/workflow/github-first-flow.md'))) {
-    const githubFlow = read(cwd, 'docs/development/workflow/github-first-flow.md');
+  const initSkillPath = sourcePath(cwd, '.agents/skills/awk/process/init-awk/SKILL.md');
+  if (existsSync(join(cwd, initSkillPath))) {
+    const initSkill = read(cwd, initSkillPath);
+    for (const snippet of [
+      'Initial Issue Bootstrap',
+      'Create one parent initiative issue',
+      'Create child task, spec, ADR, discovery, or spike issues',
+      'Next workflow verb',
+      'Do not create coding branches',
+      'Detailed Plan Import Rule',
+      'Create the parent issue first',
+      'Accepted enough for artifact review or breakdown is not accepted enough for implementation',
+    ]) {
+      if (!initSkill.includes(snippet)) {
+        errors.push(`init-awk skill is missing issue-bootstrap snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, 'docs/awk/workflow/installing-agent-workflow-kit.md'))) {
+    const installDoc = read(cwd, 'docs/awk/workflow/installing-agent-workflow-kit.md');
+    for (const snippet of [
+      'Initial Issue Bootstrap',
+      'one parent initiative issue',
+      'child task, spec, ADR, discovery, or spike issues',
+      'Next workflow verb',
+      'do not implement from the plan directly',
+      'Create the parent issue first',
+      'Accepted enough for artifact review or breakdown is not accepted enough for implementation',
+    ]) {
+      if (!installDoc.includes(snippet)) {
+        errors.push(`installing-agent-workflow-kit doc is missing init-bootstrap snippet: ${snippet}`);
+      }
+    }
+  }
+
+  if (existsSync(join(cwd, 'docs/awk/workflow/github-first-flow.md'))) {
+    const githubFlow = read(cwd, 'docs/awk/workflow/github-first-flow.md');
     for (const snippet of ['Review Handoff Rule', 'Issue Linkage Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff', 'visible grooming result', 'Open PRs as ready for review', 'completed agent review pass', 'draft/ready state', 'architecture ambiguity', 'merge approval', 'Closes #issue', 'Refs #issue']) {
       if (!githubFlow.includes(snippet)) {
         errors.push(`GitHub-first flow is missing review handoff snippet: ${snippet}`);
@@ -251,7 +314,7 @@ function validate(cwd) {
     }
   }
 
-  const draftSkillPath = sourcePath(cwd, '.agents/skills/process/draft-artifact/SKILL.md');
+  const draftSkillPath = sourcePath(cwd, '.agents/skills/awk/process/draft-artifact/SKILL.md');
   if (existsSync(join(cwd, draftSkillPath))) {
     const draftSkill = read(cwd, draftSkillPath);
     for (const snippet of ['NEEDS_INTERVIEW', 'Human decision needed: YES', 'thin rules-only spec']) {

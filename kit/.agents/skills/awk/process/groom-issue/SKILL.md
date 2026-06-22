@@ -8,8 +8,8 @@ description: Clarify a vague work item, issue, or idea and decide whether it sho
 You are turning a vague work item, issue, or idea into the next useful planning output. Do not
 implement code.
 
-Keep this skill narrow: classify unclear work, ask for missing decisions, and prepare the work item
-for durable planning work or `breakdown-issue`.
+Keep this skill narrow: classify unclear work, identify missing decisions, and prepare the work item
+for interactive discovery, durable planning work, or `breakdown-issue`.
 
 ## Core Stance
 
@@ -22,14 +22,16 @@ for durable planning work or `breakdown-issue`.
 - GitHub issues and PRs may mirror current planning, discussion, review, and audit trail.
 - Recommend work item fields, labels, and board status changes, but do not depend on automatic
   project board transitions.
-- Ask one clarification question at a time.
-- Give options, a recommendation, and the reason.
+- Ask one clarification question at a time only for ordinary clarification that can resolve grooming
+  itself. Do not conduct a product, UX, creative, game, platform, or architecture vision interview
+  inside grooming.
+- Give options, a recommendation, and the reason when asking an ordinary clarification question.
 - Explain decisions in simple operational terms, assuming the human has not looked at the code
   recently.
 - Use a compact table, diagram, or before/after flow when it makes the decision clearer.
 - When product, creative direction, interaction design, game feel, information architecture, or
-  platform choice is central to the value, enter interview mode instead of compressing the idea into
-  a small implementation shape.
+  platform choice is central to the value, route to `discover-vision` instead of compressing the
+  idea into a small implementation shape.
 - Do product/design research before recommending a vision when current market, genre, platform,
   competitor, or user-expectation evidence would materially change the answer. If the environment
   cannot access needed external evidence, say that and route to a spike or human-supplied sources.
@@ -115,13 +117,16 @@ still in grooming unless the record explains why that ambiguity does not affect 
 ## Interview And Research Mode
 
 Use interview mode when the work is vague and the missing information is product, design, creative,
-workflow, architecture, or platform judgment. In interview mode:
+workflow, architecture, or platform judgment. Grooming does not run that interview; it records that
+interactive discovery is needed and hands the item to `discover-vision`.
 
 1. Do not draft a spec, child work item, or implementation brief yet.
-2. Ask the highest-leverage next question only.
-3. Include options, a recommendation, and why the answer changes downstream work.
+2. Record the decision area and, when helpful, a candidate first question for `discover-vision`.
+3. Include options, a recommendation, and why the answer changes downstream work only as a handoff
+   note, not as a completed interview.
 4. Keep the work in `Grooming`.
 5. Set `Grooming status: NEEDS_INTERVIEW`.
+6. Set the next workflow verb to `discover-vision`.
 
 Use research mode when the next useful answer depends on evidence the agent should gather before
 asking the human to decide. In research mode:
@@ -137,9 +142,9 @@ Use `Grooming status: READY_FOR_DRAFT` only when the next durable artifact can b
 inventing meaningful product behavior, creative direction, architecture, ownership, platform shape,
 or acceptance criteria.
 
-Route to `discover-vision` when the work needs an orchestrated product, UX, creative, platform, or
-architecture vision before a useful spec can exist. Do not run discovery for `DIRECT_TASK`, `DROP`,
-or `DEFER`.
+Route to `discover-vision` when the work needs an orchestrated product, UX, creative, game,
+platform, or architecture vision before a useful spec can exist. Do not run discovery for
+`DIRECT_TASK`, `DROP`, or `DEFER`.
 
 ## Spec Flow
 
@@ -217,6 +222,9 @@ Return:
 - Prefer updating the current work item over creating a parallel planning item.
 - If the work item is clear enough for implementation, hand it to `breakdown-issue` so the
   orchestrator can produce merge-safe executable task boundaries before `prepare-implementation`.
+- If the work item needs a product, UX, creative, game, platform, or architecture interview, stop
+  after recording the grooming handoff and route to `discover-vision`; do not run the interview in
+  grooming.
 
 ## Test-Drive Feedback
 

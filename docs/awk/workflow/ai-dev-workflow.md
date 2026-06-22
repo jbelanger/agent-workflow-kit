@@ -17,22 +17,23 @@ creating architecture debt, hidden scope, or unnecessary merge conflicts.
 
 Use the smallest durable surface that matches the job:
 
-- `AGENTS.md`: installed repository rules, quality bar, validation expectations, and boundaries.
-- `.agents/skills/`: installed local Codex skills organized by category.
+- `AGENTS.md`: project-owned repository rules with a small marked AWK usage block.
+- `.agents/skills/awk/`: installed AWK Codex skills organized by category.
 - GitHub issues: active work items, discussion, human answers, and collaboration state.
 - GitHub Projects: optional operating state for lifecycle, next actor, decision needed, artifact
   state, merge risk, and area.
 - GitHub PRs: proposed durable docs or code changes and their review gates.
-- `docs/development/`: accepted durable truth such as vision briefs, specs, ADRs, spike writeups,
-  workflow docs, and planning records.
+- `docs/development/`: accepted durable project truth such as vision briefs, specs, ADRs, spike
+  writeups, and planning records.
+- `docs/awk/`: AWK process docs and workflow decisions.
 - CI: deterministic checks such as tests, typecheck, lint, formatting, build, and architecture
   checks.
 
-Development docs live in the single repo, but they must remain separate from user-facing docs and
-excluded from any published product surface when needed. In an installed target repo, active agent
-instructions stay in `AGENTS.md` and `.agents/skills/`, not under `docs/development/`. In this kit
-source repo, the installable copies live under `kit/` so local dogfooding can happen in a separate
-target repo without self-applying the workflow.
+Project development docs live in the single repo, but they must remain separate from user-facing docs
+and excluded from any published product surface when needed. In an installed target repo, active AWK
+procedure stays in `.agents/skills/awk/` and `docs/awk/`; project-specific durable artifacts stay in
+`docs/development/`. In this kit source repo, the installable skill copies live under `kit/` so local
+dogfooding can happen in a separate target repo without self-applying the workflow.
 
 ## Core Rule
 
@@ -50,7 +51,7 @@ Agents may not hide uncertainty.
 Active skills use this shape:
 
 ```text
-.agents/skills/<category>/<skill-name>/SKILL.md
+.agents/skills/awk/<category>/<skill-name>/SKILL.md
 ```
 
 The final folder must remain the skill name, and the frontmatter `name` is still the invocation
@@ -69,6 +70,8 @@ Process: planning and orchestration:
 
 | Skill | Purpose | May edit code? |
 | --- | --- | --- |
+| `init-awk` | Initialize AWK in a target repo, require pushed GitHub state, labels, and initial issues before workflow execution. | No |
+| `maintain-awk` | Update, repair, or migrate an AWK install while preserving project-owned files and workflow state. | No |
 | `triage-backlog` | Review open work items and classify what needs attention. | No |
 | `pick-next-item` | Recommend the best next work item based on readiness, risk, dependencies, and value. | No |
 | `continue-work` | Inspect GitHub issues, project fields, PRs, and repo docs to choose the next safe workflow verb. | No |
@@ -106,8 +109,8 @@ not part of the process loop.
 
 ## GitHub-First Orchestration
 
-Use `docs/development/adrs/github-first-orchestration.md` as the accepted boundary for the active
-workflow model. Use `docs/development/workflow/github-first-flow.md` for the v0 operating flow.
+Use `docs/awk/adrs/github-first-orchestration.md` as the accepted boundary for the active
+workflow model. Use `docs/awk/workflow/github-first-flow.md` for the v0 operating flow.
 
 The source-of-truth model is:
 
@@ -124,7 +127,7 @@ GitHub PR
 repo docs under docs/development/
   -> accepted durable truth after review
 
-.agents/skills/
+.agents/skills/awk/
   -> workflow procedure
 ```
 
@@ -184,6 +187,17 @@ ordinary issues, PRs, and repo docs prove insufficient for coordination.
 A work item is the workflow's unit of planning. In the default profile it is a GitHub issue. A
 repo-local Markdown record under `docs/development/work-items/` is a fallback for projects that
 cannot use GitHub.
+
+New repositories start with `init-awk`. Initialization must create the initial GitHub issue surface
+before ordinary workflow execution: a parent initiative when there is a larger outcome, child issues
+for the first real slices or unresolved decisions, links to source docs or imported plans, issue type
+labels, readiness state, and a `Next workflow verb` for each issue. Do not start implementation from
+an imported plan, README, or local Markdown record until that state exists in GitHub.
+
+During initialization, create the parent issue before child issues and update links after GitHub
+assigns issue numbers. A detailed plan may be accepted enough for artifact review or breakdown
+without being accepted enough for implementation; implementation still requires visible grooming,
+accepted direction, task boundaries, and an implementation brief or equivalent readiness record.
 
 Use this authority model:
 
@@ -269,12 +283,13 @@ Grooming answers:
 - What architecture risks exist?
 - Is this parallel-safe, needs coordination, or serial only?
 
-For product, design, game, interaction, or other user-facing creative work, grooming also owns the
-vision interview before specification. The agent should not turn a vague product prompt into a
-minimal implementation slice by guessing the product. It should identify audience, experience
-goals, core loop or workflow, comparable products or genre expectations, design risks, and platform
-options. When current market, competitor, genre, library, or platform evidence would materially
-change the recommendation, gather evidence or route to a spike before drafting.
+For product, design, game, interaction, or other user-facing creative work, grooming owns the
+classification and handoff into vision discovery. It should not turn a vague product prompt into a
+minimal implementation slice by guessing the product. It should identify the unresolved audience,
+experience goals, core loop or workflow, comparable products or genre expectations, design risks, and
+platform options, then route interactive interview work to `discover-vision`. When current market,
+competitor, genre, library, or platform evidence would materially change the recommendation, gather
+evidence or route to a spike before drafting.
 
 Choose the smallest useful output:
 
@@ -305,7 +320,8 @@ Grooming status values:
 
 `draft-artifact` should consume grooming only when the status is `READY_FOR_DRAFT` or the current
 human response resolves the blocking question. Otherwise the workflow should keep the item in
-grooming, ask the next interview question, run `discover-vision`, or run the named research spike.
+grooming for ordinary clarification, run `discover-vision` for interactive product or vision
+interviews, or run the named research spike.
 
 ### 4. Discover Vision
 
@@ -316,6 +332,11 @@ Discovery is the workflow's high-human-interaction stage. Its job is to decide t
 vision: who the work is for, what experience or operational outcome matters, which direction is
 distinctive or useful, which technical shape is credible, and what evidence will prove the direction
 is good enough to specify.
+
+Discovery interviews should be interactive. The agent asks one highest-leverage question, then stops
+unless the human answers in the same turn. In an async GitHub run, the question lives in the issue
+and the next actor is `Human`; in live chat, the agent asks in chat and waits. The agent must not
+treat its own recommendation as accepted direction.
 
 `discover-vision` acts as the orchestrator. It chooses specialist lenses conditionally:
 

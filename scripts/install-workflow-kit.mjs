@@ -16,20 +16,23 @@ const portableEntries = [
   ['kit/AGENTS.md', 'AGENTS.md'],
   ['.github/ISSUE_TEMPLATE', '.github/ISSUE_TEMPLATE'],
   ['.github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
-  ['kit/.agents/skills', '.agents/skills'],
+  ['kit/.agents/skills/awk', '.agents/skills/awk'],
   ['docs/development/README.md', 'docs/development/README.md'],
-  ['docs/development/adrs/github-first-orchestration.md', 'docs/development/adrs/github-first-orchestration.md'],
-  ['docs/development/workflow/ai-dev-workflow.md', 'docs/development/workflow/ai-dev-workflow.md'],
-  ['docs/development/workflow/github-first-flow.md', 'docs/development/workflow/github-first-flow.md'],
-  ['docs/development/workflow/installing-agent-workflow-kit.md', 'docs/development/workflow/installing-agent-workflow-kit.md'],
   ['docs/development/discovery/.gitkeep', 'docs/development/discovery/.gitkeep'],
   ['docs/development/specs/.gitkeep', 'docs/development/specs/.gitkeep'],
   ['docs/development/adrs/.gitkeep', 'docs/development/adrs/.gitkeep'],
   ['docs/development/spikes/.gitkeep', 'docs/development/spikes/.gitkeep'],
+  ['docs/awk/adrs/github-first-orchestration.md', 'docs/awk/adrs/github-first-orchestration.md'],
+  ['docs/awk/workflow/ai-dev-workflow.md', 'docs/awk/workflow/ai-dev-workflow.md'],
+  ['docs/awk/workflow/github-first-flow.md', 'docs/awk/workflow/github-first-flow.md'],
+  ['docs/awk/workflow/installing-agent-workflow-kit.md', 'docs/awk/workflow/installing-agent-workflow-kit.md'],
   ['scripts/workflow-labels.mjs', 'scripts/workflow-labels.mjs'],
   ['scripts/setup-github-labels.mjs', 'scripts/setup-github-labels.mjs'],
   ['scripts/validate-workflow.mjs', 'scripts/validate-workflow.mjs'],
 ];
+
+const awkBlockStart = '<!-- BEGIN_AGENT_WORKFLOW_KIT -->';
+const awkBlockEnd = '<!-- END_AGENT_WORKFLOW_KIT -->';
 
 function usage() {
   return `Usage: node scripts/install-workflow-kit.mjs --target <repo> [--force] [--dry-run]
@@ -37,9 +40,11 @@ function usage() {
 Installs the GitHub-first Agent Workflow Kit into another repository.
 
 Installs:
-  AGENTS.md, .github templates, .agents/skills/, workflow docs, and lightweight setup/validation scripts
+  a minimal AWK block in AGENTS.md, .github templates, .agents/skills/awk/, docs/awk/,
+  docs/development/ artifact folders, and lightweight setup/validation scripts
 
 Safety:
+  AGENTS.md is merged by replacing or appending the marked AWK block
   existing identical files are left alone
   existing different files fail unless --force is passed`;
 }
@@ -101,9 +106,47 @@ function collectFiles(sourceEntry, targetEntry = sourceEntry) {
   return files;
 }
 
+function mergeAgentsText(currentText, blockText) {
+  const blockStart = blockText.indexOf(awkBlockStart);
+  const blockEnd = blockText.indexOf(awkBlockEnd);
+  if (blockStart === -1 || blockEnd === -1 || blockEnd < blockStart) {
+    throw new Error('Install source kit/AGENTS.md is missing the marked AWK block.');
+  }
+
+  const block = blockText.slice(blockStart, blockEnd + awkBlockEnd.length);
+  const currentStart = currentText.indexOf(awkBlockStart);
+  const currentEnd = currentText.indexOf(awkBlockEnd);
+
+  if (currentStart !== -1 && currentEnd !== -1 && currentEnd > currentStart) {
+    return `${currentText.slice(0, currentStart)}${block}${currentText.slice(
+      currentEnd + awkBlockEnd.length
+    )}`;
+  }
+
+  const trimmed = currentText.trimEnd();
+  return `${trimmed}\n\n${block}\n`;
+}
+
 function copyFile(file, options, result) {
   const source = join(kitRoot, file.source);
   const target = join(options.target, file.target);
+
+  if (file.target === 'AGENTS.md' && existsSync(target)) {
+    const sourceText = readFileSync(source, 'utf8');
+    const targetText = readFileSync(target, 'utf8');
+    const mergedText = mergeAgentsText(targetText, sourceText);
+    if (mergedText === targetText) {
+      result.unchanged.push(file.target);
+      return;
+    }
+
+    result.merged.push(file.target);
+    if (!options.dryRun) {
+      mkdirSync(dirname(target), { recursive: true });
+      writeFileSync(target, mergedText);
+    }
+    return;
+  }
 
   if (existsSync(target)) {
     const sourceText = readFileSync(source);
@@ -141,6 +184,7 @@ function install(options) {
   const files = [...filesByTarget.values()].sort((a, b) => a.target.localeCompare(b.target));
   const result = {
     created: [],
+    merged: [],
     overwritten: [],
     unchanged: [],
     conflicts: [],
@@ -174,6 +218,7 @@ try {
   console.log('Profile: GitHub-first workflow');
   if (options.dryRun) console.log('Dry run: no files were written.');
   printList('Created', result.created);
+  printList('Merged', result.merged);
   printList('Overwritten', result.overwritten);
   if (result.unchanged.length > 0) {
     console.log(`Unchanged: ${result.unchanged.length} file(s) already matched.`);

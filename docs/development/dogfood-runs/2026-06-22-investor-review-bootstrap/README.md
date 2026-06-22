@@ -146,6 +146,8 @@ flowchart LR
   make skills carry too much reference material.
 - The first UX-gate wording could sound like the human had to produce UX direction from scratch,
   when the better flow is for a discovery or UX-direction agent to draft direction for human review.
+- UX direction needs visual aids for UI products. Text-only UX direction leaves too much for the
+  human to imagine and makes it harder to compare assumptions before implementation starts.
 
 ## Lessons Promoted
 
@@ -164,6 +166,11 @@ Promoted back into the source kit during this run:
   `docs/development/`.
 - Clarified that UX discovery should prepare a compact direction draft for human review, asking one
   blocking question only when the next direction cannot be drafted responsibly.
+- Added a generated visual artifact path for UX discovery and UX specs. Discovery workers can now
+  create non-production mockups or sample assets under `docs/development/discovery/<slug>/mockups/`,
+  while UX specs can keep linked visuals under `docs/development/specs/<slug>-assets/`.
+- Pushed the target repo update as commit `67305e8` and commented on `#7` to request mockups for
+  the investor review queue, review detail, and loading/error/replay states.
 
 ## Current State
 

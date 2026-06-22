@@ -23,6 +23,8 @@ Before writing the brief, verify the work item has enough context:
 - Contracts, records, APIs, storage, or user surfaces touched.
 - For UI-bearing work: accepted UX direction, or a clear recorded reason the slice touches no
   user-facing workflow, screen/state model, or interaction surface.
+- For UI-bearing work with generated visuals: linked mockups or sample assets, plus whether they are
+  accepted direction, illustrative examples, or assumptions needing human review.
 - Acceptance criteria.
 - Feedback loop or test seam.
 - Expected tests.
@@ -62,6 +64,8 @@ Produce:
 
 # UX direction / user surface
 
+# Mockups / sample assets
+
 # Parent/child context
 
 # Acceptance criteria
@@ -86,6 +90,8 @@ Produce:
 - For UI-bearing tasks, stop if the implementation brief lacks UX direction for the user journey,
   screen/state model, information hierarchy, interaction constraints, and accessibility/usability
   risks.
+- If implementation depends on visual direction, stop unless linked mockups or sample assets are
+  accepted or explicitly marked illustrative enough for the slice.
 - Stop if a real architecture fork needs human choice.
 
 ## Test-Drive Feedback

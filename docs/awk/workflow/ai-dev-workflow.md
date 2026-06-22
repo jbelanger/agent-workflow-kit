@@ -348,6 +348,14 @@ issue comment, or spec section, but it must distinguish recommendations from ass
 questions. Ask the human one blocking question only when the next direction cannot be drafted
 responsibly.
 
+When visuals would make review easier, the same worker may generate sample assets or mockups as
+review aids. These can be wireframes, screen-state mockups, sample empty/error states, generated
+bitmap images, HTML/CSS screenshots, or lightweight asset studies. Store them only when created,
+inside `docs/development/discovery/<slug>/mockups/` or beside a UX spec in
+`docs/development/specs/<slug>-assets/`. Label them as non-production until accepted, and record
+which assumptions the visual is testing. Do not let polished visuals substitute for unresolved
+product or interaction decisions.
+
 Discovery interviews should be interactive. The agent asks one highest-leverage question, then stops
 unless the human answers in the same turn. In an async GitHub run, the question lives in the issue
 and the next actor is `Human`; in live chat, the agent asks in chat and waits. The agent must not
@@ -375,6 +383,7 @@ docs/development/discovery/<slug>/
   vision-brief.md
   decision-log.md
   research-notes.md   # only when research exists
+  mockups/            # only when generated visual review aids exist
 ```
 
 Avoid permanent specialist transcript files by default. Later workflow stages should read the
@@ -412,6 +421,8 @@ Use `draft-artifact` to create or update one durable artifact from groomed direc
 - Draft specs go under `docs/development/specs/` with `Spec state: Draft`.
 - Draft ADRs go under `docs/development/adrs/` with `Status: Proposed`.
 - Spike plans or results go under `docs/development/spikes/`.
+- UX specs may include generated visuals under `docs/development/specs/<slug>-assets/` when mockups
+  or sample assets materially improve review.
 
 Create artifact folders only when writing the first artifact in that folder. Do not keep empty
 `docs/development/` subfolders as workflow placeholders.
@@ -424,6 +435,10 @@ For product or design specs, the draft must include a real product/design vision
 rules: intended audience, experience pillars, core loop or workflow, comparable references or
 research evidence, differentiators, and design risks. If the source grooming record does not support
 that depth, do not draft a thin rules-only spec; return to interview or research.
+
+For UX specs, include or link sample assets and mockups when they clarify layout, states, workflow,
+visual hierarchy, or interaction feel. Generated visuals are review aids; the spec must say whether
+they are accepted direction, illustrative examples, or assumptions needing human review.
 
 Spec state is separate from board status:
 

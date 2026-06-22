@@ -1,6 +1,6 @@
 ---
 name: draft-artifact
-description: "Draft or update one durable planning artifact from accepted or groomed direction: spec, ADR, or spike. Use when the user says \"draft a spec\", \"write an ADR\", \"record a spike\", \"turn this grooming result into a spec\", \"promote this planning artifact\", or when a groomed work item needs a durable docs/development artifact before breakdown."
+description: "Draft or update one durable planning artifact from accepted or groomed direction: spec, UX spec, ADR, or spike. Use when the user says \"draft a spec\", \"generate a UX spec\", \"make mockups\", \"write an ADR\", \"record a spike\", \"turn this grooming result into a spec\", \"promote this planning artifact\", or when a groomed work item needs a durable docs/development artifact before breakdown."
 ---
 
 # Draft Artifact
@@ -13,6 +13,9 @@ production code. Do not mark a proposal accepted unless the human explicitly acc
 - Drafting creates reviewable planning text, not implementation tasks.
 - The durable artifact lives in the repo under `docs/development/specs/`,
   `docs/development/adrs/`, or `docs/development/spikes/`.
+- Generated sample assets or mockups for a UX spec live beside the spec under
+  `docs/development/specs/<slug>-assets/` and are review aids, not production assets, until
+  accepted.
 - Create the target artifact folder only when writing the artifact. Do not create empty
   `docs/development/` subfolders as placeholders.
 - Chat notes, GitHub issues, and PR comments are source evidence until promoted into a repo artifact.
@@ -40,6 +43,8 @@ Read only the context needed to draft the artifact:
 Choose the artifact type from the work item or explicit user request:
 
 - `Spec`: behavior, contracts, records, user-visible semantics, or acceptance criteria.
+- `UX spec`: implementation-facing user journey, screen/state model, information hierarchy,
+  interactions, and review mockups for accepted product direction.
 - `ADR`: architecture direction, ownership, storage, public surface, or operating policy.
 - `Spike`: evidence gathering when production work would otherwise guess.
 
@@ -69,6 +74,8 @@ Spec state: Draft
 
 ## Source evidence
 
+## UX direction and visual references
+
 ## Architecture / ownership implications
 
 ## Acceptance criteria
@@ -91,6 +98,10 @@ Rules:
 - For UI-bearing products, include UX direction before implementation-facing details: target user,
   primary journey, key screens or states, information hierarchy, interaction constraints,
   accessibility/usability risks, and what is deliberately deferred.
+- For UX specs, generate or link sample assets and mockups when visuals would materially improve
+  review. Use `docs/development/specs/<slug>-assets/` for generated wireframes, screenshots,
+  bitmap mockups, HTML/CSS previews, or sample asset studies. Mark each visual as illustrative,
+  accepted direction, or assumption needing human review.
 - If an accepted `vision-brief.md` exists for the work, use it as the source of product direction
   instead of reopening the vision silently.
 - For platform or architecture-sensitive specs, include the credible options and tradeoffs. If the

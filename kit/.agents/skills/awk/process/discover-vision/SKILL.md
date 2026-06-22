@@ -18,6 +18,8 @@ accepted without explicit human acceptance.
   game, platform, or architecture idea to `discover-vision`.
 - For UI-bearing work, discovery or the `ux-direction` lens prepares a compact UX direction draft
   for human review. The human should review direction, not create it from a blank page.
+- When visual review would help, generate sample assets or mockups as non-production review aids
+  instead of leaving the human to imagine the UI from text alone.
 - Ask the human exactly one highest-leverage question at a time, then stop unless the human answers
   in the same turn.
 - Prefer a small accepted vision over a large speculative spec.
@@ -113,6 +115,7 @@ docs/development/discovery/<slug>/
   vision-brief.md
   decision-log.md
   research-notes.md   # only when research exists
+  mockups/            # only when generated visual review aids exist
 ```
 
 `00-intake.md`:
@@ -179,6 +182,11 @@ Vision state: Draft
 Avoid permanent specialist transcript files by default. Summarize specialist findings in the vision
 brief and decision log. Preserve raw specialist notes only when the human asks or the evidence is
 too important to compress safely.
+
+Mockups may be generated as Markdown-friendly images, screenshots, static HTML/CSS previews, simple
+wireframes, or sample asset studies. Keep them scoped to the discovery bundle, name the screen or
+state they represent, and mark them as non-production until accepted. Record the assumptions each
+visual is testing in `vision-brief.md` or `decision-log.md`.
 
 ## Output
 

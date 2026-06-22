@@ -27,6 +27,7 @@ Optional:
   docs/development/specs/          # create only when used
   docs/development/adrs/           # create only when used
   docs/development/spikes/         # create only when used
+  docs/development/**/mockups/     # create only when visual review assets exist
   docs/development/work-items/     # fallback only when GitHub is unavailable
 ```
 
@@ -44,6 +45,7 @@ Optional:
 | `docs/development/README.md` | Yes | Project artifact folder contract for durable project-specific docs. |
 | `docs/development/discovery/` | Lazy | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. Create only when a discovery artifact exists. |
 | `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Lazy | Durable planning artifacts reviewed through PRs. Create only when that artifact type exists. |
+| `docs/development/**/mockups/` or `docs/development/specs/*-assets/` | Lazy | Generated wireframes, sample assets, screenshots, or mockups used to review UX direction. Mark as non-production until accepted. |
 | `scripts/setup-github-labels.mjs` | Yes | Minimal GitHub setup for labels used by issue templates. Does not create a Project board. |
 | GitHub issues/PRs | Yes for workflow execution | Active orchestration, human answers, remote planning, audit trail, and review. |
 | GitHub labels | Recommended setup | Lightweight issue type and review signals created by `scripts/setup-github-labels.mjs`. |

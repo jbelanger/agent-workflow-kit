@@ -23,6 +23,11 @@ or packaged artifacts when end users should not see internal development materia
 Create these folders only when they contain real project artifacts. Do not keep empty artifact
 folders just to advertise the workflow shape.
 
+Visual discovery aids, sample assets, screenshots, wireframes, or mockups may live inside the
+artifact bundle they support, for example `discovery/<slug>/mockups/` or a sibling
+`specs/<slug>-assets/` folder. Mark generated visuals as review aids, not production assets, until
+the human accepts them.
+
 In target projects, AWK process docs live under `docs/awk/` and AWK skills live under
 `.agents/skills/awk/`. In the AWK source package, installable copies are stored under `kit/` before
 they are copied into target projects. Keeping AWK process assets outside this folder leaves

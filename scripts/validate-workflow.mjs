@@ -101,6 +101,8 @@ const flowAtGlanceSnippets = [
 const uxGateSnippets = [
   'UX direction is a readiness gate before implementation',
   'The human should review direction, not create it from a blank page',
+  'sample assets or mockups',
+  'docs/development/discovery/<slug>/mockups/',
   'target user, primary journey, key screens or states, information hierarchy',
   'screen/state model',
   'accessibility/usability risks',
@@ -389,7 +391,7 @@ function validate(cwd) {
   const draftSkillPath = sourcePath(cwd, '.agents/skills/awk/process/draft-artifact/SKILL.md');
   if (existsSync(join(cwd, draftSkillPath))) {
     const draftSkill = read(cwd, draftSkillPath);
-    for (const snippet of ['NEEDS_INTERVIEW', 'Human decision needed: YES', 'thin rules-only spec']) {
+    for (const snippet of ['NEEDS_INTERVIEW', 'Human decision needed: YES', 'thin rules-only spec', 'generate a UX spec', 'docs/development/specs/<slug>-assets/']) {
       if (!draftSkill.includes(snippet)) {
         errors.push(`draft-artifact skill is missing unresolved-grooming guard snippet: ${snippet}`);
       }

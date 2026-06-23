@@ -649,6 +649,9 @@ Use `Revision cycles` in the PR `AWK State` block as a hard loop counter. Increm
 PR moves from review back to implementation for accepted revision work. After two unresolved agent
 revision cycles, route to human review with `needs-human-review` and `Next workflow verb:
 human-decision` instead of sending the PR through another agent revision pass.
+If a PR is at `Revision cycles: 1` and accepted blocking revision work remains, stop before
+dispatching the implementation pass that would become the second unresolved cycle. Keep
+`Revision cycles: 1`, route to `human-decision`, and record the accepted blocker.
 
 ### 10. Refactor And Superseding PRs
 

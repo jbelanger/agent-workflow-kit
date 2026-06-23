@@ -134,6 +134,10 @@ For PR revision work, read the PR `AWK State` field `Revision cycles` before edi
 already had two unresolved agent revision cycles, stop and route to human review instead of applying
 another agent revision pass.
 
+Also stop before editing when `Revision cycles` is `1` and this assignment would be the second
+unresolved agent revision pass. Route to human review instead of dispatching the pass that would hit
+the hard stop.
+
 ## Implement In Narrow Slices
 
 - Work one step at a time.

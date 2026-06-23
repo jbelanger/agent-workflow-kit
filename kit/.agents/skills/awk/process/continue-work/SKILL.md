@@ -153,9 +153,14 @@ When recommending or making state changes:
 - keep rich context such as blockers, accepted direction, linked PR, last agent review, and revision
   cycles inside the block.
 
+If a PR has `Revision cycles: 1` and still has `revision-needed` or unresolved accepted review work,
+route to `human-decision` with `needs-human-review` instead of sending it through the implementation
+pass that would become the second unresolved agent revision cycle. Keep `Revision cycles: 1` until a
+human decision is recorded or a real implementation revision pass completes.
+
 If a PR has `Revision cycles: 2` or higher and still has `revision-needed` or unresolved accepted
-review work, route to `human-decision` with `needs-human-review` instead of sending it through
-another agent revision loop.
+review work, it is already past the agent loop stop. Route to `human-decision` with
+`needs-human-review`.
 
 ## Loop Stop Conditions
 

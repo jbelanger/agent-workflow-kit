@@ -82,6 +82,11 @@ and explain the options, recommendation, and reasoning on the PR.
 Use the PR `AWK State` field `Revision cycles` as a hard loop counter. Increment it when an agent
 routes the same PR from review back to implementation for accepted revision work.
 
+Before routing accepted revision work back to implementation, check whether that dispatch would
+become the second unresolved agent revision cycle. If `Revision cycles` is already `1`, stop before
+dispatch: set `Next workflow verb: human-decision`, add or recommend `needs-human-review`, keep
+`Revision cycles: 1`, and explain the accepted blocker.
+
 After two unresolved agent revision cycles on the same PR, stop the agent loop. Add or recommend
 `needs-human-review`, set `Next workflow verb: human-decision`, and explain whether the blocker is
 architecture, product direction, scope, validation, or conflicting review feedback. Do not route the

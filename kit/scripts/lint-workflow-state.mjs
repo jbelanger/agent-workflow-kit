@@ -129,6 +129,18 @@ export function lintItem(item) {
   }
 
   // Escalation guard: a PR stuck at >= threshold revisions must be routed to a human, not re-looped.
+  if (
+    item.kind === 'pr'
+    && cycles === REVISION_ESCALATION_THRESHOLD - 1
+    && verb === 'work-issue-local'
+    && labels.includes('revision-needed')
+  ) {
+    errors.push(
+      `Revision cycles=${cycles} and revision-needed would dispatch the second unresolved agent revision pass; `
+      + 'route to human-decision instead of work-issue-local',
+    );
+  }
+
   if (cycles !== null && cycles >= REVISION_ESCALATION_THRESHOLD) {
     const stillLooping = labels.includes('revision-needed')
       || verb === 'work-issue-local'
@@ -334,10 +346,18 @@ const SELF_TEST_CASES = [
     },
   },
   {
+    name: 'second revision dispatch not routed to human',
+    expectErrors: 1,
+    item: {
+      kind: 'pr', number: 10, labels: ['next:work-issue-local', 'revision-needed'],
+      body: block({ 'Next workflow verb': 'work-issue-local', 'Revision cycles': '1' }),
+    },
+  },
+  {
     name: 'escalation routed to human',
     expectErrors: 0,
     item: {
-      kind: 'pr', number: 10, labels: ['next:human-decision', 'needs-human-review'],
+      kind: 'pr', number: 11, labels: ['next:human-decision', 'needs-human-review'],
       body: block({ 'Next workflow verb': 'human-decision', 'Revision cycles': '3', 'Blocked by': 'human architecture decision' }),
     },
   },

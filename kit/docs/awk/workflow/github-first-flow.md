@@ -93,6 +93,9 @@ Use `Revision cycles` as a hard stop for repeated agent review loops. Increment 
 is routed from agent review back to implementation. After two unresolved agent revision cycles, add
 or recommend `needs-human-review`, set `Next workflow verb: human-decision`, and stop the agent loop
 until the human decision is recorded.
+When a PR is already at `Revision cycles: 1` and accepted blocking revision work remains, stop
+before dispatching the implementation pass that would become the second unresolved cycle. Keep
+`Revision cycles: 1`, route to `human-decision`, and record the accepted blocker.
 
 ## Issue Linkage Rule
 

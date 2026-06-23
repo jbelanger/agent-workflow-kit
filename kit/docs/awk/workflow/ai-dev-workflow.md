@@ -537,6 +537,7 @@ Merge-risk values:
 | `Parallel-safe` | Low coordination risk with other branches. | Isolated tests, local bugs, report formatting, or unrelated areas. |
 | `Needs coordination` | Can proceed with sequencing or communication. | Shared contracts, common files, public APIs, migrations, or architecture rules. |
 | `Serial only` | Should not run in parallel with related work. | Foundational changes, contested design, or likely merge-conflict paths. |
+| `Unknown` | Risk has not been classified yet. | Early grooming, imported plans, or inbox items before enough context exists. |
 
 If a child work item is still unclear, keep it in `Grooming`. If decomposition exposes a real design
 fork, route back to grooming, spec, ADR, or spike. Do not hide architecture decisions inside task

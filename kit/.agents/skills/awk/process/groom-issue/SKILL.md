@@ -219,7 +219,7 @@ Return:
 - Vision / design analysis, when product or creative direction matters.
 - Source evidence needed.
 - Acceptance criteria draft.
-- Merge risk.
+- Merge risk: `Parallel-safe`, `Needs coordination`, `Serial only`, or `Unknown`.
 - Human decision needed: `YES` or `NO`, with reason.
 - Clarification question, or `None`.
 - Recommended work item fields, labels, or status.

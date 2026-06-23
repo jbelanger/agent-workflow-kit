@@ -16,7 +16,8 @@ That means:
 - Do not force this repo through `continue-work`, `groom-issue`, `breakdown-issue`,
   `prepare-implementation`, or `work-issue-local` as mandatory gates.
 - Do not treat local source changes here as needing the installed target-repo handoff loop.
-- Do not recursively dogfood the kit on itself unless the human explicitly asks for that experiment.
+- Do not test the kit on this source repo as if this repository were a target project unless the
+  human explicitly asks for that kind of run.
 
 Use direct repository work instead: inspect the source, discuss the change with the human, edit the
 source files, run validation, and commit or push only when asked.
@@ -30,8 +31,7 @@ source files, run validation, and commit or push only when asked.
 - `kit/.github/` contains issue and PR templates for target repositories.
 - `kit/docs/awk/` contains installable AWK process docs.
 - `kit/docs/development/README.md` is the installable target-project artifact folder contract.
-- Root `docs/development/` records durable source-repo design notes, dogfood results, and source
-  spikes.
+- Root `docs/development/` records durable source-repo design notes and source spikes.
 - Root `scripts/` contains source-package helpers such as the installer and portable-install proof.
 
 When changing installed behavior, update the installable files under `kit/` deliberately. Update
@@ -47,19 +47,18 @@ Self-improvement work in this repo should stay lightweight and explicit:
 - Record important lessons in README or durable docs when they should shape future kit behavior.
 - Validate with `node kit/scripts/validate-workflow.mjs` and `node scripts/prove-portable-install.mjs`
   when installed files or installer behavior change.
-- Use the separate dogfood target repo for realistic workflow trials.
-- Promote only useful lessons from dogfood runs back into this source repo.
+- Use a separate target repo for realistic workflow trials.
+- Promote only useful lessons from external workflow trials back into this source repo.
 
 If a request is vague, ask a normal clarification question. Do not start the kit workflow to discover
 what the human meant.
 
-## Dogfood Run Protocol
+## External Workflow Trial Protocol
 
-When the human asks to dogfood or improve the flow through a realistic run, use a separate target
-repository such as the Tetris dogfood repo. Do not run this source repo through its own installed
-workflow.
+When the human asks to test or improve the flow through a realistic run, use a separate target
+repository. Do not run this source repo through its own installed workflow.
 
-For the time being, every meaningful dogfood run should start at the front door for the matching
+For the time being, every meaningful workflow trial should start at the front door for the matching
 task lane and move sequentially through the required handoffs. The point is to learn from each
 handoff, not to skip directly to code or force every task through the longest possible path:
 
@@ -78,9 +77,9 @@ handoff, not to skip directly to code or force every task through the longest po
 
 Use subagents to simulate the future multi-agent handoff model. The main thread is the supervisor
 only: it orchestrates, delegates, monitors quality, records handoff state, and captures process
-lessons. It should not personally perform the workflow step being tested. In a dogfood run, delegate
-grooming, discovery, breakdown, implementation preparation, implementation, and review to separate
-agents whenever possible.
+lessons. It should not personally perform the workflow step being tested. In a realistic workflow
+trial, delegate grooming, discovery, breakdown, implementation preparation, implementation, and
+review to separate agents whenever possible.
 
 The purpose is to test whether each individual agent can follow the installed protocol from the
 state it receives. The supervisor may read context to create a bounded assignment, inspect each
@@ -105,12 +104,10 @@ The future vision is an autonomous fan-out loop:
 Until that exists, simulate it deliberately: sequential handoffs first, parallel execution only after
 task boundaries are explicit, and process feedback recorded at every weak spot.
 
-Current dogfood focus: detailed-plan runs. When the human points at an existing detailed plan, do
-not treat it like a blank vague idea and do not start with an interactive discovery interview. The
-first delegated step should inspect the plan as an artifact: determine whether it is accepted enough
-to build from, identify missing decisions, and route to `review-artifact`, `breakdown-issue`, or
-`prepare-implementation`. Vague-idea grooming and live discovery interviews are still valid
-workflow modes, but they are not the main experiment right now.
+When the human points at an existing detailed plan, do not treat it like a blank vague idea and do
+not start with an interactive discovery interview. The first delegated step should inspect the plan
+as an artifact: determine whether it is accepted enough to build from, identify missing decisions,
+and route to `review-artifact`, `breakdown-issue`, or `prepare-implementation`.
 
 ## GitHub
 

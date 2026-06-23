@@ -8,9 +8,9 @@ Agent Workflow Kit needs a simple coordination surface that humans and local age
 The workflow should stay resumable from durable state instead of depending on chat memory, local
 scratch files, a custom runtime UI, or tracker setup.
 
-Early dogfooding used tracker-style status fields as the main coordination surface. That made fresh
-repos feel like they needed tracker setup before doing real work. The kit should copy only the
-guidance and templates needed to start work in an ordinary repository.
+Tracker-style status fields would make fresh repos feel like they need tracker setup before doing
+real work. The kit should copy only the guidance and templates needed to start work in an ordinary
+repository.
 
 ## Decision
 

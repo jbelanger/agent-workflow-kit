@@ -82,7 +82,7 @@ Process: planning and orchestration:
 | `review-artifact` | Review and accept or route revision for a durable vision brief, spec, or ADR. | Docs only |
 | `breakdown-issue` | Decompose accepted direction into independent merge-safe child work items. | No |
 | `prepare-implementation` | Convert one Ready work item into an implementation brief. | Docs/issues only when asked |
-| `improve-workflow` | Triage dogfooding feedback and propose process improvements. | Docs/issues only when asked |
+| `improve-workflow` | Triage process feedback and propose workflow improvements. | Docs/issues only when asked |
 
 Process: execution and review:
 
@@ -133,7 +133,7 @@ GitHub issues, linked PRs, comments, labels, and repo docs, then routes to the n
 may recommend issue comments or label updates; it must not silently mutate scope, accept artifacts,
 decide architecture, implement code, push, merge, or close work.
 
-Every meaningful dogfood pass should include process feedback when it notices workflow weakness.
+Every meaningful workflow pass should include process feedback when it notices workflow weakness.
 That feedback belongs in the issue comment or PR summary where it was observed, then routes through
 `improve-workflow` when it needs a durable change.
 

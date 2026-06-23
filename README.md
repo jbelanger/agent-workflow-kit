@@ -85,7 +85,7 @@ repos receive them under `docs/awk/`.
 | `kit/docs/awk/` | Workflow reference, the GitHub-first ADR, and the install contract. |
 | `kit/docs/development/README.md` | Installed target-project artifact folder contract. |
 | `kit/scripts/` | Scripts copied into target repos. |
-| `docs/development/` | This repo's own decisions, dogfood runs, and notes. |
+| `docs/development/` | This repo's own decisions, source spikes, and notes. |
 | `scripts/` | Source-package installer and portable-install proof. |
 
 ## Working on the kit itself
@@ -97,5 +97,5 @@ node kit/scripts/validate-workflow.mjs
 node scripts/prove-portable-install.mjs
 ```
 
-See `AGENTS.md` for the source-repo rules (including how to dogfood the workflow in a separate target
-repo rather than on this repo).
+See `AGENTS.md` for the source-repo rules, including how to test workflow changes in a separate
+target repo rather than on this repo.

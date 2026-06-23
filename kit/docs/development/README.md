@@ -18,7 +18,6 @@ or packaged artifacts when end users should not see internal development materia
 - `adrs/`: durable architecture, storage, public-surface, boundary, or workflow-policy decisions.
 - `spikes/`: preserved investigation outputs whose evidence is still useful.
 - `workflow/`: project-specific process notes when they are not part of the installable AWK docs.
-- `dogfood-runs/`: recorded workflow trials, outcomes, visuals, and lessons.
 
 Create these folders only when they contain real project artifacts. Do not keep empty artifact
 folders just to advertise the workflow shape.

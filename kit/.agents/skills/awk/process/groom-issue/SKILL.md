@@ -232,8 +232,10 @@ Return:
 - Use `Blocked` only for a real unresolved dependency, missing access, or decision.
 - Keep normal clarification in grooming.
 - Prefer updating the current work item over creating a parallel planning item.
-- If the work item is clear enough for implementation, hand it to `breakdown-issue` so the
-  orchestrator can produce merge-safe executable task boundaries and a self-contained issue body.
+- If the work item is tiny enough for direct implementation, record the `DIRECT_TASK` rationale,
+  scope, acceptance criteria, validation, and merge risk, then route to `work-issue-local`.
+- If accepted direction needs decomposition, hand it to `breakdown-issue` so the orchestrator can
+  produce merge-safe executable task boundaries and a self-contained issue body.
 - If the work item needs a product, UX, creative, game, platform, or architecture interview, stop
   after recording the grooming handoff and route to `discover-vision`; do not run the interview in
   grooming.

@@ -5,7 +5,7 @@
 // next:* label vocabulary, and the loop-stop conditions. It cannot prove that a *live* issue or PR
 // is honest. This linter closes that gap: it reads an actual item via the GitHub CLI and fails when
 // the machine-readable routing state (block, next:* label, revision counter) is missing, stale, or
-// self-contradictory.
+// self-contradictory, or non-canonical.
 //
 // Usage:
 //   node scripts/lint-workflow-state.mjs --issue 123 [--repo owner/name]
@@ -25,6 +25,7 @@ const REQUIRED_FIELDS = [
   'Status', 'Issue Type', 'Next workflow verb', 'Owner', 'Merge Risk',
   'Blocked by', 'Linked PR', 'Accepted direction', 'Last agent review', 'Revision cycles',
 ];
+const REQUIRED_FIELD_SET = new Set(REQUIRED_FIELDS);
 
 const MERGE_RISKS = ['Parallel-safe', 'Needs coordination', 'Serial only', 'Unknown'];
 const EMPTY_VALUES = new Set(['', 'tbd', 'todo', 'fixme', '...', '<fill>', '<value>']);
@@ -89,6 +90,12 @@ export function lintItem(item) {
       errors.push(`AWK State is missing required field: ${field}`);
     } else if (isEmpty(fields[field])) {
       errors.push(`AWK State field is empty/placeholder: ${field}`);
+    }
+  }
+
+  for (const field of Object.keys(fields)) {
+    if (!REQUIRED_FIELD_SET.has(field)) {
+      errors.push(`AWK State has unexpected field '${field}'; keep the block to the canonical fields only`);
     }
   }
 
@@ -308,10 +315,21 @@ const SELF_TEST_CASES = [
     },
   },
   {
+    name: 'unexpected state field',
+    expectErrors: 1,
+    item: {
+      kind: 'pr', number: 8, labels: ['next:review-local-changes'],
+      body: `${START}\n## AWK State\n${[
+        ...REQUIRED_FIELDS.map((k) => `${k}: ${blockFieldDefaults()[k]}`),
+        'Linked issue: #1',
+      ].join('\n')}\n${END}`,
+    },
+  },
+  {
     name: 'escalation not routed to human',
     expectErrors: 1,
     item: {
-      kind: 'pr', number: 8, labels: ['next:work-issue-local', 'revision-needed'],
+      kind: 'pr', number: 9, labels: ['next:work-issue-local', 'revision-needed'],
       body: block({ 'Next workflow verb': 'work-issue-local', 'Revision cycles': '2' }),
     },
   },
@@ -319,18 +337,22 @@ const SELF_TEST_CASES = [
     name: 'escalation routed to human',
     expectErrors: 0,
     item: {
-      kind: 'pr', number: 9, labels: ['next:human-decision', 'needs-human-review'],
+      kind: 'pr', number: 10, labels: ['next:human-decision', 'needs-human-review'],
       body: block({ 'Next workflow verb': 'human-decision', 'Revision cycles': '3', 'Blocked by': 'human architecture decision' }),
     },
   },
 ];
 
-function block(overrides = {}) {
-  const base = {
+function blockFieldDefaults() {
+  return {
     Status: 'Ready', 'Issue Type': 'Task', 'Next workflow verb': 'work-issue-local',
     Owner: 'Agent', 'Merge Risk': 'Parallel-safe', 'Blocked by': 'None', 'Linked PR': 'None',
     'Accepted direction': 'DIRECT_TASK', 'Last agent review': 'None', 'Revision cycles': '0',
   };
+}
+
+function block(overrides = {}) {
+  const base = blockFieldDefaults();
   const merged = { ...base, ...overrides };
   const lines = REQUIRED_FIELDS.map((k) => `${k}: ${merged[k]}`);
   return `${START}\n## AWK State\n${lines.join('\n')}\n${END}`;

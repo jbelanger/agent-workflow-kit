@@ -73,7 +73,9 @@ handoff, not to skip directly to code or force every task through the longest po
 6. Prepare an implementation brief for each ready task.
 7. Hand each task to a separate worker agent or worktree.
 8. Review each worker's output before human merge review.
-9. Promote only useful lessons back into this source repo.
+9. Run `improve-workflow` triage on actionable process feedback before source-package edits. Record
+   accepted, rejected, deferred, needs-evidence, or human-decision classifications.
+10. Promote only accepted lessons back into this source repo.
 
 Use subagents to simulate the future multi-agent handoff model. The main thread is the supervisor
 only: it orchestrates, delegates, monitors quality, records handoff state, and captures process

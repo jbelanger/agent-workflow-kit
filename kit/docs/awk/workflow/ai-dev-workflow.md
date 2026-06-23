@@ -364,7 +364,7 @@ Grooming status values:
 | `NEEDS_INTERVIEW` | One human answer is needed before useful durable text can exist. |
 | `NEEDS_RESEARCH` | Evidence must be gathered before the next decision or draft. |
 | `NEEDS_DECISION` | A known architecture, product, ownership, storage, public surface, or policy decision blocks progress. |
-| `DIRECT_TASK` | The work is clear enough to send to breakdown without a spec or ADR. |
+| `DIRECT_TASK` | The work is tiny and ready for `work-issue-local` once the issue records rationale, scope, acceptance, validation, and merge risk; no discovery, spec, ADR, spike, breakdown, or re-brief is needed. |
 | `DROP` | The work should not be done. |
 | `DEFER` | The work may be valid but should not move now. |
 

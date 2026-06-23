@@ -195,6 +195,17 @@ Draft
 # Breakdown notes, after accepted
 ```
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -212,6 +223,7 @@ Return:
 - Human decision needed: `YES` or `NO`, with reason.
 - Clarification question, or `None`.
 - Recommended work item fields, labels, or status.
+- Recommended AWK State block and `next:*` label updates.
 - Next action.
 
 ## Rules

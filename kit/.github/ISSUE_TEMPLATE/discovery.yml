@@ -1,47 +1,68 @@
 name: Discovery
-description: Clarify product, UX, creative, platform, or architecture vision before drafting a spec.
+description: Clarify product, UX, creative, platform, or architecture direction before drafting durable artifacts.
 title: "[Discovery] "
-labels: ["discovery"]
+labels: ["discovery", "next:discover-vision"]
 body:
+  - type: textarea
+    id: awk_state
+    attributes:
+      label: AWK State
+      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      value: |
+        <!-- awk-state:start -->
+        ## AWK State
+        Status: Discovery
+        Issue Type: Discovery
+        Next workflow verb: discover-vision
+        Owner: Agent
+        Merge Risk: Unknown
+        Blocked by: None
+        Linked PR: None
+        Accepted direction: None
+        Last agent review: None
+        Revision cycles: 0
+        <!-- awk-state:end -->
+    validations:
+      required: true
   - type: textarea
     id: source
     attributes:
       label: Source
-      description: Link the originating idea, issue, prompt, note, or user request.
+      description: Link the originating idea, issue, prompt, note, or imported plan.
     validations:
       required: true
   - type: textarea
-    id: problem
+    id: unresolved_direction
     attributes:
-      label: Problem / opportunity
-      description: What is vague or unresolved enough that discovery is needed?
+      label: Unresolved direction
+      description: What product, UX, creative, platform, architecture, or validation choice is too vague for implementation?
     validations:
       required: true
   - type: textarea
-    id: target_user
+    id: audience_and_context
     attributes:
-      label: Target user / audience
-      description: Who is this for, if known?
+      label: Audience and context
+      description: Target user, workflow, market/genre expectations, platform constraints, or domain context known so far.
     validations:
       required: false
   - type: textarea
-    id: known_constraints
+    id: constraints
     attributes:
-      label: Known constraints
-      description: Product, UX, creative, platform, architecture, validation, or schedule constraints.
+      label: Constraints and non-goals
+      description: What must discovery respect, and what should it deliberately not decide?
     validations:
       required: true
   - type: textarea
-    id: non_goals
+    id: lenses
     attributes:
-      label: Non-goals
-      description: What should discovery not try to decide?
+      label: Discovery lenses
+      description: Product, UX, creative, technical, validation, research, or other lenses needed before a useful artifact can exist.
     validations:
       required: true
   - type: textarea
     id: first_question
     attributes:
       label: First human question
-      description: One question the agent should ask first, or leave blank for discover-vision to choose.
+      description: One highest-leverage question for discover-vision to ask first, or explain why research should happen first.
     validations:
       required: false

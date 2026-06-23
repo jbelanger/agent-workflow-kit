@@ -130,6 +130,10 @@ Trivial disagreement can be resolved by the implementation agent with evidence. 
 touches architecture, contracts, ownership, public surface, storage, accepted docs, debt risk, or
 scope requires human review.
 
+For PR revision work, read the PR `AWK State` field `Revision cycles` before editing. If the PR has
+already had two unresolved agent revision cycles, stop and route to human review instead of applying
+another agent revision pass.
+
 ## Implement In Narrow Slices
 
 - Work one step at a time.
@@ -154,6 +158,17 @@ When completing a child item, superseding refactor, or replacement PR:
 - If the replacement changes the understanding of the parent, return the parent to grooming or
   breakdown instead of rewriting the original work item.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Final Summary
 
 Include:
@@ -163,6 +178,7 @@ Include:
 - Feedback loop / test seam.
 - Architecture direction and whether it still holds.
 - Review triage, when applicable.
+- AWK State update, including linked PR and revision cycles when applicable.
 - Decisions and smells.
 - Naming issues.
 - Deferred items with owner, boundary, and removal condition.

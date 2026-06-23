@@ -1,8 +1,29 @@
 name: Initiative
-description: Group related workflow-kit work under one outcome.
+description: Group related specs, ADRs, tasks, discoveries, and PRs under one outcome.
 title: "[Initiative] "
-labels: ["initiative"]
+labels: ["initiative", "next:groom-issue"]
 body:
+  - type: textarea
+    id: awk_state
+    attributes:
+      label: AWK State
+      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      value: |
+        <!-- awk-state:start -->
+        ## AWK State
+        Status: Grooming
+        Issue Type: Initiative
+        Next workflow verb: groom-issue
+        Owner: Agent
+        Merge Risk: Unknown
+        Blocked by: None
+        Linked PR: None
+        Accepted direction: None
+        Last agent review: None
+        Revision cycles: 0
+        <!-- awk-state:end -->
+    validations:
+      required: true
   - type: textarea
     id: outcome
     attributes:
@@ -13,8 +34,8 @@ body:
   - type: textarea
     id: context
     attributes:
-      label: Context
-      description: What source docs, decisions, or constraints matter?
+      label: Context and source docs
+      description: Link the source request, imported plan, durable docs, issues, or constraints that define the outcome.
     validations:
       required: true
   - type: textarea
@@ -25,9 +46,16 @@ body:
     validations:
       required: true
   - type: textarea
-    id: first_grooming_questions
+    id: child_work
     attributes:
-      label: First grooming questions
-      description: What should the agent clarify first?
+      label: Child work and current routing
+      description: List child issues/PRs, or state what first child issue should be created next.
     validations:
       required: false
+  - type: textarea
+    id: success_and_stop
+    attributes:
+      label: Done condition and stop points
+      description: How do we know the initiative is complete, blocked, or ready for human decision?
+    validations:
+      required: true

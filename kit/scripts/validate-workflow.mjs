@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import {
+  issueTypeLabels,
+  nextWorkflowLabels,
+  requiredLabels,
+  reviewSignalLabels,
+} from './workflow-labels.mjs';
 
 const requiredPortableFiles = [
   'AGENTS.md',
@@ -17,6 +23,7 @@ const requiredPortableFiles = [
   '.github/ISSUE_TEMPLATE/adr.yml',
   '.github/ISSUE_TEMPLATE/config.yml',
   '.github/ISSUE_TEMPLATE/discovery.yml',
+  '.github/ISSUE_TEMPLATE/direct-task.yml',
   '.github/ISSUE_TEMPLATE/initiative.yml',
   '.github/ISSUE_TEMPLATE/spec.yml',
   '.github/ISSUE_TEMPLATE/task.yml',
@@ -24,6 +31,7 @@ const requiredPortableFiles = [
   'scripts/workflow-labels.mjs',
   'scripts/setup-github-labels.mjs',
   'scripts/validate-workflow.mjs',
+  'scripts/lint-workflow-state.mjs',
 ];
 
 const requiredSkills = [
@@ -84,6 +92,7 @@ const sourceOnlyLegacyPayloadPaths = [
   '.github/ISSUE_TEMPLATE/adr.yml',
   '.github/ISSUE_TEMPLATE/config.yml',
   '.github/ISSUE_TEMPLATE/discovery.yml',
+  '.github/ISSUE_TEMPLATE/direct-task.yml',
   '.github/ISSUE_TEMPLATE/initiative.yml',
   '.github/ISSUE_TEMPLATE/spec.yml',
   '.github/ISSUE_TEMPLATE/task.yml',
@@ -96,15 +105,53 @@ const sourceOnlyLegacyPayloadPaths = [
   'scripts/setup-github-labels.mjs',
   'scripts/validate-workflow.mjs',
   'scripts/workflow-labels.mjs',
+  'scripts/lint-workflow-state.mjs',
 ];
 
 const issueTemplateLabels = new Map([
   ['.github/ISSUE_TEMPLATE/adr.yml', 'adr'],
   ['.github/ISSUE_TEMPLATE/discovery.yml', 'discovery'],
+  ['.github/ISSUE_TEMPLATE/direct-task.yml', 'task'],
   ['.github/ISSUE_TEMPLATE/initiative.yml', 'initiative'],
   ['.github/ISSUE_TEMPLATE/spec.yml', 'spec'],
   ['.github/ISSUE_TEMPLATE/task.yml', 'task'],
 ]);
+
+const awkStateFiles = [
+  '.github/ISSUE_TEMPLATE/adr.yml',
+  '.github/ISSUE_TEMPLATE/discovery.yml',
+  '.github/ISSUE_TEMPLATE/direct-task.yml',
+  '.github/ISSUE_TEMPLATE/initiative.yml',
+  '.github/ISSUE_TEMPLATE/spec.yml',
+  '.github/ISSUE_TEMPLATE/task.yml',
+  '.github/PULL_REQUEST_TEMPLATE.md',
+];
+
+const awkStateSnippets = [
+  '<!-- awk-state:start -->',
+  '## AWK State',
+  'Status:',
+  'Issue Type:',
+  'Next workflow verb:',
+  'Owner:',
+  'Merge Risk:',
+  'Blocked by:',
+  'Linked PR:',
+  'Accepted direction:',
+  'Last agent review:',
+  'Revision cycles:',
+  '<!-- awk-state:end -->',
+];
+
+const loopStopSnippets = [
+  '## Loop Stop Conditions',
+  'human decision needed',
+  'no ready item exists',
+  'PR is waiting for human merge',
+  'validation cannot run',
+  'architecture fork detected',
+  'next workflow verb changes',
+];
 
 const flowAtGlanceSnippets = [
   'Flow At A Glance',
@@ -202,6 +249,19 @@ function validateSkill(cwd, path, errors) {
   }
 }
 
+function hasIssueTemplateLabel(text, label) {
+  const labelsLine = text.match(/^labels:\s*\[(.+)\]/m)?.[1] ?? '';
+  return labelsLine.includes(`"${label}"`) || labelsLine.includes(`'${label}'`);
+}
+
+function validateAwkStateBlock(text, path, errors) {
+  for (const snippet of awkStateSnippets) {
+    if (!text.includes(snippet)) {
+      errors.push(`${path} is missing AWK State snippet: ${snippet}`);
+    }
+  }
+}
+
 function validate(cwd) {
   const errors = [];
 
@@ -253,6 +313,25 @@ function validate(cwd) {
     }
   }
 
+  for (const path of awkStateFiles) {
+    const actualPath = sourcePath(cwd, path);
+    if (existsSync(join(cwd, actualPath))) {
+      validateAwkStateBlock(read(cwd, actualPath), actualPath, errors);
+    }
+  }
+
+  for (const path of requiredSkills.filter((skillPath) => skillPath.startsWith('.agents/skills/awk/process/'))) {
+    const actualPath = sourcePath(cwd, path);
+    if (existsSync(join(cwd, actualPath))) {
+      const skill = read(cwd, actualPath);
+      for (const snippet of loopStopSnippets) {
+        if (!skill.includes(snippet)) {
+          errors.push(`${actualPath} is missing loop-stop snippet: ${snippet}`);
+        }
+      }
+    }
+  }
+
   const groomSkillPath = sourcePath(cwd, '.agents/skills/awk/process/groom-issue/SKILL.md');
   if (existsSync(join(cwd, groomSkillPath))) {
     const groomSkill = read(cwd, groomSkillPath);
@@ -276,7 +355,7 @@ function validate(cwd) {
   const continueSkillPath = sourcePath(cwd, '.agents/skills/awk/process/continue-work/SKILL.md');
   if (existsSync(join(cwd, continueSkillPath))) {
     const continueSkill = read(cwd, continueSkillPath);
-    for (const snippet of ['GitHub issues', 'Next workflow verb', 'work-issue-local', 'visible grooming result', 'direct-task rationale', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue', 'Runtime worker loops', 'compact re-brief']) {
+    for (const snippet of ['GitHub issues', 'AWK State', 'next:*', 'Next workflow verb', 'Revision cycles', 'work-issue-local', 'visible grooming result', 'direct-task rationale', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue', 'Runtime worker loops', 'compact re-brief']) {
       if (!continueSkill.includes(snippet)) {
         errors.push(`continue-work skill is missing GitHub routing snippet: ${snippet}`);
       }
@@ -396,7 +475,7 @@ function validate(cwd) {
   const prTemplatePath = sourcePath(cwd, '.github/PULL_REQUEST_TEMPLATE.md');
   if (existsSync(join(cwd, prTemplatePath))) {
     const prTemplate = read(cwd, prTemplatePath);
-    for (const snippet of ['Issue Linkage', 'Closes #', 'Refs #', 'Reason:', 'Grooming / Readiness']) {
+    for (const snippet of ['AWK State', 'Issue Linkage', 'Closes #', 'Refs #', 'Reason:', 'Readiness', 'Revision cycles', 'Loop Stop / Handoff']) {
       if (!prTemplate.includes(snippet)) {
         errors.push(`pull request template is missing issue-linkage snippet: ${snippet}`);
       }
@@ -405,7 +484,7 @@ function validate(cwd) {
 
   for (const [path, label] of issueTemplateLabels) {
     const actualPath = sourcePath(cwd, path);
-    if (existsSync(join(cwd, actualPath)) && !read(cwd, actualPath).includes(`labels: ["${label}"]`)) {
+    if (existsSync(join(cwd, actualPath)) && !hasIssueTemplateLabel(read(cwd, actualPath), label)) {
       errors.push(`${actualPath} must assign the workflow label '${label}'`);
     }
   }
@@ -413,9 +492,22 @@ function validate(cwd) {
   const workflowLabelsPath = sourcePath(cwd, 'scripts/workflow-labels.mjs');
   if (existsSync(join(cwd, workflowLabelsPath))) {
     const workflowLabels = read(cwd, workflowLabelsPath);
-    for (const snippet of ['initiative', 'discovery', 'spec', 'adr', 'task', 'revision-needed', 'needs-human-review']) {
-      if (!workflowLabels.includes(`'${snippet}'`)) {
-        errors.push(`workflow label contract is missing label: ${snippet}`);
+    for (const snippet of ['issueTypeLabels', 'reviewSignalLabels', 'nextWorkflowVerbs', 'nextWorkflowLabels', 'requiredLabels']) {
+      if (!workflowLabels.includes(snippet)) {
+        errors.push(`workflow label contract is missing export or definition: ${snippet}`);
+      }
+    }
+
+    const expectedLabels = [
+      ...issueTypeLabels,
+      ...reviewSignalLabels,
+      ...nextWorkflowLabels,
+    ].map(([name]) => name);
+    const requiredLabelNames = new Set(requiredLabels.map(([name]) => name));
+
+    for (const snippet of expectedLabels) {
+      if (!requiredLabelNames.has(snippet)) {
+        errors.push(`required workflow labels export is missing label: ${snippet}`);
       }
     }
   }
@@ -423,9 +515,19 @@ function validate(cwd) {
   const taskTemplatePath = sourcePath(cwd, '.github/ISSUE_TEMPLATE/task.yml');
   if (existsSync(join(cwd, taskTemplatePath))) {
     const taskTemplate = read(cwd, taskTemplatePath);
-    for (const snippet of ['Grooming result', 'human questions asked/answered', 'Allowed files/directories', 'Forbidden files/directories', 'Runtime worker loop', 'Required PR summary']) {
+    for (const snippet of ['Readiness evidence', 'Scope and boundaries', 'Architecture, contracts, and user surfaces', 'Feedback loop and validation', 'PR requirements']) {
       if (!taskTemplate.includes(snippet)) {
         errors.push(`task issue template is missing grooming snippet: ${snippet}`);
+      }
+    }
+  }
+
+  const directTaskTemplatePath = sourcePath(cwd, '.github/ISSUE_TEMPLATE/direct-task.yml');
+  if (existsSync(join(cwd, directTaskTemplatePath))) {
+    const directTaskTemplate = read(cwd, directTaskTemplatePath);
+    for (const snippet of ['DIRECT_TASK rationale', 'next:work-issue-local', 'Fast-lane task', 'Merge risk']) {
+      if (!directTaskTemplate.includes(snippet)) {
+        errors.push(`direct task issue template is missing fast-lane snippet: ${snippet}`);
       }
     }
   }

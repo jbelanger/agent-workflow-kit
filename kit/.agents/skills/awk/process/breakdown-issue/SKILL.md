@@ -101,6 +101,17 @@ Recommend parent status explicitly:
 - Use `Blocked` only when a real decision, dependency, access problem, or failed prerequisite stops
   progress.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -115,6 +126,20 @@ Return:
 ## Proposed child work items
 
 ### Work item: ...
+<!-- awk-state:start -->
+## AWK State
+Status:
+Issue Type: Task
+Next workflow verb:
+Owner:
+Merge Risk:
+Blocked by:
+Linked PR:
+Accepted direction:
+Last agent review:
+Revision cycles: 0
+<!-- awk-state:end -->
+
 Work item type:
 Status:
 Parent:

@@ -1,3 +1,17 @@
+<!-- awk-state:start -->
+## AWK State
+Status: Review
+Issue Type:
+Next workflow verb: review-local-changes
+Owner: Agent
+Merge Risk:
+Blocked by: None
+Linked PR: This PR
+Accepted direction:
+Last agent review: None
+Revision cycles: 0
+<!-- awk-state:end -->
+
 ## Summary
 
 ## Issue Linkage
@@ -8,43 +22,42 @@ Choose one:
 
 Reason:
 
-## Grooming / Readiness
-- Grooming result:
-- Human question asked:
-- Why direct implementation was safe:
-- Unclear assumption or challenge:
+## Readiness
+
+- Grooming result, accepted artifact, or DIRECT_TASK rationale:
+- Human question asked and answered, or why none was needed:
+- Implementation authorization source:
 
 ## Scope
+
 - In:
 - Out:
+- Owned area:
+- Allowed files:
+- Forbidden files:
 
-## Contracts / APIs Touched
+## Architecture / Contracts / UX
 
-## Architecture Direction Challenge
 - Intended direction:
 - Direction still sound:
+- Public APIs, storage, migrations, user surfaces, or UX touched:
 - Cheap/minimal shortcut introduced:
-- Human architecture decision needed:
-- Recommended correction:
+- Human decision needed:
 
 ## Validation
+
 - Feedback loop / test seam:
 - [ ] Focused tests:
 - [ ] Full check:
 - [ ] Other project-specific checks:
 
-## Review Triage
-Accepted:
-Rejected:
-Deferred:
+## Review State
 
-## Decisions & Smells
-- Decision:
-- Smell:
-- Owner:
-- Removal condition:
+<!-- Status, Last agent review, and Revision cycles live in the AWK State block above. Keep them there only. -->
+- Accepted review items:
+- Rejected review items:
+- Deferred items with owner, boundary, and removal condition:
 
-## Naming Issues
-- Current:
-- Suggested:
-- Reason:
+## Loop Stop / Handoff
+
+Stop and hand off when a human decision is needed, no ready item exists, the PR is waiting for human merge, validation cannot run, an architecture fork is detected, or the next workflow verb changes.

@@ -54,6 +54,17 @@ Stop and ask before:
 - force-pushing a target repository;
 - migrating an ambiguous `AGENTS.md` where AWK-owned and project-owned guidance cannot be separated.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -67,6 +78,7 @@ Files changed:
 Validation:
 GitHub labels:
 Issues/PRs affected:
+AWK State/template migration:
 Blocked:
 
 ## Recommended follow-up

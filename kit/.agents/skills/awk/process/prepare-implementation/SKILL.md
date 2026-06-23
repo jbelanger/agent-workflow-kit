@@ -50,6 +50,8 @@ Produce a compact prompt or issue comment. Keep it as a pointer to durable state
 of the workflow rules:
 
 ```md
+# AWK State update
+
 # Runtime worker loop
 
 # Grooming result
@@ -106,3 +108,14 @@ required validation has run, and a PR is open with the required summary."
 - If implementation depends on visual direction, stop unless linked mockups or sample assets are
   accepted or explicitly marked illustrative enough for the slice.
 - Stop if a real architecture fork needs human choice.
+
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.

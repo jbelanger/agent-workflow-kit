@@ -51,12 +51,25 @@ Use `revision-needed` as a label signal.
 - Do not use `revision-needed` for taste-only comments, speculative feedback, or unresolved
   discussion that does not require a concrete change.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
 
 ```md
 ## Findings
+
+## AWK State update
 
 ## Architecture concerns
 

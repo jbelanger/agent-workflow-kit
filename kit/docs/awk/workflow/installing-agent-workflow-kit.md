@@ -87,8 +87,9 @@ Before any AWK workflow step after initialization, create the initial GitHub iss
   decisions;
 - links from children to parent and from every issue to source docs or imported plans;
 - issue type labels from the installed templates;
-- a recorded current state, blocker or human decision if any, and `Next workflow verb` for each
-  issue.
+- a canonical `AWK State` block for each issue;
+- exactly one `next:*` label that mirrors each issue's `Next workflow verb` when labels are
+  available.
 
 Create the parent issue first, create child issues one at a time, then update the parent or add a
 setup comment with the assigned child issue numbers. Do the same for sibling links that could not be

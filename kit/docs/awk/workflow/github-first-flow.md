@@ -33,10 +33,39 @@ Human leaves the keyboard
 | --- | --- | --- |
 | GitHub Issue | Work item, discussion, human answers, visible grooming result, process feedback, and source links. | Accepted durable specs or architecture truth by itself. |
 | GitHub PR | Proposed repo doc or code change, review discussion, validation summary, and issue linkage. | Autonomous merge or hidden acceptance. |
-| GitHub labels | Lightweight issue type and review signals. | Full workflow state or acceptance evidence. |
+| GitHub labels | Lightweight issue type, review signals, and the active `next:*` routing label. | Acceptance evidence or rich context by themselves. |
 | `docs/development/` | Accepted durable truth after review: vision, specs, ADRs, spikes, workflow docs, and source evidence. | Raw scratch planning. |
 | `.agents/skills/awk/` | Workflow procedure. | Project-specific accepted direction. |
 | Runtime worker loop | Active execution binding for one Ready issue. | Durable queue state, accepted direction, review evidence, or issue/PR replacement. |
+
+## AWK State Block
+
+Every issue and PR should carry one canonical state block:
+
+```md
+<!-- awk-state:start -->
+## AWK State
+Status:
+Issue Type:
+Next workflow verb:
+Owner:
+Merge Risk:
+Blocked by:
+Linked PR:
+Accepted direction:
+Last agent review:
+Revision cycles:
+<!-- awk-state:end -->
+```
+
+Use this block for human-readable state and rich context. Use exactly one `next:*` label for the
+machine-readable routing signal when labels are available. When a skill changes routing, it should
+replace this block or recommend the exact replacement, then add the new `next:*` label and remove
+stale `next:*` labels.
+
+`Status`, `Blocked by`, `Accepted direction`, `Linked PR`, `Last agent review`, and
+`Revision cycles` belong in the block because they carry explanation. Do not spread those fields
+across competing comments unless the comment contains a replacement block.
 
 ## Review Handoff Rule
 
@@ -60,6 +89,11 @@ unclear long-term model, route to human architecture judgment before merge appro
 process, or chore changes, clean validation plus explicit human approval is enough to move to the
 human-owned merge step.
 
+Use `Revision cycles` as a hard stop for repeated agent review loops. Increment it when the same PR
+is routed from agent review back to implementation. After two unresolved agent revision cycles, add
+or recommend `needs-human-review`, set `Next workflow verb: human-decision`, and stop the agent loop
+until the human decision is recorded.
+
 ## Issue Linkage Rule
 
 PR bodies should use GitHub closing keywords only when the PR can close the work item by itself.
@@ -78,6 +112,17 @@ clear acceptance criteria, validation, merge-risk classification, and explicit u
 for the current turn. A self-contained Ready issue can route directly to `work-issue-local`; use
 `prepare-implementation` only when a stale or scattered issue needs a compact re-brief before a
 fresh worker loop starts.
+
+## Loop Stop Conditions
+
+After each workflow verb, stop and hand off instead of silently continuing when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
 
 ## Process Feedback
 

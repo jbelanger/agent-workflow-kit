@@ -1,16 +1,27 @@
 name: Spec
-description: Define accepted behavior, contracts, or user-visible semantics before implementation.
+description: Define behavior, contracts, records, APIs, or user-visible semantics before implementation.
 title: "[Spec] "
-labels: ["spec"]
+labels: ["spec", "next:draft-artifact"]
 body:
-  - type: markdown
-    attributes:
-      value: "Use this when behavior or contracts need to be settled before implementation."
   - type: textarea
-    id: problem
+    id: awk_state
     attributes:
-      label: Problem
-      description: What operational problem does this spec solve?
+      label: AWK State
+      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      value: |
+        <!-- awk-state:start -->
+        ## AWK State
+        Status: Drafting
+        Issue Type: Spec
+        Next workflow verb: draft-artifact
+        Owner: Agent
+        Merge Risk: Unknown
+        Blocked by: None
+        Linked PR: None
+        Accepted direction: None
+        Last agent review: None
+        Revision cycles: 0
+        <!-- awk-state:end -->
     validations:
       required: true
   - type: dropdown
@@ -25,41 +36,44 @@ body:
     validations:
       required: true
   - type: textarea
-    id: current_understanding
+    id: problem
     attributes:
-      label: Current understanding
-      description: What do we know so far?
+      label: Problem
+      description: What operational problem does this spec solve?
     validations:
       required: true
   - type: textarea
-    id: clarification_questions
+    id: source_context
     attributes:
-      label: Clarification questions
-      description: Ask one question at a time during grooming; record resolved questions here.
+      label: Source context
+      description: Link grooming, discovery, ADRs, incidents, product notes, code, or prior specs that define the work.
     validations:
-      required: false
+      required: true
   - type: textarea
     id: proposed_behavior
     attributes:
-      label: Proposed behavior / contract
-      description: What should agents implement after this spec is accepted?
+      label: Proposed behavior or contract
+      description: What should become accepted truth after review?
     validations:
-      required: false
+      required: true
+  - type: textarea
+    id: open_questions
+    attributes:
+      label: Open questions or decisions
+      description: Record unresolved behavior, product, architecture, ownership, validation, or UX questions. Use None only when honest.
+    validations:
+      required: true
   - type: textarea
     id: non_goals
     attributes:
       label: Non-goals
+      description: What should this spec not settle?
     validations:
       required: true
   - type: textarea
-    id: architecture_implications
+    id: acceptance
     attributes:
-      label: Architecture / ownership implications
-    validations:
-      required: false
-  - type: textarea
-    id: acceptance_criteria
-    attributes:
-      label: Acceptance criteria for the spec
+      label: Acceptance and breakdown notes
+      description: What makes this spec accepted, and what implementation slices should follow after acceptance?
     validations:
       required: false

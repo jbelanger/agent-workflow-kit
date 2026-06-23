@@ -77,6 +77,16 @@ and explain the options, recommendation, and reasoning on the PR.
 - Blocking revisions stay on the PR. Rare non-blocking follow-ups become linked work items with
   owner, boundary, and removal condition.
 
+## Revision Cycle Guard
+
+Use the PR `AWK State` field `Revision cycles` as a hard loop counter. Increment it when an agent
+routes the same PR from review back to implementation for accepted revision work.
+
+After two unresolved agent revision cycles on the same PR, stop the agent loop. Add or recommend
+`needs-human-review`, set `Next workflow verb: human-decision`, and explain whether the blocker is
+architecture, product direction, scope, validation, or conflicting review feedback. Do not route the
+same PR back to `work-issue-local` until the human decision is recorded.
+
 ## Spec And ADR Updates
 
 - You may update specs or ADRs directly only for factual drift or already-accepted decisions.
@@ -132,6 +142,8 @@ Revision routing:
 - needs-human-review:
 - blocking before merge:
 - follow-up issue needed:
+- AWK State update:
+- Revision cycles:
 
 Proposed fix:
 
@@ -142,6 +154,17 @@ Validation needed:
 
 The comment may be lengthy when needed. Its job is to let the human understand the issue, options,
 and proposed direction without rereading the whole codebase.
+
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
 
 ## Guardrails
 

@@ -171,6 +171,17 @@ Rules:
 - Separate evidence from recommendation.
 - Do not turn a spike result into implementation work until accepted direction exists.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -180,6 +191,7 @@ Return:
 Type:
 Path:
 State/status:
+AWK State update:
 
 ## Source provenance
 

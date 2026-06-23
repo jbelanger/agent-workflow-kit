@@ -29,6 +29,17 @@ Classify open work items into useful next-action buckets and recommend a small n
    worktree, and one PR.
 5. Recommend no more than three immediate next actions.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -39,6 +50,7 @@ Return:
 - Work items needing grooming.
 - Work items needing breakdown.
 - Work items needing human decision.
+- Recommended AWK State or `next:*` label updates.
 - Cleanup candidates.
 
 ## Rules

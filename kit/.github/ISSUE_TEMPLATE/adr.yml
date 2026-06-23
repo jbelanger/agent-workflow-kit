@@ -1,35 +1,61 @@
 name: ADR
-description: Record a durable architecture, storage, boundary, public-surface, or policy decision.
+description: Record a durable architecture, storage, ownership, public-surface, or policy decision.
 title: "[ADR] "
-labels: ["adr"]
+labels: ["adr", "next:draft-artifact"]
 body:
+  - type: textarea
+    id: awk_state
+    attributes:
+      label: AWK State
+      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      value: |
+        <!-- awk-state:start -->
+        ## AWK State
+        Status: Grooming
+        Issue Type: ADR
+        Next workflow verb: draft-artifact
+        Owner: Agent
+        Merge Risk: Unknown
+        Blocked by: None
+        Linked PR: None
+        Accepted direction: None
+        Last agent review: None
+        Revision cycles: 0
+        <!-- awk-state:end -->
+    validations:
+      required: true
   - type: textarea
     id: decision
     attributes:
       label: Decision to make
+      description: State the architecture, ownership, storage, boundary, public surface, or policy choice.
     validations:
       required: true
   - type: textarea
     id: context
     attributes:
-      label: Context
+      label: Context and source evidence
+      description: Link the issue, plan, code, incident, spec, spike, or prior decision that makes this ADR necessary.
     validations:
       required: true
   - type: textarea
     id: options
     attributes:
       label: Options considered
+      description: Name credible options and the tradeoff each creates.
     validations:
       required: true
   - type: textarea
     id: recommendation
     attributes:
-      label: Recommendation
+      label: Recommended direction
+      description: Say which option should become durable truth and why.
     validations:
       required: true
   - type: textarea
-    id: consequences
+    id: review_path
     attributes:
-      label: Consequences
+      label: Review and next step
+      description: Record whether the ADR needs drafting, artifact review, human decision, breakdown, or implementation work.
     validations:
-      required: false
+      required: true

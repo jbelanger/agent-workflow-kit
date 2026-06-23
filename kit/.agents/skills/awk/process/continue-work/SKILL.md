@@ -139,6 +139,35 @@ follow-up, architecture ambiguity, or uncertainty.
 Do not keep routing low-risk docs, process, or chore PRs through extra review loops after the human
 has explicitly approved and validation is clean. Report that the next action is human-owned merge.
 
+## AWK State Contract
+
+Issues and PRs carry a canonical `AWK State` block delimited by `<!-- awk-state:start -->` and
+`<!-- awk-state:end -->`. Treat that block as the human-readable state surface. Treat exactly one
+`next:*` label as the machine-readable routing signal when labels are available.
+
+When recommending or making state changes:
+
+- update the `AWK State` block instead of appending competing state prose;
+- mirror `Next workflow verb` with exactly one `next:*` label;
+- remove stale `next:*` labels from the item;
+- keep rich context such as blockers, accepted direction, linked PR, last agent review, and revision
+  cycles inside the block.
+
+If a PR has `Revision cycles: 2` or higher and still has `revision-needed` or unresolved accepted
+review work, route to `human-decision` with `needs-human-review` instead of sending it through
+another agent revision loop.
+
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -148,15 +177,24 @@ Return:
 
 Selected item:
 Reason:
-Next workflow verb:
 
-## Current state
-
+<!-- awk-state:start -->
+## AWK State
 Status:
 Issue Type:
-Merge Risk:
+Next workflow verb:
 Owner:
-Blocker:
+Merge Risk:
+Blocked by:
+Linked PR:
+Accepted direction:
+Last agent review:
+Revision cycles:
+<!-- awk-state:end -->
+
+The `AWK State` block above is the single state surface. Do not add a competing `Current state`
+section; carry Status, Issue Type, Merge Risk, Owner, and blocker context inside the block, and
+mirror `Next workflow verb` with exactly one `next:*` label.
 
 ## Evidence
 

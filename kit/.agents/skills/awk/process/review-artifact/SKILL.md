@@ -61,6 +61,17 @@ For revision requests, keep the artifact in its draft/proposed state and record 
 change where the next agent can find it. The revision request should name the artifact path, the
 requested change, and whether a human decision is still needed.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -72,6 +83,7 @@ Type:
 Decision: Accepted | Rejected | No-op | Blocked
 
 ## State change
+AWK State update:
 
 ## Decision record
 

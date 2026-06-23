@@ -62,7 +62,8 @@ that source into GitHub state before any downstream AWK skill runs:
 - Link every child back to the parent issue.
 - Link every issue back to source docs, imported plans, prompts, or local files that define the work.
 - Label each issue with the matching AWK issue type label.
-- Record current status/readiness in the issue body or a setup comment.
+- Record the canonical `AWK State` block in the issue body or a setup comment.
+- Add exactly one `next:*` label that mirrors `Next workflow verb` when labels are available.
 - Record `Next workflow verb` for each issue: usually `groom-issue`, `review-artifact`,
   `breakdown-issue`, `prepare-implementation`, or `work-issue-local` during initialization,
   depending on whether the issue already has a complete Ready task contract and implementation
@@ -89,12 +90,19 @@ the boundaries.
 
 ## Initial child issues
 
-## Current workflow state
-
-- Status:
-- Owner:
-- Blocker:
-- Next workflow verb:
+<!-- awk-state:start -->
+## AWK State
+Status:
+Issue Type: Initiative
+Next workflow verb:
+Owner:
+Merge Risk:
+Blocked by:
+Linked PR:
+Accepted direction:
+Last agent review:
+Revision cycles: 0
+<!-- awk-state:end -->
 ```
 
 ### Child Issue Minimum Shape
@@ -108,13 +116,21 @@ the boundaries.
 
 ## Acceptance criteria or decision needed
 
-## Current workflow state
-
 - Parent:
-- Status:
-- Owner:
-- Blocker:
-- Next workflow verb:
+
+<!-- awk-state:start -->
+## AWK State
+Status:
+Issue Type:
+Next workflow verb:
+Owner:
+Merge Risk:
+Blocked by:
+Linked PR:
+Accepted direction:
+Last agent review:
+Revision cycles: 0
+<!-- awk-state:end -->
 ```
 
 ### Detailed Plan Import Rule
@@ -144,6 +160,17 @@ Stop before workflow execution when:
 - root `AGENTS.md` would be overwritten instead of merged;
 - the target contains private data that would be pushed without an explicit privacy decision.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -161,6 +188,7 @@ Root README status:
 Labels status:
 Initial issues:
 Issue bootstrap complete:
+AWK State updates:
 Blocked:
 
 ## Next workflow step

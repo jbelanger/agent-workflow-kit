@@ -212,8 +212,9 @@ cannot use GitHub.
 New repositories start with `init-awk`. Initialization must create the initial GitHub issue surface
 before ordinary workflow execution: a parent initiative when there is a larger outcome, child issues
 for the first real slices or unresolved decisions, links to source docs or imported plans, issue type
-labels, readiness state, and a `Next workflow verb` for each issue. Do not start implementation from
-an imported plan, README, or local Markdown record until that state exists in GitHub.
+labels, a canonical `AWK State` block, and one `next:*` routing label for each issue. Do not start
+implementation from an imported plan, README, or local Markdown record until that state exists in
+GitHub.
 
 During initialization, create the parent issue before child issues and update links after GitHub
 assigns issue numbers. A detailed plan may be accepted enough for artifact review or breakdown
@@ -251,6 +252,22 @@ ownership, public-surface, storage, or scope disagreement.
 Fast lane means fewer artifacts, not hidden state. If GitHub is available, active work still belongs
 in issues before implementation. A chat-only instruction can authorize the current turn, but durable
 state must be updated before downstream agents rely on it.
+
+## AWK State And Routing Labels
+
+Issues and PRs carry one `AWK State` block delimited by `<!-- awk-state:start -->` and
+`<!-- awk-state:end -->`. The block is the human-readable source for current status, issue type,
+next workflow verb, owner, merge risk, blocker, linked PR, accepted direction, last agent review,
+and revision cycles.
+
+When GitHub labels are available, each active item should have exactly one `next:*` label matching
+the block's `Next workflow verb`. Use labels for routing queries and the state block for context.
+Do not create a second workflow model in external tracker fields.
+
+The direct-task fast lane uses `.github/ISSUE_TEMPLATE/direct-task.yml`. It is for tiny, clear work
+with a visible `DIRECT_TASK` rationale, one-agent scope, acceptance criteria, validation, merge risk,
+and PR requirements. It skips separate discovery/spec/ADR/breakdown artifacts only when they would
+add no useful evidence.
 
 ## Workflow
 
@@ -627,6 +644,11 @@ is agent-pickable only when both agents agree no human-review-worthy smell exist
 Review details stay on the PR. Use `revision-needed` and `needs-human-review` as labels when
 available, or as issue comments when labels are not configured.
 
+Use `Revision cycles` in the PR `AWK State` block as a hard loop counter. Increment it when the same
+PR moves from review back to implementation for accepted revision work. After two unresolved agent
+revision cycles, route to human review with `needs-human-review` and `Next workflow verb:
+human-decision` instead of sending the PR through another agent revision pass.
+
 ### 10. Refactor And Superseding PRs
 
 Do not add a dedicated refactor skill yet. Refactor is a work item type and an implementation path
@@ -668,9 +690,21 @@ Use squash merge by default so `main` keeps a readable history.
 
 ## Queue State
 
-Keep queue state in issue text, labels, comments, and linked PRs. Do not add external tracker fields as a
-second workflow model. Blocker state belongs in issue comments and labels. Revision state belongs on
-the PR and in labels.
+Keep queue state in issue text, the canonical `AWK State` block, `next:*` labels, comments, and
+linked PRs. Do not add external tracker fields as a second workflow model. Blocker state belongs in
+the state block and explanatory comments. Revision state belongs on the PR state block and review
+labels.
+
+## Loop Stop Conditions
+
+After each workflow verb, stop and hand off instead of silently continuing when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
 
 ## Definition Of Ready
 

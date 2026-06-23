@@ -194,6 +194,17 @@ that important text, controls, and panels are visible without clipping or overla
 syntax validation alone is not enough. Record the preview command or tool in the issue comment or
 PR summary.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -202,6 +213,7 @@ Return:
 ## Discovery route
 Stage:
 Status: READY_FOR_VISION | NEEDS_INTERVIEW | NEEDS_RESEARCH | NEEDS_DECISION | READY_FOR_SPEC | DIRECT_TASK | DROP | DEFER
+AWK State update:
 Selected lenses:
 Skipped lenses:
 

@@ -64,11 +64,23 @@ instruction.
 Every planning reply should make the next state explicit:
 
 ```text
+<!-- awk-state:start -->
+## AWK State
 Status:
+Issue Type:
+Next workflow verb:
 Owner:
-Blocker:
-Next Step:
+Merge Risk:
+Blocked by:
+Linked PR:
+Accepted direction:
+Last agent review:
+Revision cycles:
+<!-- awk-state:end -->
 ```
+
+When GitHub labels are available, the active item should also carry exactly one `next:*` label that
+matches `Next workflow verb`.
 
 ## Packaging Boundary
 

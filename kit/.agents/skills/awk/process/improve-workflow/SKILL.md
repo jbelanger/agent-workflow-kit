@@ -40,6 +40,17 @@ Classify each item:
 - If the process issue created real risk for a PR or implementation task, state how to recover that
   work safely.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -56,6 +67,8 @@ Deferred:
 Needs evidence:
 
 Human decision needed:
+
+AWK State/template impact:
 
 ## Proposed changes
 

@@ -1,6 +1,6 @@
-name: Task
-description: A prepared implementation or documentation task for one agent, one branch or worktree, and one PR.
-title: "[Task] "
+name: Direct Task
+description: Fast-lane task for tiny, clear work that does not need separate discovery, spec, ADR, spike, breakdown, or re-brief.
+title: "[Direct Task] "
 labels: ["task", "next:work-issue-local"]
 body:
   - type: textarea
@@ -12,13 +12,13 @@ body:
         <!-- awk-state:start -->
         ## AWK State
         Status: Ready
-        Issue Type: Task
+        Issue Type: Direct Task
         Next workflow verb: work-issue-local
         Owner: Agent
-        Merge Risk: Unknown
+        Merge Risk: Parallel-safe
         Blocked by: None
         Linked PR: None
-        Accepted direction: None
+        Accepted direction: DIRECT_TASK
         Last agent review: None
         Revision cycles: 0
         <!-- awk-state:end -->
@@ -28,49 +28,42 @@ body:
     id: goal
     attributes:
       label: Goal
-      description: The concrete outcome this one task must deliver.
+      description: The small concrete outcome.
     validations:
       required: true
   - type: textarea
-    id: readiness
+    id: direct_task_rationale
     attributes:
-      label: Readiness evidence
-      description: Link accepted spec, ADR, discovery, spike, breakdown, or DIRECT_TASK rationale. Include human questions asked/answered, or why none were needed.
+      label: DIRECT_TASK rationale
+      description: Why no discovery, spec, ADR, spike, breakdown, or human question is needed.
     validations:
       required: true
   - type: textarea
     id: scope
     attributes:
-      label: Scope and boundaries
-      description: Parent issue, non-goals, owned area, allowed files/directories, and forbidden files/directories.
-    validations:
-      required: true
-  - type: textarea
-    id: surfaces
-    attributes:
-      label: Architecture, contracts, and user surfaces
-      description: Public APIs, storage, migrations, screens, UX direction, accessibility/usability risks, or state why none are touched.
+      label: Scope
+      description: In scope, out of scope, allowed files/directories, and forbidden files/directories.
     validations:
       required: true
   - type: textarea
     id: acceptance
     attributes:
       label: Acceptance criteria
-      description: Observable conditions that make the task complete.
+      description: What must be true when this tiny task is done?
     validations:
       required: true
   - type: textarea
     id: validation
     attributes:
-      label: Feedback loop and validation
-      description: Feedback loop or test seam, required tests, and exact validation command.
+      label: Validation
+      description: Exact validation command, or why validation-only/check-only is honest for this tiny task.
     validations:
       required: true
   - type: dropdown
     id: merge_risk
     attributes:
       label: Merge risk
-      description: Keep this consistent with the AWK State block.
+      description: Direct tasks should usually be Parallel-safe. Choose a higher risk only when coordination is real.
       options:
         - Parallel-safe
         - Needs coordination
@@ -81,6 +74,6 @@ body:
     id: pr_requirements
     attributes:
       label: PR requirements
-      description: Required issue linkage, summary facts, validation evidence, deferred items, and parent-resolution notes.
+      description: Required issue linkage, summary facts, validation evidence, and any parent-resolution note.
     validations:
       required: true

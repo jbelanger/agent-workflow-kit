@@ -22,6 +22,17 @@ Treat implementation work as Ready only when it is breakdown-shaped: parent cont
 allowed and forbidden files, acceptance criteria, validation command, and merge-risk classification
 are clear.
 
+## Loop Stop Conditions
+
+After this step, stop and hand off instead of silently choosing another workflow verb when:
+
+- human decision needed;
+- no ready item exists;
+- PR is waiting for human merge;
+- validation cannot run;
+- architecture fork detected;
+- next workflow verb changes.
+
 ## Output
 
 Return:
@@ -32,6 +43,7 @@ Return:
 - Why this one:
 - Expected workflow:
 - Risk:
+- Recommended AWK State or `next:*` label update:
 - First action:
 
 ## Not chosen

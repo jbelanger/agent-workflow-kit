@@ -11,22 +11,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-
-const portableEntries = [
-  ['kit/AGENTS.md', 'AGENTS.md'],
-  ['.github/ISSUE_TEMPLATE', '.github/ISSUE_TEMPLATE'],
-  ['.github/PULL_REQUEST_TEMPLATE.md', '.github/PULL_REQUEST_TEMPLATE.md'],
-  ['kit/.agents/skills/awk', '.agents/skills/awk'],
-  ['docs/development/README.md', 'docs/development/README.md'],
-  ['docs/awk/README.md', 'docs/awk/README.md'],
-  ['docs/awk/adrs/github-first-orchestration.md', 'docs/awk/adrs/github-first-orchestration.md'],
-  ['docs/awk/workflow/ai-dev-workflow.md', 'docs/awk/workflow/ai-dev-workflow.md'],
-  ['docs/awk/workflow/github-first-flow.md', 'docs/awk/workflow/github-first-flow.md'],
-  ['docs/awk/workflow/installing-agent-workflow-kit.md', 'docs/awk/workflow/installing-agent-workflow-kit.md'],
-  ['scripts/workflow-labels.mjs', 'scripts/workflow-labels.mjs'],
-  ['scripts/setup-github-labels.mjs', 'scripts/setup-github-labels.mjs'],
-  ['scripts/validate-workflow.mjs', 'scripts/validate-workflow.mjs'],
-];
+const payloadRoot = join(kitRoot, 'kit');
 
 const awkBlockStart = '<!-- BEGIN_AGENT_WORKFLOW_KIT -->';
 const awkBlockEnd = '<!-- END_AGENT_WORKFLOW_KIT -->';
@@ -37,8 +22,8 @@ function usage() {
 Installs the GitHub-first Agent Workflow Kit into another repository.
 
 Installs:
-  a minimal AWK block in AGENTS.md, .github templates, .agents/skills/awk/, docs/awk/,
-  docs/development/README.md, and lightweight setup/validation scripts
+  everything under kit/ into the target repository root
+  kit/AGENTS.md is merged as AGENTS.md instead of copied over project guidance
 
 Safety:
   AGENTS.md is merged by replacing or appending the marked AWK block
@@ -80,24 +65,24 @@ function parseArgs(argv) {
   };
 }
 
-function collectFiles(sourceEntry, targetEntry = sourceEntry) {
-  const source = join(kitRoot, sourceEntry);
-  if (!existsSync(source)) {
-    throw new Error(`Install source is missing: ${sourceEntry}`);
+function collectPayloadFiles(root = payloadRoot) {
+  if (!existsSync(root)) {
+    throw new Error(`Install payload is missing: ${relative(kitRoot, root) || 'kit'}`);
   }
 
-  const stat = statSync(source);
-  if (stat.isFile()) return [{ source: sourceEntry, target: targetEntry }];
+  const stat = statSync(root);
+  if (stat.isFile()) {
+    return [{ source: root, target: relative(payloadRoot, root) }];
+  }
 
   const files = [];
-  for (const name of readdirSync(source)) {
-    const childSource = join(sourceEntry, name);
-    const childTarget = join(targetEntry, name);
-    const childStat = statSync(join(kitRoot, childSource));
+  for (const name of readdirSync(root)) {
+    const child = join(root, name);
+    const childStat = statSync(child);
     if (childStat.isDirectory()) {
-      files.push(...collectFiles(childSource, childTarget));
+      files.push(...collectPayloadFiles(child));
     } else if (childStat.isFile()) {
-      files.push({ source: childSource, target: childTarget });
+      files.push({ source: child, target: relative(payloadRoot, child) });
     }
   }
   return files;
@@ -125,7 +110,7 @@ function mergeAgentsText(currentText, blockText) {
 }
 
 function copyFile(file, options, result) {
-  const source = join(kitRoot, file.source);
+  const source = file.source;
   const target = join(options.target, file.target);
 
   if (file.target === 'AGENTS.md' && existsSync(target)) {
@@ -172,13 +157,7 @@ function install(options) {
     throw new Error(`Target repository does not exist: ${options.target}`);
   }
 
-  const filesByTarget = new Map();
-  for (const [source, target] of portableEntries) {
-    for (const file of collectFiles(source, target)) {
-      filesByTarget.set(file.target, file);
-    }
-  }
-  const files = [...filesByTarget.values()].sort((a, b) => a.target.localeCompare(b.target));
+  const files = collectPayloadFiles().sort((a, b) => a.target.localeCompare(b.target));
   const result = {
     created: [],
     merged: [],

@@ -3,8 +3,7 @@
 This file is guidance for working inside the Agent Workflow Kit source repository.
 
 This repository is not an installed target of Agent Workflow Kit. It is the source package where we
-improve the kit itself: installable instructions, skills, issue templates, workflow docs, validation
-scripts, and optional setup helpers.
+improve the kit itself: the installable `kit/` payload, source docs, installer, and proof scripts.
 
 ## Core Rule
 
@@ -25,18 +24,20 @@ source files, run validation, and commit or push only when asked.
 ## Source vs Installed Guidance
 
 - Root `AGENTS.md` is for this source repository only.
-- `kit/AGENTS.md` is the minimal AWK usage block merged into target repository guidance.
+- `kit/` is the install payload. The installer copies `kit/**` into a target repository root.
+- `kit/AGENTS.md` is merged as the target repository's root `AGENTS.md` AWK block.
 - `kit/.agents/skills/awk/` contains installable skills for target repositories.
-- `.github/ISSUE_TEMPLATE/` and `.github/PULL_REQUEST_TEMPLATE.md` are package assets for target
-  repositories, not process requirements for this source repository.
-- `docs/awk/` contains installable AWK process docs.
-- `docs/development/` records durable source-repo design notes, dogfood results, and project
-  artifact templates.
+- `kit/.github/` contains issue and PR templates for target repositories.
+- `kit/docs/awk/` contains installable AWK process docs.
+- `kit/docs/development/README.md` is the installable target-project artifact folder contract.
+- Root `docs/development/` records durable source-repo design notes, dogfood results, and source
+  spikes.
+- Root `scripts/` contains source-package helpers such as the installer and portable-install proof.
 
-When changing installed behavior, update the installable files under `kit/`, `.github/`,
-`docs/awk/`, relevant project-artifact templates under `docs/development/`, and `scripts/`
-deliberately. Keep root-only guidance out of the installed package unless the human explicitly wants
-it installed into target repos.
+When changing installed behavior, update the installable files under `kit/` deliberately. Update
+root source helper scripts only when installer, validation, or proof behavior changes. Keep
+root-only guidance out of the installed package unless the human explicitly wants it installed into
+target repos.
 
 ## Self-Improvement Policy
 
@@ -44,7 +45,7 @@ Self-improvement work in this repo should stay lightweight and explicit:
 
 - Prefer small source edits over new process machinery.
 - Record important lessons in README or durable docs when they should shape future kit behavior.
-- Validate with `node scripts/validate-workflow.mjs` and `node scripts/prove-portable-install.mjs`
+- Validate with `node kit/scripts/validate-workflow.mjs` and `node scripts/prove-portable-install.mjs`
   when installed files or installer behavior change.
 - Use the separate dogfood target repo for realistic workflow trials.
 - Promote only useful lessons from dogfood runs back into this source repo.

@@ -67,6 +67,7 @@ function proveGithubFirst(root) {
     existsSync(join(target, '.agents/skills/awk/process/init-awk/SKILL.md')),
     'Install did not create namespaced AWK skills.'
   );
+  assert(!existsSync(join(target, 'kit')), 'Install copied the source kit/ wrapper into the target.');
   assert(!existsSync(join(target, '.agents/skills/process')), 'Install created old root skill paths.');
   assert(
     existsSync(join(target, 'docs/awk/README.md')) &&
@@ -76,6 +77,12 @@ function proveGithubFirst(root) {
   assert(
     !existsSync(join(target, 'docs/development/workflow')),
     'Install created old docs/development workflow docs.'
+  );
+  assert(
+    existsSync(join(target, '.github/ISSUE_TEMPLATE/task.yml')) &&
+      existsSync(join(target, 'scripts/setup-github-labels.mjs')) &&
+      existsSync(join(target, 'scripts/validate-workflow.mjs')),
+    'Install did not copy target-root templates and scripts from kit/.'
   );
   for (const lazyPath of [
     'docs/development/adrs',

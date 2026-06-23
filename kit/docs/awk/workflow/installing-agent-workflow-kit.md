@@ -18,6 +18,8 @@ Required:
   docs/awk/workflow/github-first-flow.md
   docs/awk/workflow/installing-agent-workflow-kit.md
   docs/development/README.md
+  scripts/workflow-labels.mjs
+  scripts/setup-github-labels.mjs
   scripts/validate-workflow.mjs
   pushed GitHub repository
   initial GitHub issues before workflow execution
@@ -46,7 +48,9 @@ Optional:
 | `docs/development/discovery/` | Lazy | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. Create only when a discovery artifact exists. |
 | `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Lazy | Durable planning artifacts reviewed through PRs. Create only when that artifact type exists. |
 | `docs/development/**/mockups/` or `docs/development/specs/*-assets/` | Lazy | Generated wireframes, sample assets, screenshots, or mockups used to review UX direction. Mark as non-production until accepted. |
+| `scripts/workflow-labels.mjs` | Yes | Shared workflow label contract used by setup and validation. |
 | `scripts/setup-github-labels.mjs` | Yes | Minimal GitHub setup for labels used by issue templates. |
+| `scripts/validate-workflow.mjs` | Yes | Local validation for the installed AWK payload and workflow contract. |
 | GitHub issues/PRs | Yes for workflow execution | Active orchestration, human answers, remote planning, audit trail, and review. |
 | GitHub labels | Recommended setup | Lightweight issue type and review signals created by `scripts/setup-github-labels.mjs`. |
 | `docs/development/work-items/` | Optional fallback | Portable planning records only when GitHub is absent. |

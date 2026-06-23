@@ -28,9 +28,8 @@ artifact bundle they support, for example `discovery/<slug>/mockups/` or a sibli
 `specs/<slug>-assets/` folder. Mark generated visuals as review aids, not production assets, until
 the human accepts them.
 
-In target projects, AWK process docs live under `docs/awk/` and AWK skills live under
-`.agents/skills/awk/`. In the AWK source package, installable copies are stored under `kit/` before
-they are copied into target projects. Keeping AWK process assets outside this folder leaves
-`docs/development/` focused on project-owned durable truth.
+AWK process docs live under `docs/awk/` and AWK skills live under `.agents/skills/awk/`. Keeping AWK
+process assets outside this folder leaves `docs/development/` focused on project-owned durable
+truth.
 
 Skill category folders are navigation only; each skill still owns its own `SKILL.md` instructions.

@@ -32,10 +32,9 @@ Use the smallest durable surface that matches the job:
   checks.
 
 Project development docs live in the single repo, but they must remain separate from user-facing docs
-and excluded from any published product surface when needed. In an installed target repo, active AWK
-procedure stays in `.agents/skills/awk/` and `docs/awk/`; project-specific durable artifacts stay in
-`docs/development/`. In this kit source repo, the installable skill copies live under `kit/` so local
-dogfooding can happen in a separate target repo without self-applying the workflow.
+and excluded from any published product surface when needed. Active AWK procedure stays in
+`.agents/skills/awk/` and `docs/awk/`; project-specific durable artifacts stay in
+`docs/development/`.
 
 ## Core Rule
 

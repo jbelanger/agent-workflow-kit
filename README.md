@@ -1,86 +1,101 @@
 # Agent Workflow Kit
 
-Agent Workflow Kit is a source package for a GitHub-first agent workflow. It contains installable
-agent guidance, skills, issue templates, workflow docs, validation scripts, and setup helpers.
+Agent Workflow Kit (AWK) is a GitHub-first workflow you install into a project so that AI agents and
+humans plan, build, and review through the same durable state.
 
-This repository is not a normal installed target of the kit. Change it directly: inspect the source,
-edit the relevant files, run validation, and commit or push only when asked.
+The core bet: **GitHub issues, PRs, and repo docs hold enough state that any agent — Codex, Claude,
+or a human — can resume work without chat memory.** Agents execute prepared work and open small PRs.
+Humans keep architecture, product, and merge decisions. Agents never merge.
 
-## Repository Map
+This repository is the **source package** for the kit, not a project that runs the workflow on
+itself. To use AWK, install it into another repository (below).
 
-- `AGENTS.md`: source-repo operating rules for Codex and other agents.
-- `kit/AGENTS.md`: minimal AWK usage block merged into target repository guidance.
-- `kit/.agents/skills/awk/`: namespaced installable workflow and procedural specialist skills.
-- `.github/`: issue and PR templates copied into target repositories.
-- `docs/awk/`: installable AWK process and reference docs copied into target repositories.
-- `docs/development/`: durable source-repo decisions, dogfood results, specs, and spikes.
-- `scripts/`: installer, validation, label setup, and optional setup helpers.
+## What you get
 
-## Current Dogfood Mode
+- **Installable skills** (`kit/.agents/skills/awk/`) — the loop steps an agent runs: groom,
+  break down, prepare, implement, review.
+- **GitHub-first orchestration** — issues and PRs are the source of truth; no board or platform
+  required to start.
+- **Issue and PR templates** plus a label setup script.
+- **Readiness and merge-safety discipline** — the part generic agents lack: every task ships with a
+  goal, allowed/forbidden files, acceptance criteria, validation command, and a merge-risk tag so
+  work is safe to hand to an autonomous agent.
 
-When improving the workflow through a realistic run, use a separate dogfood target repository.
+## Start here
 
-Dogfood runs should test the lane that matches the input, not the longest possible process. Start at
-the front door for that lane, then move sequentially through each required handoff so the run teaches
-us where agents follow or miss the protocol.
+Run these from this kit repo, targeting the project you want to use AWK in.
 
-The current focus is the detailed-plan path, not vague-idea discovery. If a real plan already
-exists, do not start by re-interviewing the human as if the idea were blank. Start by having a
-delegated agent inspect the plan, classify whether it is accepted enough to build from, identify any
-missing decisions, and route to `review-artifact`, `breakdown-issue`, or
-`prepare-implementation` as appropriate.
+```bash
+# 1. Install the kit into your project (merges an AWK block into AGENTS.md; copies skills,
+#    templates, and docs; refuses to overwrite different existing files).
+node scripts/install-workflow-kit.mjs --target /path/to/your-project
 
-For vague ideas, start from the vague-idea lane so the run teaches us about grooming and discovery:
+# 2. In your project: push it to GitHub, then create the workflow labels.
+cd /path/to/your-project
+node scripts/setup-github-labels.mjs
+```
 
-1. Reset or confirm the target baseline.
-2. Create or select the initial work item.
-3. Groom or inspect it carefully.
-4. Discover, review, draft, spike, or decide only when the intake step proves that is needed.
-5. Break accepted direction into one-agent, one-worktree, one-PR tasks.
-6. Prepare implementation briefs.
-7. Dispatch workers.
-8. Review worker quality.
-9. Promote useful lessons back into this source repo.
+Then, in your project, drive the loop by talking to your agent (Codex, Claude Code, etc.):
 
-Use subagents to mimic handoffs between future agents. The main thread is the supervisor: it
-orchestrates, delegates, monitors quality, records handoff state, and captures lessons. It should
-not personally perform the workflow step being tested.
+1. **Initialize** — ask the agent to use the `init-awk` skill. It verifies the repo is pushed,
+   labels exist, and turns your plan into the first GitHub issues. No coding starts before this.
+2. **Continue work** — ask the agent to *"continue work."* It reads issues, PRs, and repo docs via
+   the `continue-work` skill and routes to the next step (groom → break down → prepare → implement →
+   review).
+3. **Review and merge** — you review each PR and merge with squash. Agents never merge.
 
-Each subagent should own one bounded workflow step or task. The goal is to see whether individual
-agents follow the installed protocol from the state they receive. The supervisor evaluates their
-work, asks the human when a delegated agent surfaces a real decision, and redirects the run when a
-handoff fails instead of quietly doing the work itself.
+That's the whole loop. You produce ready, well-bounded issues; the agent drains them into PRs; you
+approve.
 
-Grooming should receive the most effort for vague ideas. Detailed-plan runs should spend their effort
-on plan quality, readiness, decomposition, implementation briefs, and whether downstream agents can
-follow the plan without hidden chat context.
-
-## Loop Direction
-
-The intended flow is a small agent-loop contract rather than a runtime platform:
+## The loop
 
 ```text
 Intake -> Shape -> Execute -> Review -> Improve
 ```
 
-GitHub state should be enough for agents to resume without chat memory:
+`Shape` is the human-heavy part (grooming, specs/ADRs, breakdown into one-agent/one-PR tasks).
+`Execute` is one prepared task → one worktree → one PR. `Improve` feeds lessons back into the kit.
+Full operating rules live in `AGENTS.md` and `kit/docs/awk/` in this source repo; installed target
+repos receive them under `docs/awk/`.
 
-- grooming records the real problem and unresolved decisions,
-- breakdown creates independent task boundaries,
-- a human or thin local runner assigns prepared tasks to worktrees,
-- worker agents open linked PRs,
-- reviewer agents monitor quality and route revisions,
-- humans retain architecture, product, approval, and merge decisions.
+## What works today
 
-Do not build a platform before proving the loop. Simulate the sequence deliberately with one
-worktree first, then a small parallel batch, and record process feedback where the workflow feels
-unclear, too heavy, too loose, or unsafe.
+- **Built:** the Shape loop (grooming, drafting, breakdown, readiness) and single-worker Execute →
+  Review → merge handoff, driven from GitHub state.
+- **Manual for now:** parallel fan-out across many worktrees. Run one worktree by hand first, then a
+  small parallel batch. A thin local launcher is the next step — deliberately *not* a platform.
 
-## Validation
+**Current state** — planning is built; execution runs one prepared task at a time, launched and reviewed by hand.
 
-Run source validation after changing installable files or workflow scripts:
+![Current state: the Shape loop is built; a single worktree implements one task and a human starts review and merges](docs/assets/current-state.svg)
+
+**Intended state** — same planning, but a dispatcher fans work out to parallel worktrees and a reviewer agent auto-picks up PRs. You keep approval and merge.
+
+![Intended state: a dispatcher reads ready issues and merge-risk, fans work to parallel worktrees that open PRs, and a reviewer agent auto-picks them up before the human approves and squashes to main](docs/assets/intended-state.svg)
+
+## Where the details live
+
+| Path | Holds |
+| --- | --- |
+| `AGENTS.md` | Operating rules for agents working in this source repo. |
+| `kit/` | The entire install payload copied into target repo roots. |
+| `kit/AGENTS.md` | The minimal AWK block merged into each target project's `AGENTS.md`. |
+| `kit/.agents/skills/awk/` | The installable workflow skills (the loop steps). |
+| `kit/.github/` | Issue and PR templates copied into target repos. |
+| `kit/docs/awk/` | Workflow reference, the GitHub-first ADR, and the install contract. |
+| `kit/docs/development/README.md` | Installed target-project artifact folder contract. |
+| `kit/scripts/` | Scripts copied into target repos. |
+| `docs/development/` | This repo's own decisions, dogfood runs, and notes. |
+| `scripts/` | Source-package installer and portable-install proof. |
+
+## Working on the kit itself
+
+Edit the source files directly, then validate. Commit or push only when asked.
 
 ```bash
-node scripts/validate-workflow.mjs
+node kit/scripts/validate-workflow.mjs
 node scripts/prove-portable-install.mjs
 ```
+
+See `AGENTS.md` for the source-repo rules (including how to dogfood the workflow in a separate target
+repo rather than on this repo).

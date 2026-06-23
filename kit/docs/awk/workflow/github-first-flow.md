@@ -14,15 +14,17 @@ Intake -> Shape -> Execute -> Review -> Improve
 
 GitHub issues, PRs, labels, and repo docs are the durable coordination surface for that loop.
 GitHub is not a runtime platform, and AWK does not use external tracker fields as workflow state.
+Runtime worker loops such as a Codex goal, headless prompt, local script, or human working session
+consume GitHub state; they do not replace it.
 
 ## Product Promise
 
 ```text
 Human leaves the keyboard
   -> answers a question or approves direction in GitHub
-  -> later asks Codex to continue work
-  -> Codex reads GitHub issues, PRs, repo docs, and labels
-  -> Codex knows the next safe workflow step
+  -> later asks an agent to continue work
+  -> the agent reads GitHub issues, PRs, repo docs, and labels
+  -> the agent knows the next safe workflow step
 ```
 
 ## Surfaces
@@ -34,6 +36,7 @@ Human leaves the keyboard
 | GitHub labels | Lightweight issue type and review signals. | Full workflow state or acceptance evidence. |
 | `docs/development/` | Accepted durable truth after review: vision, specs, ADRs, spikes, workflow docs, and source evidence. | Raw scratch planning. |
 | `.agents/skills/awk/` | Workflow procedure. | Project-specific accepted direction. |
+| Runtime worker loop | Active execution binding for one Ready issue. | Durable queue state, accepted direction, review evidence, or issue/PR replacement. |
 
 ## Review Handoff Rule
 
@@ -72,7 +75,9 @@ comments, repo docs, and labels, then chooses one next workflow verb.
 
 Implementation still requires issue state, a visible grooming result or `DIRECT_TASK` rationale,
 clear acceptance criteria, validation, merge-risk classification, and explicit user authorization
-for the current turn.
+for the current turn. A self-contained Ready issue can route directly to `work-issue-local`; use
+`prepare-implementation` only when a stale or scattered issue needs a compact re-brief before a
+fresh worker loop starts.
 
 ## Process Feedback
 

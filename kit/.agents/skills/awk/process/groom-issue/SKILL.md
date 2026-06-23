@@ -103,8 +103,8 @@ Why:
 
 ## Visible Grooming Record
 
-Before implementation, record the grooming result in the issue, a linked planning artifact, or the
-implementation brief. Even `DIRECT_TASK` must make the skipped planning visible:
+Before implementation, record the grooming result in the issue, a linked planning artifact, or a
+re-brief when one is needed. Even `DIRECT_TASK` must make the skipped planning visible:
 
 - Why direct implementation is safe.
 - Ambiguities, alternatives, architecture concerns, and validation challenges considered.
@@ -120,7 +120,7 @@ Use interview mode when the work is vague and the missing information is product
 workflow, architecture, or platform judgment. Grooming does not run that interview; it records that
 interactive discovery is needed and hands the item to `discover-vision`.
 
-1. Do not draft a spec, child work item, or implementation brief yet.
+1. Do not draft a spec, child work item, or implementation task contract yet.
 2. Record the decision area and, when helpful, a candidate first question for `discover-vision`.
 3. Include options, a recommendation, and why the answer changes downstream work only as a handoff
    note, not as a completed interview.
@@ -221,7 +221,7 @@ Return:
 - Keep normal clarification in grooming.
 - Prefer updating the current work item over creating a parallel planning item.
 - If the work item is clear enough for implementation, hand it to `breakdown-issue` so the
-  orchestrator can produce merge-safe executable task boundaries before `prepare-implementation`.
+  orchestrator can produce merge-safe executable task boundaries and a self-contained issue body.
 - If the work item needs a product, UX, creative, game, platform, or architecture interview, stop
   after recording the grooming handoff and route to `discover-vision`; do not run the interview in
   grooming.

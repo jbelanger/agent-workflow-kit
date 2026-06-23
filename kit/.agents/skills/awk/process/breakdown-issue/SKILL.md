@@ -21,6 +21,9 @@ promotes them into a durable work item.
 - Every child work item needs a clear parent, owned area, allowed files, forbidden files,
   acceptance criteria, feedback loop or test seam, validation command, and merge-risk
   classification.
+- The child issue body is the normal implementation task contract. Make it self-contained enough for a
+  runtime worker loop to start from the issue, then follow links to authoritative specs, ADRs, code,
+  or source evidence as needed.
 - Do not mark implementation work `Ready` until child work item boundaries are clear enough for
   autonomous work.
 - Do not hide architecture decisions inside task splitting. If decomposition exposes a real fork,
@@ -48,8 +51,9 @@ Read the parent work item and all accepted source artifacts before proposing chi
    - `Parallel-safe`: isolated or unrelated to other active work.
    - `Needs coordination`: can proceed in parallel with explicit sequencing or communication.
    - `Serial only`: should not run in parallel with related work.
-6. Mark child work items that need more clarification as `Grooming`, not `Ready`.
-7. Mark executable child work items `Ready` only when they meet the Definition of Ready.
+6. Write each executable child as a complete task contract suitable for the issue body.
+7. Mark child work items that need more clarification as `Grooming`, not `Ready`.
+8. Mark executable child work items `Ready` only when they meet the Definition of Ready.
 
 ## Definition Of Ready For Child Work Items
 
@@ -121,6 +125,8 @@ Owned area:
 Allowed files:
 Forbidden files:
 Contracts/APIs/storage touched:
+Architecture boundary:
+UX direction / user surface:
 Acceptance criteria:
 Feedback loop / test seam:
 Required tests:
@@ -128,6 +134,8 @@ Validation command:
 Merge risk:
 Sequencing notes:
 Human decision needed:
+Runtime worker loop:
+Required PR summary:
 
 ## Child work items not ready yet
 
@@ -135,6 +143,11 @@ Human decision needed:
 
 ## Open questions
 ```
+
+For `Ready` child work items, the `Runtime worker loop` field should be a thin pointer, not a copy
+of the workflow rules. Example: "Implement this issue in one branch or worktree using `AGENTS.md`
+and `.agents/skills/awk/process/work-issue-local/SKILL.md`; done means the acceptance criteria pass,
+required validation has run, and a PR is open with the required summary."
 
 Ask at most one clarification question at a time. Include options, a recommendation, and why the
 answer matters.

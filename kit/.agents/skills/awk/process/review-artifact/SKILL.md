@@ -28,7 +28,7 @@ artifact PR.
   workflow stage.
 - Do not silently resolve open product, architecture, ownership, storage, public-surface, or
   validation forks during review.
-- Do not create child work items, implementation briefs, branches, commits, or PRs.
+- Do not create child work items, implementation task contracts, branches, commits, or PRs.
 - Do not route an artifact PR to `review-local-changes` only because it is a PR. Use
   `review-artifact` to review artifact substance, state, decision history, source linkage, and next
   workflow routing. Use `review-local-changes` for implementation or general doc/code diffs that are

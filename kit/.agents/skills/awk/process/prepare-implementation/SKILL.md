@@ -1,16 +1,21 @@
 ---
 name: prepare-implementation
-description: Convert a breakdown-shaped ready work item, issue, refactor, revision, or child item into a local Codex implementation brief with goal, non-goals, allowed files, boundaries, acceptance criteria, tests, validation, merge risk, parent context, and PR summary requirements. Use when the user says "prepare this for codex", "make implementation prompt", "make this issue agent-ready", or "make this work item agent-ready".
+description: Re-brief a stale, scattered, or incomplete Ready work item into a compact worker prompt with goal, non-goals, allowed files, boundaries, acceptance criteria, tests, validation, merge risk, parent context, and PR summary requirements. Use when the user says "prepare implementation", "make implementation prompt", "make this issue agent-ready", or "make this work item agent-ready".
 ---
 
 # Prepare Implementation
 
-You are preparing one breakdown-shaped ready work item for a local Codex implementation session. Do
-not write production code.
+You are preparing one breakdown-shaped Ready work item for a runtime worker loop. Do not write
+production code.
+
+The issue body is the normal implementation task contract. Use this skill only when the issue is
+stale, has important decisions scattered through comments, or lacks a compact worker contract. If
+the issue is already self-contained, do not duplicate it; say that no separate brief is needed and
+route to `work-issue-local` after the human authorizes implementation.
 
 ## Readiness Check
 
-Before writing the brief, verify the work item has enough context:
+Before writing a re-brief, verify the work item has enough context:
 
 - Visible grooming result such as `DIRECT_TASK`, accepted spec/ADR/discovery, or accepted breakdown.
 - Human questions asked and answered, or a clear reason no human answer is needed.
@@ -39,11 +44,14 @@ If the work item is not ready, return it to grooming and explain the missing inf
 If the work item is clear but not decomposed into merge-safe implementation work, send it to
 `breakdown-issue` first.
 
-## Brief Shape
+## Re-Brief Shape
 
-Produce:
+Produce a compact prompt or issue comment. Keep it as a pointer to durable state, not a second copy
+of the workflow rules:
 
 ```md
+# Runtime worker loop
+
 # Grooming result
 
 # Clarifying questions / challenges
@@ -81,13 +89,18 @@ Produce:
 # Required PR summary
 ```
 
+The `Runtime worker loop` section should bind the worker to one issue and one done condition. Example:
+"Implement issue #N in one branch or worktree using `AGENTS.md` and
+`.agents/skills/awk/process/work-issue-local/SKILL.md`; done means the acceptance criteria pass,
+required validation has run, and a PR is open with the required summary."
+
 ## Rules
 
 - Do not broaden scope.
 - Do not guess missing architecture decisions.
 - Make allowed and forbidden areas concrete.
 - Call out public surfaces, storage, migrations, and cross-module contracts.
-- For UI-bearing tasks, stop if the implementation brief lacks UX direction for the user journey,
+- For UI-bearing tasks, stop if the issue or re-brief lacks UX direction for the user journey,
   screen/state model, information hierarchy, interaction constraints, and accessibility/usability
   risks.
 - If implementation depends on visual direction, stop unless linked mockups or sample assets are

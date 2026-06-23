@@ -117,6 +117,7 @@ const flowAtGlanceSnippets = [
   'review-local-changes',
   'review-revision-triage',
   'Do not skip from vague idea or Inbox directly to implementation',
+  'Runtime worker loops are ephemeral',
 ];
 
 const uxGateSnippets = [
@@ -125,7 +126,9 @@ const uxGateSnippets = [
   'sample assets or mockups',
   'docs/development/discovery/<slug>/mockups/',
   'rendered-preview validation',
-  'target user, primary journey, key screens or states, information hierarchy',
+  'target user, primary journey',
+  'key screens or states',
+  'information hierarchy',
   'screen/state model',
   'accessibility/usability risks',
 ];
@@ -273,7 +276,7 @@ function validate(cwd) {
   const continueSkillPath = sourcePath(cwd, '.agents/skills/awk/process/continue-work/SKILL.md');
   if (existsSync(join(cwd, continueSkillPath))) {
     const continueSkill = read(cwd, continueSkillPath);
-    for (const snippet of ['GitHub issues', 'Next workflow verb', 'work-issue-local', 'visible grooming result', 'direct-task rationale', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue']) {
+    for (const snippet of ['GitHub issues', 'Next workflow verb', 'work-issue-local', 'visible grooming result', 'direct-task rationale', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue', 'Runtime worker loops', 'compact re-brief']) {
       if (!continueSkill.includes(snippet)) {
         errors.push(`continue-work skill is missing GitHub routing snippet: ${snippet}`);
       }
@@ -299,6 +302,7 @@ function validate(cwd) {
       'UX direction / user surface',
       'screen/state model',
       'accessibility/usability',
+      'no separate brief is needed',
     ]) {
       if (!prepareSkill.includes(snippet)) {
         errors.push(`prepare-implementation skill is missing readiness snippet: ${snippet}`);
@@ -377,6 +381,11 @@ function validate(cwd) {
         errors.push(`AI dev workflow is missing UX readiness snippet: ${snippet}`);
       }
     }
+    for (const snippet of ['Runtime Worker Loops', 'tool-neutral', 'self-contained and Ready', 'Use `prepare-implementation` only when']) {
+      if (!aiWorkflow.includes(snippet)) {
+        errors.push(`AI dev workflow is missing runtime-worker-loop snippet: ${snippet}`);
+      }
+    }
     for (const snippet of ['Create artifact folders only when writing the first artifact', 'Do not keep empty']) {
       if (!aiWorkflow.includes(snippet)) {
         errors.push(`AI dev workflow is missing lazy artifact folder snippet: ${snippet}`);
@@ -414,7 +423,7 @@ function validate(cwd) {
   const taskTemplatePath = sourcePath(cwd, '.github/ISSUE_TEMPLATE/task.yml');
   if (existsSync(join(cwd, taskTemplatePath))) {
     const taskTemplate = read(cwd, taskTemplatePath);
-    for (const snippet of ['Grooming result', 'human questions asked/answered']) {
+    for (const snippet of ['Grooming result', 'human questions asked/answered', 'Allowed files/directories', 'Forbidden files/directories', 'Runtime worker loop', 'Required PR summary']) {
       if (!taskTemplate.includes(snippet)) {
         errors.push(`task issue template is missing grooming snippet: ${snippet}`);
       }

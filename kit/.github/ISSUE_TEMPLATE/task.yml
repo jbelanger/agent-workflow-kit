@@ -23,6 +23,13 @@ body:
     validations:
       required: true
   - type: textarea
+    id: parent_context
+    attributes:
+      label: Parent / context
+      description: Link parent initiatives or related issues; include resolution expectations when this is child or replacement work.
+    validations:
+      required: false
+  - type: textarea
     id: grooming_result
     attributes:
       label: Grooming result
@@ -36,10 +43,38 @@ body:
     validations:
       required: true
   - type: textarea
+    id: allowed_files
+    attributes:
+      label: Allowed files/directories
+      description: Concrete paths or areas the worker may edit.
+    validations:
+      required: true
+  - type: textarea
+    id: forbidden_files
+    attributes:
+      label: Forbidden files/directories
+      description: Concrete paths or areas the worker must not edit without further approval.
+    validations:
+      required: true
+  - type: textarea
     id: architecture_direction
     attributes:
       label: Architecture direction
       description: Intended model, boundary, public surfaces touched, and shortcuts rejected.
+    validations:
+      required: true
+  - type: textarea
+    id: contracts_touched
+    attributes:
+      label: Contracts / APIs / storage / user surfaces touched
+      description: Name affected contracts, records, APIs, migrations, screens, workflows, or state why none are touched.
+    validations:
+      required: true
+  - type: textarea
+    id: ux_direction
+    attributes:
+      label: UX direction / user surface
+      description: For UI-bearing work, record target user, journey, screen/state model, accessibility/usability risks, and deferred UX; otherwise state no user-facing surface is touched.
     validations:
       required: true
   - type: textarea
@@ -56,6 +91,13 @@ body:
     validations:
       required: true
   - type: textarea
+    id: required_tests
+    attributes:
+      label: Required tests
+      description: Focused tests, characterization tests, diagnosis loop, or why validation-only is honest.
+    validations:
+      required: true
+  - type: textarea
     id: validation
     attributes:
       label: Validation command
@@ -69,5 +111,19 @@ body:
         - Parallel-safe
         - Needs coordination
         - Serial only
+    validations:
+      required: true
+  - type: textarea
+    id: runtime_worker_loop
+    attributes:
+      label: Runtime worker loop
+      description: Thin pointer for the worker loop; name the issue, AGENTS.md, work-issue-local, and done condition without copying workflow rules.
+    validations:
+      required: true
+  - type: textarea
+    id: required_pr_summary
+    attributes:
+      label: Required PR summary
+      description: Required sections or facts the PR must report for review and issue linkage.
     validations:
       required: true

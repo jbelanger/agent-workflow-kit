@@ -64,7 +64,9 @@ that source into GitHub state before any downstream AWK skill runs:
 - Label each issue with the matching AWK issue type label.
 - Record current status/readiness in the issue body or a setup comment.
 - Record `Next workflow verb` for each issue: usually `groom-issue`, `review-artifact`,
-  `breakdown-issue`, or `prepare-implementation` during initialization.
+  `breakdown-issue`, `prepare-implementation`, or `work-issue-local` during initialization,
+  depending on whether the issue already has a complete Ready task contract and implementation
+  authorization.
 
 Create the parent issue first. Then create children one at a time so each child can link to the
 parent. After child issue numbers exist, update the parent issue body or add a setup comment that
@@ -118,12 +120,13 @@ the boundaries.
 ### Detailed Plan Import Rule
 
 When a source plan is already detailed enough to build from, initialization still creates issues
-first. It may route directly to `breakdown-issue` or `prepare-implementation` only when the issue
-records why the plan is accepted enough, what source doc is authoritative, and what ambiguity remains.
+first. It may route directly to `breakdown-issue`, `prepare-implementation`, or `work-issue-local`
+only when the issue records why the plan is accepted enough, what source doc is authoritative, what
+ambiguity remains, and whether the issue body is already a complete Ready task contract.
 
 Accepted enough for artifact review or breakdown is not accepted enough for implementation. An
 implementation issue is not ready for `work-issue-local` until it has a visible grooming result,
-accepted direction, task boundaries, and an implementation brief or equivalent issue body that passes
+accepted direction, task boundaries, and a self-contained Ready issue body or re-brief that passes
 the `work-issue-local` readiness gate.
 
 When a source plan is not accepted enough, route the parent or first child to `groom-issue`,

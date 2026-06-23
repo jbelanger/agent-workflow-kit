@@ -39,13 +39,13 @@ cross-module direction, and operating policy.
 ## Readiness Gate
 
 Before creating a branch, editing files, or writing code, verify that the issue, comment thread,
-linked artifact, or implementation brief contains a visible grooming result. Acceptable evidence is
-one of:
+linked artifact, or re-brief contains a visible grooming result. The self-contained Ready issue body
+is the normal implementation contract. Acceptable evidence is one of:
 
 - `DIRECT_TASK` with a clear rationale for why no spec, ADR, spike, discovery, or human question is
   needed.
 - Accepted spec, ADR, discovery, or spike direction plus breakdown/implementation boundaries.
-- A prepared implementation brief produced after grooming.
+- A self-contained Ready issue body or prepared implementation re-brief produced after grooming.
 
 If this evidence is missing, stop before implementation and route back to `groom-issue`. Do not
 treat a well-written issue body as a substitute for grooming.
@@ -55,14 +55,14 @@ asked and answered, or explain why that ambiguity does not affect the next slice
 
 For UI-bearing work, the readiness record must also include accepted UX direction or a clear reason
 the slice touches no user-facing workflow, screen/state model, or interaction surface. UX direction
-can live in an accepted discovery note, spec section, issue comment, or implementation brief. It
+can live in an accepted discovery note, spec section, issue comment, issue body, or implementation
+re-brief. It
 should cover the target user, primary journey, key screens or states, information hierarchy,
 interaction constraints, accessibility/usability risks, and what is deliberately deferred.
 
 ## Process
 
-1. Read the work item, visible grooming result, implementation brief, linked docs, nearby code, and
-   tests.
+1. Read the work item, visible grooming result, any re-brief, linked docs, nearby code, and tests.
 2. If this is a child item, superseding refactor, or replacement PR, read the parent work item and
    record how the child work relates to the parent acceptance criteria.
 3. Restate the goal, non-goals, owned area, allowed and forbidden files, validation command, merge

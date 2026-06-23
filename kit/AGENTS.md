@@ -21,13 +21,15 @@ Intake -> Shape -> Execute -> Review -> Improve
   verb.
 - **Intake:** `init-awk`, `groom-issue`.
 - **Shape:** `discover-vision`, `draft-artifact`, `review-artifact`, `breakdown-issue`.
-- **Execute:** `prepare-implementation`, `work-issue-local`.
+- **Execute:** `work-issue-local`; use `prepare-implementation` only to re-brief a stale or
+  incomplete Ready issue before handing it to a worker.
 - **Review:** `review-local-changes`, `review-revision-triage`.
 - **Improve:** `improve-workflow`.
 
 Do not skip from vague idea or Inbox directly to implementation. A fast lane still needs visible
 issue state, a `DIRECT_TASK` rationale, one-agent scope, acceptance criteria, validation, and merge
-risk.
+risk. Runtime worker loops are ephemeral; GitHub issues, PRs, and repo docs remain the durable AWK
+state.
 
 - AWK skills live under `.agents/skills/awk/`.
 - AWK process docs live under `docs/awk/`.

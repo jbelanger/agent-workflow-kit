@@ -13,7 +13,7 @@ itself. To use AWK, install it into another repository (below).
 ## What you get
 
 - **Installable skills** (`kit/.agents/skills/awk/`) — the loop steps an agent runs: groom,
-  break down, prepare, implement, review.
+  break down, implement, review, and re-brief only when a handoff is stale or fragmented.
 - **GitHub-first orchestration** — issues and PRs are the source of truth; no board or platform
   required to start.
 - **Issue and PR templates** plus a label setup script.
@@ -40,8 +40,8 @@ Then, in your project, drive the loop by talking to your agent (Codex, Claude Co
 1. **Initialize** — ask the agent to use the `init-awk` skill. It verifies the repo is pushed,
    labels exist, and turns your plan into the first GitHub issues. No coding starts before this.
 2. **Continue work** — ask the agent to *"continue work."* It reads issues, PRs, and repo docs via
-   the `continue-work` skill and routes to the next step (groom → break down → prepare → implement →
-   review).
+   the `continue-work` skill and routes to the next step (groom → break down → implement → review,
+   with re-briefing only when needed).
 3. **Review and merge** — you review each PR and merge with squash. Agents never merge.
 
 That's the whole loop. You produce ready, well-bounded issues; the agent drains them into PRs; you
@@ -54,7 +54,8 @@ Intake -> Shape -> Execute -> Review -> Improve
 ```
 
 `Shape` is the human-heavy part (grooming, specs/ADRs, breakdown into one-agent/one-PR tasks).
-`Execute` is one prepared task → one worktree → one PR. `Improve` feeds lessons back into the kit.
+`Execute` is one Ready issue → one runtime worker loop → one worktree → one PR. `Improve` feeds
+lessons back into the kit.
 Full operating rules live in `AGENTS.md` and `kit/docs/awk/` in this source repo; installed target
 repos receive them under `docs/awk/`.
 
@@ -65,9 +66,9 @@ repos receive them under `docs/awk/`.
 - **Manual for now:** parallel fan-out across many worktrees. Run one worktree by hand first, then a
   small parallel batch. A thin local launcher is the next step — deliberately *not* a platform.
 
-**Current state** — planning is built; execution runs one prepared task at a time, launched and reviewed by hand.
+**Current state** — planning is built; execution runs one Ready issue at a time through a runtime worker loop, launched and reviewed by hand.
 
-![Current state: the Shape loop is built; a single worktree implements one task and a human starts review and merges](docs/assets/current-state.svg)
+![Current state: the Shape loop is built; one Ready issue runs through a runtime worker loop and a human starts review and merges](docs/assets/current-state.svg)
 
 **Intended state** — same planning, but a dispatcher fans work out to parallel worktrees and a reviewer agent auto-picks up PRs. You keep approval and merge.
 

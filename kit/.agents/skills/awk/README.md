@@ -21,14 +21,16 @@ Use the process skills as workflow verbs:
 | Unknown next step | `process/continue-work` |
 | Intake | `process/groom-issue` |
 | Shape | `process/discover-vision`, `process/draft-artifact`, `process/review-artifact`, `process/breakdown-issue` |
-| Execute | `process/prepare-implementation`, `process/work-issue-local` |
+| Execute | `process/work-issue-local`; `process/prepare-implementation` only when a stale or incomplete Ready issue needs a compact re-brief |
 | Review | `process/review-local-changes`, `process/review-revision-triage` |
 | Improve | `process/improve-workflow` |
 
 Do not skip from vague idea or Inbox directly to implementation. A fast lane may skip discovery,
-spec, ADR, or a separate artifact only when the issue records a visible `DIRECT_TASK` rationale,
-one-agent scope, acceptance criteria, validation, and merge risk. Implementation starts only after
-GitHub issue state and the smallest honest readiness record make the task safe for one agent.
+spec, ADR, a separate artifact, or a separate implementation re-brief only when the issue records a
+visible `DIRECT_TASK` rationale, one-agent scope, acceptance criteria, validation, and merge risk.
+Implementation starts only after GitHub issue state and the smallest honest readiness record make
+the task safe for one agent.
+Runtime worker loops are ephemeral; GitHub issues, PRs, and repo docs remain the durable AWK state.
 `process/continue-work` owns the detailed task-shape routing table; keep this README as an index.
 
 - `process/`: workflow initialization, planning, implementation routing, and review routing skills.

@@ -21,13 +21,15 @@ surfaces carry this loop state.
 Use the smallest durable surface that matches the job:
 
 - `AGENTS.md`: project-owned repository rules with a small marked AWK usage block.
-- `.agents/skills/awk/`: installed AWK Codex skills organized by category.
+- `.agents/skills/awk/`: installed AWK skills organized by category.
 - GitHub issues: active work items, discussion, human answers, and collaboration state.
 - GitHub PRs: proposed durable docs or code changes and their review gates.
 - GitHub labels: lightweight issue type and review signals.
 - `docs/development/`: accepted durable project truth such as vision briefs, specs, ADRs, spike
   writeups, and planning records.
 - `docs/awk/`: AWK process references and workflow decisions.
+- Runtime worker loops: ephemeral execution bindings such as a Codex goal, a headless Claude prompt,
+  an opencode session, a local script invocation, or a human working session.
 - CI: deterministic checks such as tests, typecheck, lint, formatting, build, and architecture
   checks.
 
@@ -81,7 +83,7 @@ Process: planning and orchestration:
 | `draft-artifact` | Draft or update one durable spec, ADR, or spike from groomed direction. | Docs only |
 | `review-artifact` | Review and accept or route revision for a durable vision brief, spec, or ADR. | Docs only |
 | `breakdown-issue` | Decompose accepted direction into independent merge-safe child work items. | No |
-| `prepare-implementation` | Convert one Ready work item into an implementation brief. | Docs/issues only when asked |
+| `prepare-implementation` | Re-brief a stale or incomplete Ready work item into a compact worker prompt. | Docs/issues only when asked |
 | `improve-workflow` | Triage process feedback and propose workflow improvements. | Docs/issues only when asked |
 
 Process: execution and review:
@@ -126,12 +128,33 @@ repo docs under docs/development/
 
 .agents/skills/awk/
   -> workflow procedure
+
+runtime worker loop
+  -> ephemeral execution binding for one Ready work item
 ```
 
 Use `continue-work` when the human asks to resume without remembering the current state. It reads
 GitHub issues, linked PRs, comments, labels, and repo docs, then routes to the next workflow verb. It
 may recommend issue comments or label updates; it must not silently mutate scope, accept artifacts,
 decide architecture, implement code, push, merge, or close work.
+
+### Runtime Worker Loops
+
+AWK's execution contract is tool-neutral: one runtime worker loop works one Ready issue in one
+branch or worktree and opens one PR. A Codex goal, a headless Claude prompt, an opencode session, a
+local script invocation, or a human working session are runtime bindings of that contract. They are
+not durable workflow state.
+
+Keep runtime prompts thin. They should name the work item, point to `AGENTS.md`, the selected AWK
+skill, and the issue's Definition of Ready fields, then state the definition of done for the current
+worker loop. Do not copy the full workflow rules into every runtime prompt; keep those rules in the
+installed skills, process docs, issue bodies, PR bodies, and accepted repo artifacts where the next
+worker can read them.
+
+When a work item is already self-contained and Ready, route directly to `work-issue-local` after the
+human authorizes implementation. Use `prepare-implementation` only when the Ready issue is stale,
+spread across too many comments or links for a fresh worker, or missing a compact task contract that
+would let the worker start safely.
 
 Every meaningful workflow pass should include process feedback when it notices workflow weakness.
 That feedback belongs in the issue comment or PR summary where it was observed, then routes through
@@ -141,11 +164,11 @@ That feedback belongs in the issue comment or PR summary where it was observed, 
 
 Do not start implementation from a fresh issue only because the issue has a goal and acceptance
 criteria. Before `work-issue-local`, the issue, comment thread, linked artifact, or implementation
-brief must record a visible grooming result:
+re-brief must record a visible grooming result:
 
 - `DIRECT_TASK` with why no spec, ADR, spike, discovery, or human question is needed.
 - Accepted spec, ADR, discovery, or spike direction plus breakdown/implementation boundaries.
-- Prepared implementation brief produced after grooming.
+- Self-contained Ready issue body or prepared implementation re-brief produced after grooming.
 
 If meaningful ambiguity remains, the grooming record must also capture the clarification question
 asked and answered, or explain why that ambiguity does not affect the next slice.
@@ -195,7 +218,8 @@ an imported plan, README, or local Markdown record until that state exists in Gi
 During initialization, create the parent issue before child issues and update links after GitHub
 assigns issue numbers. A detailed plan may be accepted enough for artifact review or breakdown
 without being accepted enough for implementation; implementation still requires visible grooming,
-accepted direction, task boundaries, and an implementation brief or equivalent readiness record.
+accepted direction, task boundaries, and a self-contained Ready issue body or equivalent readiness
+record.
 
 Use this authority model:
 
@@ -211,8 +235,8 @@ PR
 ```
 
 Grooming classifies unclear work. Drafting creates proposed specs, ADRs, or spikes. Breakdown
-creates child work items only after direction is accepted. Preparation turns one breakdown-shaped
-child work item into an implementation brief.
+creates child work items only after direction is accepted. Re-briefing turns a stale or incomplete
+Ready work item into a compact worker prompt only when the issue body is not already enough.
 
 ## Routing Owner
 
@@ -344,11 +368,11 @@ is good enough to specify.
 
 For products with a UI, user-facing workflow, interaction model, screen/state model, or meaningful
 operator experience, UX direction is a readiness gate before implementation. This gate can be light,
-but it must exist: an accepted discovery note, spec section, issue comment, or implementation brief
-must record the target user, primary journey, key screens or states, information hierarchy,
-interaction constraints, accessibility/usability risks, and what is deliberately deferred. Backend
-or infrastructure-only slices may bypass the gate only by recording why no user-facing surface is
-touched.
+but it must exist: an accepted discovery note, spec section, issue comment, Ready issue body, or
+implementation re-brief must record the target user, primary journey, key screens or states,
+information hierarchy, interaction constraints, accessibility/usability risks, and what is
+deliberately deferred. Backend or infrastructure-only slices may bypass the gate only by recording
+why no user-facing surface is touched.
 
 The human should review direction, not create it from a blank page. For UI-bearing work, discovery
 should prepare a compact UX direction draft from the plan, existing screens, comparable references,
@@ -486,6 +510,8 @@ Breakdown must produce child work items that are:
 - Covered by acceptance criteria, feedback loop or test seam, required tests, and validation
   commands.
 - Classified for merge risk.
+- Self-contained enough that a runtime worker loop can start from the issue body, then follow links
+  to authoritative specs, ADRs, code, or source evidence as needed.
 
 Merge-risk values:
 
@@ -499,11 +525,13 @@ If a child work item is still unclear, keep it in `Grooming`. If decomposition e
 fork, route back to grooming, spec, ADR, or spike. Do not hide architecture decisions inside task
 splitting.
 
-### 7. Prepare Implementation
+### 7. Prepare Or Re-Brief Implementation
 
-Use `prepare-implementation` after breakdown has produced a Ready child work item.
+Use `prepare-implementation` only when breakdown or issue history produced a Ready child work item
+that is not yet a good worker handoff. The normal path is that `breakdown-issue` writes a complete
+task contract into the issue body, and the human can authorize `work-issue-local` directly.
 
-The implementation brief contains:
+The issue body is the primary implementation task contract. It should contain:
 
 - Goal.
 - Non-goals.
@@ -520,8 +548,10 @@ The implementation brief contains:
 - Merge risk.
 - Required PR summary sections.
 
-If the work item is clear but not decomposed into merge-safe implementation work, return it to
-`breakdown-issue`. If the work item is unclear, return it to `groom-issue`.
+Create a separate compact brief only when the issue is stale, has important decisions scattered
+through comments, or would force a fresh worker to reconstruct the task from too many links before
+starting. If the work item is clear but not decomposed into merge-safe implementation work, return it
+to `breakdown-issue`. If the work item is unclear, return it to `groom-issue`.
 
 ### 8. Work Issue Locally
 
@@ -539,6 +569,9 @@ Rules:
 - Stop for architecture forks.
 - Ask before changing public APIs, ownership boundaries, storage shape, migration policy, or
   long-term abstractions.
+
+Bind the worker loop to the Ready issue with a thin runtime prompt. The prompt should point to the
+issue, `AGENTS.md`, and `work-issue-local`; it should not restate every AWK rule.
 
 The implementation agent decides whether the full Architecture Direction Check is needed. Use the
 full check when the task touches architecture, ownership, contracts, storage, public surface,

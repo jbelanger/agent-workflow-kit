@@ -5,7 +5,8 @@ Use this category for the core AWK loop:
 - **Intake:** initialize, maintain, triage, pick the next item, and groom unclear work.
 - **Shape:** discover only missing direction, draft or review durable artifacts, and break accepted
   direction into merge-safe work.
-- **Execute:** prepare one issue and implement it locally in one branch or worktree.
+- **Execute:** implement one Ready issue in one branch or worktree; re-brief only when the issue is
+  stale or incomplete.
 - **Review:** inspect local changes, PRs, and revision feedback before human merge approval.
 - **Improve:** record and fix workflow friction discovered while running the loop.
 

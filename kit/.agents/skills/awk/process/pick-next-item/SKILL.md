@@ -5,7 +5,7 @@ description: Choose the best next work item to work on from the current backlog 
 
 # Pick Next Item
 
-You are helping choose the next best local Codex task. Do not implement code.
+You are helping choose the next best local worker task. Do not implement code.
 
 ## Selection Criteria
 

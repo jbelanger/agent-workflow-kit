@@ -32,6 +32,9 @@ prepared work as long as they read and write the same durable state:
 - Local skills under `.agents/skills/awk/` hold workflow procedure.
 - Local Codex, Claude, opencode, and humans are interchangeable workers that read the same issues,
   PRs, docs, and labels.
+- Runtime worker loops such as Codex goals, headless prompts, opencode sessions, local scripts, or
+  human working sessions are ephemeral bindings to one Ready issue. They are not the AWK durable
+  state model.
 - GitHub labels are lightweight repo configuration for issue type and review signals. The default
   templates assign those labels after `scripts/setup-github-labels.mjs` creates them.
 - Do not use a separate planning tracker as part of the AWK contract. If a repository has another
@@ -87,6 +90,9 @@ approvals directly in the issue thread.
 The kit stops competing with existing products on runtime machinery. It instead sharpens the parts
 existing products do not fully solve for this workflow: planning state, readiness, architecture
 guardrails, and agent-resumable next steps.
+
+Ready issue bodies are the normal implementation task contract. A separate preparation pass is only for
+stale or fragmented handoffs that need a compact worker prompt before execution starts.
 
 The cost is that fresh repos need one small label setup command before issue-template labels apply:
 `node scripts/setup-github-labels.mjs`. Execution fan-out remains outside the default kit until the

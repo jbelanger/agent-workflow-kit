@@ -80,7 +80,7 @@ When discovery needs human judgment, conduct the interview interactively:
 1. Synthesize specialist evidence into the smallest decision map needed for the next answer.
 2. Ask exactly one question with options, a recommendation, and why the answer matters.
 3. If the human has not answered that exact question in the current turn, stop. Do not draft the
-   vision, create child tasks, write implementation briefs, or proceed as if the recommendation was
+   vision, create child tasks, write implementation task contracts, or proceed as if the recommendation was
    accepted.
 4. If using GitHub as the async surface, record the question in the issue and set the next actor to
    `Human`; the next `continue-work` or `discover-vision` run should read the answer and continue.

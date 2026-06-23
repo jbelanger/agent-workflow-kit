@@ -40,7 +40,7 @@ Optional:
 | `AGENTS.md` AWK block | Yes | Minimal instruction that points agents to the namespaced AWK install while preserving project-owned guidance. |
 | `.github/ISSUE_TEMPLATE/` | Yes | GitHub-first intake contracts for initiatives, specs, ADRs, and tasks. |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Yes | Review gate and validation summary for proposed docs or code. |
-| `.agents/skills/awk/` | Yes | Namespaced AWK workflow verbs and procedural specialists such as initialization, grooming, discovery, artifact drafting, breakdown, preparation, local work, review, TDD, and bug diagnosis. |
+| `.agents/skills/awk/` | Yes | Namespaced AWK workflow verbs and procedural specialists such as initialization, grooming, discovery, artifact drafting, breakdown, conditional re-briefing, local work, review, TDD, and bug diagnosis. |
 | `docs/awk/` | Yes | Visible AWK documentation root for process references and workflow decisions. |
 | `docs/awk/adrs/github-first-orchestration.md` | Yes | Accepted source-of-truth decision for the GitHub-first operating model. |
 | `docs/awk/workflow/` | Yes | AWK flow and install docs. |
@@ -95,11 +95,14 @@ setup comment with the assigned child issue numbers. Do the same for sibling lin
 known before GitHub assigned issue numbers.
 
 For a detailed existing plan, initialize from the plan but do not implement from the plan directly.
-Convert it into issue state first, then route to `review-artifact`, `breakdown-issue`, or
-`prepare-implementation` only when the issue records why the plan is accepted enough to use.
+Convert it into issue state first, then route to `review-artifact` or `breakdown-issue` when
+direction or task boundaries still need review. Use `prepare-implementation` only when accepted
+issue state is stale or scattered and needs a compact re-brief. If the resulting issue already
+contains a complete Ready task contract and the human authorizes implementation, route directly to
+`work-issue-local`.
 Accepted enough for artifact review or breakdown is not accepted enough for implementation; a future
 implementation issue still needs visible grooming, accepted direction, task boundaries, and an
-implementation brief or equivalent readiness record.
+self-contained Ready issue body or equivalent readiness record.
 
 After installing into a GitHub repo, create the lightweight labels used by issue templates:
 
@@ -127,14 +130,14 @@ node scripts/prove-portable-install.mjs
 
 ## Expected Use In A Project
 
-Plain Codex:
+Plain worker loop:
 
 ```text
-Codex chat in the project
+Agent chat or headless worker in the project
   -> user asks "continue work"
-  -> Codex reads GitHub issues, PRs, repo docs, and labels
-  -> Codex uses .agents/skills/awk/process/continue-work/SKILL.md to choose the next workflow verb
-  -> Codex records process feedback when the workflow itself shows weakness
+  -> the worker reads GitHub issues, PRs, repo docs, and labels
+  -> the worker uses .agents/skills/awk/process/continue-work/SKILL.md to choose the next workflow verb
+  -> the worker records process feedback when the workflow itself shows weakness
 ```
 
 GitHub:

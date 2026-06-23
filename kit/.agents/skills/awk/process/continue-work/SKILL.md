@@ -1,6 +1,6 @@
 ---
 name: continue-work
-description: Inspect GitHub-first workflow state and choose the next safe workflow action. Use when the user says "continue work", "what next", "resume this project", or wants Codex to infer the next step from GitHub issues, PRs, repo docs, and labels.
+description: Inspect GitHub-first workflow state and choose the next safe workflow action. Use when the user says "continue work", "what next", "resume this project", or wants an agent to infer the next step from GitHub issues, PRs, repo docs, and labels.
 ---
 
 # Continue Work
@@ -26,6 +26,8 @@ be inspected.
 - PRs hold proposed doc/code changes and review gates.
 - Labels provide lightweight issue type and review signals.
 - Skills hold procedure.
+- Runtime worker loops are ephemeral bindings for one Ready issue. They are not durable workflow
+  state.
 - AWK routes by task shape. Do not force every item through discovery, specs, ADRs, or full
   breakdown when a lighter recorded path is honest.
 - Agents do not merge, silently decide architecture, silently accept artifacts, or expand scope.
@@ -71,19 +73,20 @@ Classify the selected item before choosing a verb:
 | --- | --- |
 | New repo, copied kit, missing labels, missing pushed baseline, or no persisted issues | `init-awk` |
 | Existing AWK install needs update, repair, or migration | `maintain-awk` |
-| Detailed plan already exists | Ensure issue bootstrap exists, then route to `review-artifact`, `breakdown-issue`, or `prepare-implementation`; do not start a blank discovery interview unless acceptance or direction is genuinely missing |
+| Detailed plan already exists | Ensure issue bootstrap exists, then route to `review-artifact`, `breakdown-issue`, `prepare-implementation`, or `work-issue-local` depending on whether accepted direction, issue readiness, and implementation authorization already exist; do not start a blank discovery interview unless acceptance or direction is genuinely missing |
 | Vague product, UX, creative, game, platform, or architecture idea | `groom-issue`, then `discover-vision` only when grooming records the missing direction |
 | Bug with unclear expected behavior, reproduction, or cause | `groom-issue` or `diagnose-bug` before implementation |
-| Bug with clear expected behavior, bounded fix scope, and validation | `prepare-implementation` or `work-issue-local` if the issue already contains a direct-task readiness record and the user authorized implementation |
+| Bug with clear expected behavior, bounded fix scope, and validation | `work-issue-local` if the issue already contains a direct-task readiness record and the user authorized implementation; otherwise `prepare-implementation` only when the issue needs a compact re-brief |
 | Maintenance or refactor | `groom-issue`, `maintain-awk`, or `review-revision-triage` depending on whether the risk is ownership, migration, or PR feedback |
 | UI-bearing product work | Require accepted UX direction, or route to `discover-vision` with the UX lens and visual review aids when useful |
-| Small direct task | Fast lane with visible `DIRECT_TASK` rationale, one-agent scope, acceptance criteria, validation, and merge risk; skip only the gates that add no useful evidence |
+| Small direct task | Fast lane with visible `DIRECT_TASK` rationale, one-agent scope, acceptance criteria, validation, and merge risk; skip only the gates and separate briefs that add no useful evidence |
 | Artifact PR ready for acceptance or revision routing | `review-artifact` |
 | Implementation or general doc/code diff or PR without agent review | `review-local-changes` |
 
 The fast lane reduces ceremony; it does not remove GitHub state, visible readiness, validation, or
 review. If any of those are missing and GitHub is available, create or update the issue state before
-implementation.
+implementation. If the issue is already self-contained and Ready, prefer a thin runtime worker loop
+that points to the issue, `AGENTS.md`, and `work-issue-local` instead of creating a duplicate brief.
 
 ## Workflow Verbs
 
@@ -99,7 +102,7 @@ Route to one of these verbs:
 | Accepted or groomed direction needs a spec, ADR, or spike record | `draft-artifact` |
 | Vision brief, spec, or ADR is ready for human acceptance or revision routing | `review-artifact` |
 | Accepted direction must become merge-safe child issues | `breakdown-issue` |
-| A child issue needs an implementation brief | `prepare-implementation` |
+| A child issue is stale, scattered across comments, or missing a compact worker contract | `prepare-implementation` |
 | A Ready issue should be implemented and the user asked for implementation | `work-issue-local` |
 | Local changes need pre-PR review | `review-local-changes` |
 | PR feedback, architecture-sensitive review, or revision routing is needed | `review-revision-triage` |

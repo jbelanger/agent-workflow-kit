@@ -73,8 +73,3 @@ Blocked:
 
 ## Process feedback
 ```
-
-## Test-Drive Feedback
-
-Record any migration friction. In particular, note cases where the old install made it hard to tell
-which guidance belonged to AWK and which guidance belonged to the project.

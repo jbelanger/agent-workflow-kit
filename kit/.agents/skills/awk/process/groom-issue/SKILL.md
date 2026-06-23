@@ -21,8 +21,7 @@ for interactive discovery, durable planning work, or `breakdown-issue`.
 - Repo-local work items under `docs/development/work-items/` are the portable default planning
   record when no external tracker is required.
 - GitHub issues and PRs may mirror current planning, discussion, review, and audit trail.
-- Recommend work item fields, labels, and board status changes, but do not depend on automatic
-  project board transitions.
+- Recommend issue text, comments, and labels. Do not depend on external board transitions.
 - Ask one clarification question at a time only for ordinary clarification that can resolve grooming
   itself. Do not conduct a product, UX, creative, game, platform, or architecture vision interview
   inside grooming.
@@ -226,10 +225,3 @@ Return:
 - If the work item needs a product, UX, creative, game, platform, or architecture interview, stop
   after recording the grooming handoff and route to `discover-vision`; do not run the interview in
   grooming.
-
-## Test-Drive Feedback
-
-This workflow is being dogfooded. If you notice process friction while using this skill, include a
-brief `Process feedback` note in your reply, issue comment, or PR summary. Mention confusing
-instructions, missing fields, too much ceremony, unsafe autonomy, merge-safety gaps, or ideas that
-would make the workflow easier to use.

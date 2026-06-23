@@ -13,6 +13,9 @@ The baseline:
 The goal is to shift important thinking left so implementation agents can work independently without
 creating architecture debt, hidden scope, or unnecessary merge conflicts.
 
+This is the canonical AWK operating reference. `github-first-flow.md` only explains how GitHub
+surfaces carry this loop state.
+
 ## Operating Surfaces
 
 Use the smallest durable surface that matches the job:
@@ -20,9 +23,8 @@ Use the smallest durable surface that matches the job:
 - `AGENTS.md`: project-owned repository rules with a small marked AWK usage block.
 - `.agents/skills/awk/`: installed AWK Codex skills organized by category.
 - GitHub issues: active work items, discussion, human answers, and collaboration state.
-- GitHub Projects: optional operating state for lifecycle, next actor, decision needed, artifact
-  state, merge risk, and area.
 - GitHub PRs: proposed durable docs or code changes and their review gates.
+- GitHub labels: lightweight issue type and review signals.
 - `docs/development/`: accepted durable project truth such as vision briefs, specs, ADRs, spike
   writeups, and planning records.
 - `docs/awk/`: AWK process references and workflow decisions.
@@ -63,7 +65,7 @@ Current categories:
 | Category | Use for |
 | --- | --- |
 | `process/` | Planning, orchestration, implementation routing, review routing, and workflow improvement. |
-| `specialist/` | Repeatable expert passes such as product strategy, UX direction, creative direction, technical architecture, validation strategy, testing, diagnosis, simplification, naming review, or refactor support. |
+| `specialist/` | Concrete expert procedures that are not already covered by the process loop, currently TDD and bug diagnosis. |
 | `domain/` | Project or business-domain skills with domain vocabulary, records, policies, reports, or workflows. |
 
 Process: planning and orchestration:
@@ -74,7 +76,7 @@ Process: planning and orchestration:
 | `maintain-awk` | Update, repair, or migrate an AWK install while preserving project-owned files and workflow state. | No |
 | `triage-backlog` | Review open work items and classify what needs attention. | No |
 | `pick-next-item` | Recommend the best next work item based on readiness, risk, dependencies, and value. | No |
-| `continue-work` | Inspect GitHub issues, project fields, PRs, and repo docs to choose the next safe workflow verb. | No |
+| `continue-work` | Inspect GitHub issues, PRs, labels, and repo docs to choose the next safe workflow verb. | No |
 | `groom-issue` | Turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
 | `discover-vision` | Orchestrate early high-interaction product, UX, creative, platform, or architecture discovery before specs. | Docs only |
 | `draft-artifact` | Draft or update one durable spec, ADR, or spike from groomed direction. | Docs only |
@@ -95,22 +97,18 @@ Specialist skills:
 
 | Skill | Purpose |
 | --- | --- |
-| `product-strategy` | Advisory product, audience, value, market, and differentiation lens for discovery. |
-| `technical-architecture` | Advisory platform, ownership, build/runtime, storage, public-surface, and architecture lens. |
-| `validation-strategy` | Advisory acceptance evidence, feedback-loop, test, playtest, and quality strategy lens. |
-| `ux-direction` | Conditional UX, interaction, information architecture, accessibility, and usability lens. |
-| `creative-direction` | Conditional creative, brand, content, game-design, tone, and game-feel lens. |
 | `tdd` | Behavior-first red/green/refactor through the highest useful public seam. |
 | `diagnose-bug` | Build a tight red-capable bug feedback loop before implementation. |
 
 Do not create one mega-skill for the whole workflow. Skills should match the verbs people actually
-say. Add specialist or domain skills when repeated work needs durable procedural knowledge that is
-not part of the process loop.
+say. Product, UX, creative, architecture, and validation discovery are lenses inside
+`discover-vision`, not separate specialist skill files. Add specialist or domain skills only when
+repeated work needs durable procedural knowledge that is not part of the process loop.
 
 ## GitHub-First Orchestration
 
-Use `docs/awk/adrs/github-first-orchestration.md` as the accepted boundary for the active
-workflow model. Use `docs/awk/workflow/github-first-flow.md` for the v0 operating flow.
+Use `docs/awk/adrs/github-first-orchestration.md` as the accepted boundary for the active workflow
+model. Use `docs/awk/workflow/github-first-flow.md` as the GitHub surface companion.
 
 The source-of-truth model is:
 
@@ -118,11 +116,11 @@ The source-of-truth model is:
 GitHub issue
   -> active work item, discussion, human answers, and collaboration state
 
-GitHub Project, optional
-  -> operating state for what should happen next when a repo uses a board
-
 GitHub PR
   -> proposed durable doc or code change plus review gate
+
+GitHub labels
+  -> lightweight issue type and review signals
 
 repo docs under docs/development/
   -> accepted durable truth after review
@@ -132,9 +130,9 @@ repo docs under docs/development/
 ```
 
 Use `continue-work` when the human asks to resume without remembering the current state. It reads
-GitHub issues, linked PRs, comments, repo docs, and Project fields when present, then routes to the
-next workflow verb. It may recommend comments and optional field updates; it must not silently
-mutate scope, accept artifacts, decide architecture, implement code, push, merge, or close work.
+GitHub issues, linked PRs, comments, labels, and repo docs, then routes to the next workflow verb. It
+may recommend issue comments or label updates; it must not silently mutate scope, accept artifacts,
+decide architecture, implement code, push, merge, or close work.
 
 Every meaningful dogfood pass should include process feedback when it notices workflow weakness.
 That feedback belongs in the issue comment or PR summary where it was observed, then routes through
@@ -163,12 +161,14 @@ Use draft only when work is knowingly incomplete, validation is missing, or the 
 diff without asking for attention.
 
 A linked PR is not automatically human-ready, whether GitHub marks it draft or ready for review. If
-the PR or issue does not record an agent `review-local-changes` result, keep the work `In Progress`,
-keep or set `Next Actor = Agent`, and route the next step to local review. After the agent fixes or
-classifies findings and records the result, ordinary cleanup can continue in the agent loop. The next
-human approval handoff is merge approval. If review finds architecture ambiguity, ownership drift,
-public-surface risk, storage risk, or an unclear long-term model, route to human architecture
-judgment before merge.
+an implementation or general doc/code PR or issue does not record an agent `review-local-changes`
+result, keep the work agent-owned and route the next step to local review. If a linked PR exists to
+review a durable vision brief, spec, ADR, or spike, route to `review-artifact`; that review is the
+agent review pass for artifact acceptance or revision routing.
+After the agent fixes or classifies findings and records the result, ordinary cleanup can continue in
+the agent loop. The next human approval handoff is merge approval. If review finds architecture
+ambiguity, ownership drift, public-surface risk, storage risk, or an unclear long-term model, route
+to human architecture judgment before merge.
 
 PR bodies should use `Closes #issue` only when the PR fully satisfies the issue acceptance criteria
 and needs no post-merge reconciliation. Use `Refs #issue` for initiatives, parent work, partial
@@ -179,8 +179,7 @@ low-risk docs, process, or chore work when validation is clean and the human exp
 Meaningful review remains required for architecture-sensitive, ownership, storage, public-surface,
 or unclear model changes.
 
-The default installed kit should work in a fresh repo without Project setup. Add a Project only after
-ordinary issues, PRs, and repo docs prove insufficient for coordination.
+The default installed kit should work in a fresh repo with issues, PRs, labels, and repo docs only.
 
 ## Work Items
 
@@ -202,7 +201,7 @@ accepted direction, task boundaries, and an implementation brief or equivalent r
 Use this authority model:
 
 ```text
-GitHub issue / optional Project fields
+GitHub issue
   -> active workflow state
 
 accepted vision brief / spec / ADR / spike under docs/development/
@@ -216,22 +215,33 @@ Grooming classifies unclear work. Drafting creates proposed specs, ADRs, or spik
 creates child work items only after direction is accepted. Preparation turns one breakdown-shaped
 child work item into an implementation brief.
 
+## Routing Owner
+
+The workflow is not meant to be one rigid ladder. Use the smallest route that leaves enough visible
+state for the next agent, reviewer, or human to resume safely.
+
+`continue-work` owns the detailed task-shape routing table. This document records the rule, not a
+second copy of the matrix: pick the shortest route that preserves visible state, a visible grooming
+result or `DIRECT_TASK` rationale, validation, review, and human escalation for architecture,
+ownership, public-surface, storage, or scope disagreement.
+
+Fast lane means fewer artifacts, not hidden state. If GitHub is available, active work still belongs
+in issues before implementation. A chat-only instruction can authorize the current turn, but durable
+state must be updated before downstream agents rely on it.
+
 ## Workflow
 
 ```text
-Inbox
-  -> Grooming
-  -> Discovery / Vision, when vague product direction needs it
-  -> Drafting Spec / ADR / Spike / Direct Direction
-  -> Breakdown
-  -> Ready
-  -> In Progress
-  -> Review
-  -> Done
+Intake -> Shape -> Execute -> Review -> Improve
 ```
 
+Granular workflow words fit under those phases: Intake covers triage and grooming; Shape covers
+discovery, drafting, artifact review, and breakdown; Execute covers ready work, implementation, and
+revision passes; Review covers local, artifact, and PR review; Improve covers completed,
+deferred, and process-feedback work.
+
 `Deferred` is an explicit parking state. `Blocked` is not a normal phase; represent blockers with
-`Next Actor`, `Decision Needed`, labels, and a clear issue comment.
+labels and a clear issue comment.
 
 ### 1. Triage Backlog
 
@@ -342,11 +352,10 @@ or infrastructure-only slices may bypass the gate only by recording why no user-
 touched.
 
 The human should review direction, not create it from a blank page. For UI-bearing work, discovery
-or a UX-direction specialist should prepare a compact UX direction draft from the plan, existing
-screens, comparable references, and stated constraints. The draft can be a discovery bundle,
-issue comment, or spec section, but it must distinguish recommendations from assumptions and open
-questions. Ask the human one blocking question only when the next direction cannot be drafted
-responsibly.
+should prepare a compact UX direction draft from the plan, existing screens, comparable references,
+and stated constraints. The draft can be a discovery bundle, issue comment, or spec section, but it
+must distinguish recommendations from assumptions and open questions. Ask the human one blocking
+question only when the next direction cannot be drafted responsibly.
 
 When visuals would make review easier, the same worker may generate sample assets or mockups as
 review aids. These can be wireframes, screen-state mockups, sample empty/error states, generated
@@ -366,19 +375,18 @@ unless the human answers in the same turn. In an async GitHub run, the question 
 and the next actor is `Human`; in live chat, the agent asks in chat and waits. The agent must not
 treat its own recommendation as accepted direction.
 
-`discover-vision` acts as the orchestrator. It chooses specialist lenses conditionally:
+`discover-vision` acts as the orchestrator. It chooses discovery lenses conditionally:
 
-- Default for vague product or platform work: `product-strategy`, `technical-architecture`, and
-  `validation-strategy`.
-- Add `ux-direction` only when journey, interaction, information architecture, usability, or
-  accessibility materially affects the direction.
-- Add `creative-direction` only when brand, tone, content, game design, emotional target, visual or
-  audio language, or memorability materially affects the direction.
+- Default for vague product or platform work: product, technical, and validation lenses.
+- Add a UX lens only when journey, interaction, information architecture, usability, or accessibility
+  materially affects the direction.
+- Add a creative lens only when brand, tone, content, game design, emotional target, visual or audio
+  language, or memorability materially affects the direction.
 
-Specialists are advisory. They produce observations, options, recommendations, risks, questions,
-evidence needs, and readiness impact. They do not create accepted truth or ask the human directly.
-The orchestrator reconciles conflicts, deduplicates findings, and asks exactly one highest-leverage
-human question.
+Discovery lenses are advisory. They produce observations, options, recommendations, risks,
+questions, evidence needs, and readiness impact. They do not create accepted truth or ask the human
+directly. The orchestrator reconciles conflicts, deduplicates findings, and asks exactly one
+highest-leverage human question.
 
 Discovery artifacts live under:
 
@@ -391,10 +399,10 @@ docs/development/discovery/<slug>/
   mockups/            # only when generated visual review aids exist
 ```
 
-Avoid permanent specialist transcript files by default. Later workflow stages should read the
-accepted `vision-brief.md` and `decision-log.md`, not raw brainstorming.
+Avoid permanent lens transcript files by default. Later workflow stages should read the accepted
+`vision-brief.md` and `decision-log.md`, not raw brainstorming.
 
-Vision state is separate from board status:
+Vision state is artifact state, not queue state:
 
 | Vision State | Meaning |
 | --- | --- |
@@ -445,7 +453,7 @@ For UX specs, include or link sample assets and mockups when they clarify layout
 visual hierarchy, or interaction feel. Generated visuals are review aids; the spec must say whether
 they are accepted direction, illustrative examples, or assumptions needing human review.
 
-Spec state is separate from board status:
+Spec state is artifact state, not queue state:
 
 | Spec State | Meaning |
 | --- | --- |
@@ -558,8 +566,10 @@ There are two review paths.
 Use `review-local-changes` for lightweight pre-PR local diff review. It checks blockers,
 architecture concerns, feedback-loop quality, test gaps, naming issues, scope drift, suggested
 fixes, and taste-only notes.
-When a PR already exists, this same review is still the next agent-owned step unless the PR or issue
-records that the agent review pass is complete.
+When an implementation or general doc/code PR already exists, this same review is still the next
+agent-owned step unless the PR or issue records that the agent review pass is complete. Artifact PRs
+whose selected verb is `review-artifact` do not need a separate `review-local-changes` pass before
+artifact acceptance; `review-artifact` owns that agent review.
 If the change touches architecture-sensitive surfaces or reveals a smell, switch to
 `review-revision-triage`.
 
@@ -583,8 +593,7 @@ Either agent can force human review. Both agents must agree before skipping huma
 is agent-pickable only when both agents agree no human-review-worthy smell exists.
 
 Review details stay on the PR. Use `revision-needed` and `needs-human-review` as labels when
-available, or as issue comments/fields when labels are not configured. They are not required board
-statuses.
+available, or as issue comments when labels are not configured.
 
 ### 10. Refactor And Superseding PRs
 
@@ -625,65 +634,11 @@ Merge only when:
 
 Use squash merge by default so `main` keeps a readable history.
 
-## Optional Board Model
+## Queue State
 
-Use this model when a repository adopts a GitHub Project. Without a Project, capture the same state
-in issue text, labels, comments, and linked PRs.
-
-Recommended statuses:
-
-| Status | Description | When to use |
-| --- | --- | --- |
-| `Inbox` | Captured but not yet classified. | New ideas, raw requests, imported notes, and untriaged items. |
-| `Grooming` | Clarifying intent and classifying next output. | Use while deciding spec, ADR, spike, direct direction, drop, or defer. |
-| `Discovery` | High-interaction product, UX, creative, platform, or architecture direction is being clarified. | Use when a vague idea needs `discover-vision` before specification. |
-| `Drafting` | A durable vision brief, spec, ADR, or spike record is being drafted. | Use before the artifact is ready for review. |
-| `Breakdown` | Accepted direction is being decomposed into executable child work items. | Use before child work items are merge-safe and Ready. |
-| `Ready` | Scoped and safe for one agent to pick up. | Use after breakdown and implementation prep are sufficient. |
-| `In Progress` | An agent or human is actively working. | Branch/worktree work, spec drafting, active replacement path, or revision pass. |
-| `Review` | The PR, artifact, or result is ready for review. | Use when review should evaluate the work. |
-| `Done` | Done and no required work remains. | Use after merge, closure, or accepted completion for non-code artifacts. |
-| `Deferred` | Intentionally parked. | Use when the item remains valid but should not move now. |
-
-Recommended issue types:
-
-| Issue Type | Description | When to use |
-| --- | --- | --- |
-| `Initiative` | A large outcome grouping multiple work items. | Use for parent tracking, sequencing, and progress visibility. |
-| `Discovery` | A high-level vision work item. | Use for vague product, UX, creative, game, platform, or architecture direction before a spec. |
-| `Spec` | Durable behavior or contract definition. | Use when behavior or acceptance criteria need agreement. |
-| `ADR` | Durable architecture or operating decision. | Use when direction, ownership, storage, public surface, or policy changes. |
-| `Spike` | Time-boxed evidence gathering. | Use when production work would otherwise guess. |
-| `Task` | Concrete executable work. | Use when one branch or PR can complete the work. |
-| `Bug` | Actual behavior differs from expected behavior. | Use with reproduction evidence or a failing check. |
-| `Refactor` | Behavior-preserving structural improvement. | Use for ownership, boundary, naming, abstraction, or debt cleanup. |
-
-Core fields:
-
-| Field | Description | When to use |
-| --- | --- | --- |
-| `Status` | Coarse lifecycle state. | Always. |
-| `Issue Type` | Work or artifact type. | Always. |
-| `Next Actor` | Human, Agent, or Either. | Use for active Project items. |
-| `Decision Needed` | None, Question, Approval, Research, Architecture, or Access. | Use for active Project items. |
-| `Area` | Product, architecture, or code area. | Use for filtering and avoiding parallel work in the same area. |
-| `Merge Risk` | Parallel coordination risk. | Required before Ready. |
-| `Artifact State` | None, Draft, Accepted, Implemented, or Superseded. | Use when a vision brief, spec, ADR, or spike is linked. |
-
-Useful labels or secondary fields:
-
-| Label / Field | Description | When to use |
-| --- | --- | --- |
-| `revision-needed` | Actionable review work must be addressed before merge. | Use as a queue signal, not a board status. |
-| `needs-human-review` | Human architecture or product judgment is needed. | Use when either agent escalates. |
-| `needs-source-evidence` | Claims need code, docs, logs, or external evidence. | Use before planning or implementation can proceed. |
-| `human-only` | Should not be autonomously executed by an agent. | Credentials, subjective product decisions, finance/legal/privacy judgment, or merge approval. |
-| `target-phase` | Phase, milestone, or release. | Add only when planning across phases is useful. |
-| `estimate/budget` | Rough size, time, or cost. | Add only when timeline or agent-cost planning needs it. |
-
-Do not add `Blocked` or `Revision Needed` as required board statuses. Blocker state belongs in issue
-comments, labels, and optional `Next Actor` / `Decision Needed` fields. Revision state belongs on
-the PR and in labels or fields.
+Keep queue state in issue text, labels, comments, and linked PRs. Do not add external tracker fields as a
+second workflow model. Blocker state belongs in issue comments and labels. Revision state belongs on
+the PR and in labels.
 
 ## Definition Of Ready
 
@@ -740,16 +695,13 @@ Revisit these after the local workflow is stable:
 
 - Packaging skills as a plugin.
 - Codex-in-CI advisory review.
-- Structured issue or board automation.
+- Structured issue automation.
 - Dedicated refactor skill if refactor passes become frequent enough.
 - More detailed spec, ADR, and spike templates.
 
-## Temporary Dogfooding Feedback
+## Process Feedback
 
-This workflow is still being test-driven. Agents should include a brief `Process feedback` note in
-replies, issue comments, or PR summaries when they encounter confusing instructions, missing fields,
-excess ceremony, unsafe autonomy, merge-safety gaps, or ideas that would make the workflow easier to
-use.
-
-Use `improve-workflow` to triage those notes before changing the process. Remove this section and the
-matching skill footers when the workflow is stable enough for real project rollout.
+Agents should include a brief `Process feedback` note in replies, issue comments, or PR summaries
+when they encounter confusing instructions, missing fields, excess ceremony, unsafe autonomy,
+merge-safety gaps, or ideas that would make the workflow easier to use. Use `improve-workflow` to
+triage those notes before changing the process.

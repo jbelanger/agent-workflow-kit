@@ -194,10 +194,3 @@ State/status:
 
 If drafting is blocked, do not create a placeholder artifact. Explain the missing input and ask one
 clarification question with options, a recommendation, and why it matters.
-
-## Test-Drive Feedback
-
-This workflow is being dogfooded. If you notice process friction while using this skill, include a
-brief `Process feedback` note in your reply, issue comment, or PR summary. Mention confusing
-instructions, missing fields, too much ceremony, unsafe autonomy, merge-safety gaps, or ideas that
-would make the workflow easier to use.

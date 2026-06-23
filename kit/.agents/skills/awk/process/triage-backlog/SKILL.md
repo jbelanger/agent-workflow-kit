@@ -50,10 +50,3 @@ Return:
 - Do not classify implementation work as Ready unless it is already breakdown-shaped and merge-risk
   classified.
 - Surface uncertainty clearly.
-
-## Test-Drive Feedback
-
-This workflow is being dogfooded. If you notice process friction while using this skill, include a
-brief `Process feedback` note in your reply, issue comment, or PR summary. Mention confusing
-instructions, missing fields, too much ceremony, unsafe autonomy, merge-safety gaps, or ideas that
-would make the workflow easier to use.

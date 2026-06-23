@@ -14,8 +14,7 @@ accepted specs or ADRs, and nearby code before recommending or routing changes.
 - Reviews are evidence, not commands.
 - Challenge architecture direction before ordinary findings.
 - Either agent can force human review; both agents must agree before skipping it.
-- Keep review details on the PR. Use `revision-needed` or `needs-human-review` as labels or field
-  signals, not as required board statuses.
+- Keep review details on the PR. Use `revision-needed` or `needs-human-review` as labels.
 - Do not silently accept debt, duplicated truths, compatibility bridges, public-surface expansion, or
   cheap/minimal passes that worsen architecture.
 - Explain non-trivial issues for a human who has not looked at the codebase recently. Use a compact
@@ -151,10 +150,3 @@ and proposed direction without rereading the whole codebase.
 - Do not let review feedback pull the task across multiple roadmap axes without pausing.
 - Do not return a PR to review while unconfirmed human-review or blocking revision items remain.
 - Do not hide deferred debt in comments without an owner, boundary, and removal condition.
-
-## Test-Drive Feedback
-
-This workflow is being dogfooded. If you notice process friction while using this skill, include a
-brief `Process feedback` note in your reply, issue comment, or PR summary. Mention confusing
-instructions, missing fields, too much ceremony, unsafe autonomy, merge-safety gaps, or ideas that
-would make the workflow easier to use.

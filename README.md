@@ -10,7 +10,7 @@ edit the relevant files, run validation, and commit or push only when asked.
 
 - `AGENTS.md`: source-repo operating rules for Codex and other agents.
 - `kit/AGENTS.md`: minimal AWK usage block merged into target repository guidance.
-- `kit/.agents/skills/awk/`: namespaced installable workflow and specialist skills.
+- `kit/.agents/skills/awk/`: namespaced installable workflow and procedural specialist skills.
 - `.github/`: issue and PR templates copied into target repositories.
 - `docs/awk/`: installable AWK process and reference docs copied into target repositories.
 - `docs/development/`: durable source-repo decisions, dogfood results, specs, and spikes.
@@ -20,14 +20,17 @@ edit the relevant files, run validation, and commit or push only when asked.
 
 When improving the workflow through a realistic run, use a separate dogfood target repository.
 
+Dogfood runs should test the lane that matches the input, not the longest possible process. Start at
+the front door for that lane, then move sequentially through each required handoff so the run teaches
+us where agents follow or miss the protocol.
+
 The current focus is the detailed-plan path, not vague-idea discovery. If a real plan already
 exists, do not start by re-interviewing the human as if the idea were blank. Start by having a
 delegated agent inspect the plan, classify whether it is accepted enough to build from, identify any
 missing decisions, and route to `review-artifact`, `breakdown-issue`, or
 `prepare-implementation` as appropriate.
 
-For vague ideas, still start from the beginning of the process so the run teaches us about the full
-loop:
+For vague ideas, start from the vague-idea lane so the run teaches us about grooming and discovery:
 
 1. Reset or confirm the target baseline.
 2. Create or select the initial work item.
@@ -52,20 +55,26 @@ Grooming should receive the most effort for vague ideas. Detailed-plan runs shou
 on plan quality, readiness, decomposition, implementation briefs, and whether downstream agents can
 follow the plan without hidden chat context.
 
-## Future Vision
+## Loop Direction
 
-The intended flow is an autonomous fan-out loop where GitHub state is enough for agents to resume
-without chat memory:
+The intended flow is a small agent-loop contract rather than a runtime platform:
+
+```text
+Intake -> Shape -> Execute -> Review -> Improve
+```
+
+GitHub state should be enough for agents to resume without chat memory:
 
 - grooming records the real problem and unresolved decisions,
 - breakdown creates independent task boundaries,
-- a dispatcher assigns prepared tasks to worktrees,
+- a human or thin local runner assigns prepared tasks to worktrees,
 - worker agents open linked PRs,
 - reviewer agents monitor quality and route revisions,
 - humans retain architecture, product, approval, and merge decisions.
 
-Until that dispatcher exists, simulate the sequence deliberately and record process feedback where
-the workflow feels unclear, too heavy, too loose, or unsafe.
+Do not build a platform before proving the loop. Simulate the sequence deliberately with one
+worktree first, then a small parallel batch, and record process feedback where the workflow feels
+unclear, too heavy, too loose, or unsafe.
 
 ## Validation
 

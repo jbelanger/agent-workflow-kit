@@ -8,24 +8,26 @@ review handoffs.
 
 ### Flow At A Glance
 
-AWK is a Kanban-like GitHub issue flow:
+AWK is a lightweight agent-loop contract. Route by task shape first; do not force every item through
+every gate. `continue-work` owns the detailed task-shape routing table.
 
 ```text
-Inbox -> Grooming -> Discovery/Vision or Drafting -> Breakdown -> Ready -> In Progress -> Review -> Done
+Intake -> Shape -> Execute -> Review -> Improve
 ```
 
 - Start with `init-awk` in a new repo. Do not run the workflow until the repo is pushed, labels are
   set up, and initial work exists as GitHub issues.
-- Use `continue-work` to read issues, PRs, repo docs, and optional Project fields, then choose the
-  next workflow verb.
-- Route unclear work to `groom-issue`; use `discover-vision`, `draft-artifact`, or
-  `review-artifact` only when grooming shows direction or durable docs are needed.
-- Route accepted direction to `breakdown-issue`, then use `prepare-implementation` to make one Ready
-  child issue executable by one agent.
-- Route prepared implementation work to `work-issue-local`.
-- Route local diffs or PRs without a recorded agent review to `review-local-changes`; use
-  `review-revision-triage` for non-trivial PR feedback or architecture-sensitive review.
-- Do not skip from vague idea or Inbox directly to implementation.
+- Use `continue-work` to read issues, PRs, repo docs, and labels, then choose the next workflow
+  verb.
+- **Intake:** `init-awk`, `groom-issue`.
+- **Shape:** `discover-vision`, `draft-artifact`, `review-artifact`, `breakdown-issue`.
+- **Execute:** `prepare-implementation`, `work-issue-local`.
+- **Review:** `review-local-changes`, `review-revision-triage`.
+- **Improve:** `improve-workflow`.
+
+Do not skip from vague idea or Inbox directly to implementation. A fast lane still needs visible
+issue state, a `DIRECT_TASK` rationale, one-agent scope, acceptance criteria, validation, and merge
+risk.
 
 - AWK skills live under `.agents/skills/awk/`.
 - AWK process docs live under `docs/awk/`.

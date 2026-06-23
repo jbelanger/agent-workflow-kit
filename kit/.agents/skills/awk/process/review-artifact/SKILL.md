@@ -7,7 +7,8 @@ description: "Review a durable planning artifact and record human acceptance or 
 
 Use this when a durable planning artifact is ready for human review. This skill promotes accepted
 planning truth or routes the artifact back to revision; it does not draft, break down, or implement
-work.
+work. When the artifact is proposed through a linked PR, this skill is the agent review pass for that
+artifact PR.
 
 ## Inputs To Read
 
@@ -16,6 +17,7 @@ work.
   - `docs/development/specs/<name>.md`
   - `docs/development/adrs/<name>.md`
 - Related decision log, if one exists.
+- Linked issue or PR that exposes the proposed artifact diff, if review is happening through GitHub.
 - Source provenance named by the artifact only when needed to verify the review decision.
 
 ## Review Rules
@@ -27,6 +29,10 @@ work.
 - Do not silently resolve open product, architecture, ownership, storage, public-surface, or
   validation forks during review.
 - Do not create child work items, implementation briefs, branches, commits, or PRs.
+- Do not route an artifact PR to `review-local-changes` only because it is a PR. Use
+  `review-artifact` to review artifact substance, state, decision history, source linkage, and next
+  workflow routing. Use `review-local-changes` for implementation or general doc/code diffs that are
+  not durable artifact acceptance reviews.
 - Preserve the audit trail. Record acceptance decisions and durable revision requests with reviewer
   response, timestamp, and next action.
 
@@ -73,8 +79,3 @@ Decision: Accepted | Rejected | No-op | Blocked
 
 ## Process feedback
 ```
-
-## Test-Drive Feedback
-
-If review cannot be completed from GitHub state or repo-local docs, record that as process feedback.
-Artifact review should have an explicit accept/revise decision and a durable decision record.

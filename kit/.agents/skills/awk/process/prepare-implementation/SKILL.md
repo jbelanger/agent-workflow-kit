@@ -93,10 +93,3 @@ Produce:
 - If implementation depends on visual direction, stop unless linked mockups or sample assets are
   accepted or explicitly marked illustrative enough for the slice.
 - Stop if a real architecture fork needs human choice.
-
-## Test-Drive Feedback
-
-This workflow is being dogfooded. If you notice process friction while using this skill, include a
-brief `Process feedback` note in your reply, issue comment, or PR summary. Mention confusing
-instructions, missing fields, too much ceremony, unsafe autonomy, merge-safety gaps, or ideas that
-would make the workflow easier to use.

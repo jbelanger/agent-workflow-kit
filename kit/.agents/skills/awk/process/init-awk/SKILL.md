@@ -90,8 +90,8 @@ the boundaries.
 ## Current workflow state
 
 - Status:
-- Next Actor:
-- Decision Needed:
+- Owner:
+- Blocker:
 - Next workflow verb:
 ```
 
@@ -110,8 +110,8 @@ the boundaries.
 
 - Parent:
 - Status:
-- Next Actor:
-- Decision Needed:
+- Owner:
+- Blocker:
 - Next workflow verb:
 ```
 
@@ -164,9 +164,3 @@ Blocked:
 
 ## Process feedback
 ```
-
-## Test-Drive Feedback
-
-If initialization feels too manual, too broad, or missing a concrete check, record process feedback.
-The goal is for this skill to become the reliable front door before dogfood runs and real projects
-start AWK execution.

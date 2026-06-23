@@ -38,7 +38,7 @@ Optional:
 | `AGENTS.md` AWK block | Yes | Minimal instruction that points agents to the namespaced AWK install while preserving project-owned guidance. |
 | `.github/ISSUE_TEMPLATE/` | Yes | GitHub-first intake contracts for initiatives, specs, ADRs, and tasks. |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Yes | Review gate and validation summary for proposed docs or code. |
-| `.agents/skills/awk/` | Yes | Namespaced AWK workflow verbs and specialist lenses such as initialization, grooming, discovery, artifact drafting, breakdown, preparation, local work, and review. |
+| `.agents/skills/awk/` | Yes | Namespaced AWK workflow verbs and procedural specialists such as initialization, grooming, discovery, artifact drafting, breakdown, preparation, local work, review, TDD, and bug diagnosis. |
 | `docs/awk/` | Yes | Visible AWK documentation root for process references and workflow decisions. |
 | `docs/awk/adrs/github-first-orchestration.md` | Yes | Accepted source-of-truth decision for the GitHub-first operating model. |
 | `docs/awk/workflow/` | Yes | AWK flow and install docs. |
@@ -46,10 +46,9 @@ Optional:
 | `docs/development/discovery/` | Lazy | Portable discovery bundles for accepted or in-progress product, UX, creative, platform, or architecture vision work. Create only when a discovery artifact exists. |
 | `docs/development/specs/`, `docs/development/adrs/`, `docs/development/spikes/` | Lazy | Durable planning artifacts reviewed through PRs. Create only when that artifact type exists. |
 | `docs/development/**/mockups/` or `docs/development/specs/*-assets/` | Lazy | Generated wireframes, sample assets, screenshots, or mockups used to review UX direction. Mark as non-production until accepted. |
-| `scripts/setup-github-labels.mjs` | Yes | Minimal GitHub setup for labels used by issue templates. Does not create a Project board. |
+| `scripts/setup-github-labels.mjs` | Yes | Minimal GitHub setup for labels used by issue templates. |
 | GitHub issues/PRs | Yes for workflow execution | Active orchestration, human answers, remote planning, audit trail, and review. |
 | GitHub labels | Recommended setup | Lightweight issue type and review signals created by `scripts/setup-github-labels.mjs`. |
-| GitHub Projects | Optional | Useful when a repo has enough parallel work to need board state. Not installed or required by default. |
 | `docs/development/work-items/` | Optional fallback | Portable planning records only when GitHub is absent. |
 
 ## Install
@@ -84,7 +83,8 @@ Before any AWK workflow step after initialization, create the initial GitHub iss
   decisions;
 - links from children to parent and from every issue to source docs or imported plans;
 - issue type labels from the installed templates;
-- a recorded status, next actor, decision needed, and `Next workflow verb` for each issue.
+- a recorded current state, blocker or human decision if any, and `Next workflow verb` for each
+  issue.
 
 Create the parent issue first, create child issues one at a time, then update the parent or add a
 setup comment with the assigned child issue numbers. Do the same for sibling links that could not be
@@ -104,7 +104,7 @@ cd /path/to/project
 node scripts/setup-github-labels.mjs
 ```
 
-This creates labels only. It does not create a Project board.
+This creates labels only.
 
 ## Validation
 
@@ -121,9 +121,6 @@ From the kit repo, prove the install path against a clean temporary repository:
 node scripts/prove-portable-install.mjs
 ```
 
-Optional GitHub Project board tooling is kept in the source repo under `scripts/optional/`. It is
-not copied by the default installer.
-
 ## Expected Use In A Project
 
 Plain Codex:
@@ -131,7 +128,7 @@ Plain Codex:
 ```text
 Codex chat in the project
   -> user asks "continue work"
-  -> Codex reads GitHub issues, PRs, repo docs, and Project fields when present
+  -> Codex reads GitHub issues, PRs, repo docs, and labels
   -> Codex uses .agents/skills/awk/process/continue-work/SKILL.md to choose the next workflow verb
   -> Codex records process feedback when the workflow itself shows weakness
 ```
@@ -140,7 +137,7 @@ GitHub:
 
 ```text
 Issues and PRs hold collaboration and audit trail.
-Projects may hold lifecycle and coordination fields when a repo chooses to use one.
+Labels provide lightweight issue type and review signals.
 PRs hold proposed durable docs or code and review gates.
 Repo docs remain the accepted durable truth after review.
 ```

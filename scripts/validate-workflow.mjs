@@ -40,11 +40,6 @@ const requiredSkills = [
   '.agents/skills/awk/process/review-local-changes/SKILL.md',
   '.agents/skills/awk/process/review-revision-triage/SKILL.md',
   '.agents/skills/awk/process/improve-workflow/SKILL.md',
-  '.agents/skills/awk/specialist/product-strategy/SKILL.md',
-  '.agents/skills/awk/specialist/technical-architecture/SKILL.md',
-  '.agents/skills/awk/specialist/validation-strategy/SKILL.md',
-  '.agents/skills/awk/specialist/ux-direction/SKILL.md',
-  '.agents/skills/awk/specialist/creative-direction/SKILL.md',
   '.agents/skills/awk/specialist/diagnose-bug/SKILL.md',
   '.agents/skills/awk/specialist/tdd/SKILL.md',
 ];
@@ -64,6 +59,11 @@ const legacyAwkOwnedPaths = [
   '.agents/skills/process/review-local-changes/SKILL.md',
   '.agents/skills/process/review-revision-triage/SKILL.md',
   '.agents/skills/process/improve-workflow/SKILL.md',
+  '.agents/skills/awk/specialist/product-strategy/SKILL.md',
+  '.agents/skills/awk/specialist/technical-architecture/SKILL.md',
+  '.agents/skills/awk/specialist/validation-strategy/SKILL.md',
+  '.agents/skills/awk/specialist/ux-direction/SKILL.md',
+  '.agents/skills/awk/specialist/creative-direction/SKILL.md',
   '.agents/skills/specialist/product-strategy/SKILL.md',
   '.agents/skills/specialist/technical-architecture/SKILL.md',
   '.agents/skills/specialist/validation-strategy/SKILL.md',
@@ -71,6 +71,7 @@ const legacyAwkOwnedPaths = [
   '.agents/skills/specialist/creative-direction/SKILL.md',
   '.agents/skills/specialist/diagnose-bug/SKILL.md',
   '.agents/skills/specialist/tdd/SKILL.md',
+  'scripts/optional/setup-github-project.mjs',
   'docs/development/workflow/ai-dev-workflow.md',
   'docs/development/workflow/github-first-flow.md',
   'docs/development/workflow/installing-agent-workflow-kit.md',
@@ -87,7 +88,7 @@ const issueTemplateLabels = new Map([
 
 const flowAtGlanceSnippets = [
   'Flow At A Glance',
-  'Inbox -> Grooming -> Discovery/Vision or Drafting -> Breakdown -> Ready -> In Progress -> Review -> Done',
+  'Intake -> Shape -> Execute -> Review -> Improve',
   'continue-work',
   'groom-issue',
   'breakdown-issue',
@@ -238,7 +239,7 @@ function validate(cwd) {
   const discoverSkillPath = sourcePath(cwd, '.agents/skills/awk/process/discover-vision/SKILL.md');
   if (existsSync(join(cwd, discoverSkillPath))) {
     const discoverSkill = read(cwd, discoverSkillPath);
-    for (const snippet of ['product-strategy', 'technical-architecture', 'validation-strategy', 'ux-direction', 'creative-direction', 'READY_FOR_SPEC', 'DIRECT_TASK', 'real fork']) {
+    for (const snippet of ['Product:', 'Technical:', 'Validation:', 'UX:', 'Creative:', 'READY_FOR_SPEC', 'DIRECT_TASK', 'real fork']) {
       if (!discoverSkill.includes(snippet)) {
         errors.push(`discover-vision skill is missing required snippet: ${snippet}`);
       }

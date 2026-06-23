@@ -1,6 +1,6 @@
 ---
 name: discover-vision
-description: Orchestrate early discovery for vague product, UX, creative, game, platform, or architecture direction before specs or breakdown. Use when grooming returns NEEDS_INTERVIEW, NEEDS_RESEARCH, or NEEDS_DECISION for product/design vision work, when the user asks to discover or refine a vision, or when a vague idea needs specialist lenses before a durable spec.
+description: Orchestrate early discovery for vague product, UX, creative, game, platform, or architecture direction before specs or breakdown. Use when grooming returns NEEDS_INTERVIEW, NEEDS_RESEARCH, or NEEDS_DECISION for product/design vision work, when the user asks to discover or refine a vision, or when a vague idea needs discovery lenses before a durable spec.
 ---
 
 # Discover Vision
@@ -12,12 +12,12 @@ accepted without explicit human acceptance.
 ## Core Stance
 
 - Discovery decides what we are making and why, not every detail of how it works.
-- Specialists are advisory lenses. They do not create accepted truth and do not ask the human
+- Discovery lenses are advisory. They do not create accepted truth and do not ask the human
   directly.
 - Discovery owns the interactive interview after grooming routes a vague product, UX, creative,
   game, platform, or architecture idea to `discover-vision`.
-- For UI-bearing work, discovery or the `ux-direction` lens prepares a compact UX direction draft
-  for human review. The human should review direction, not create it from a blank page.
+- For UI-bearing work, discovery prepares a compact UX direction draft for human review. The human
+  should review direction, not create it from a blank page.
 - When visual review would help, generate sample assets or mockups as non-production review aids
   instead of leaving the human to imagine the UI from text alone.
 - Ask the human exactly one highest-leverage question at a time, then stop unless the human answers
@@ -30,24 +30,25 @@ accepted without explicit human acceptance.
 - `AGENTS.md` and `docs/awk/workflow/ai-dev-workflow.md`.
 - The grooming artifact, work item, issue, prompt, or prior discovery bundle.
 - Existing specs, ADRs, spikes, research notes, or source docs named by the work item.
-- Relevant specialist skills only after selecting the needed lenses.
+- Relevant domain docs, product constraints, UI references, architecture notes, or validation
+  evidence needed for the selected lenses.
 
 ## Lens Selection
 
-Select lenses from `.agents/skills/awk/specialist/`. Record which lenses were used and why.
+Select only the lenses needed to make the next handoff safer. Record which lenses were used and why.
 
 Default lenses for vague product or platform work:
 
-- `product-strategy`: user, value, market/genre expectations, differentiation.
-- `technical-architecture`: feasible platform/system shape and architectural forks.
-- `validation-strategy`: evidence, tests, playtests, and acceptance proof.
+- Product: user, value, market/genre expectations, differentiation.
+- Technical: feasible platform/system shape and architectural forks.
+- Validation: evidence, tests, playtests, and acceptance proof.
 
 Conditional lenses:
 
-- `ux-direction`: use when flows, interaction model, information architecture, accessibility, or
-  usability are central to success.
-- `creative-direction`: use when brand, tone, game design, emotional target, content, visual/audio
-  direction, or memorability are central to success.
+- UX: use when flows, interaction model, information architecture, accessibility, or usability are
+  central to success.
+- Creative: use when brand, tone, game design, emotional target, content, visual/audio direction, or
+  memorability are central to success.
 
 Rules:
 
@@ -179,9 +180,9 @@ Vision state: Draft
 ## Impact on readiness
 ```
 
-Avoid permanent specialist transcript files by default. Summarize specialist findings in the vision
-brief and decision log. Preserve raw specialist notes only when the human asks or the evidence is
-too important to compress safely.
+Avoid permanent lens transcript files by default. Summarize findings in the vision brief and
+decision log. Preserve raw notes only when the human asks or the evidence is too important to
+compress safely.
 
 Mockups may be generated as Markdown-friendly images, screenshots, static HTML/CSS previews, simple
 wireframes, or sample asset studies. Keep them scoped to the discovery bundle, name the screen or

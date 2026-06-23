@@ -6,7 +6,6 @@ function usage() {
   return `Usage: node scripts/setup-github-labels.mjs [--repo <owner/name>] [--dry-run] [--verify-only]
 
 Creates the lightweight GitHub labels used by the Agent Workflow Kit issue templates.
-This does not create a GitHub Project board.
 
 Options:
   --repo <owner/name>  Repository to configure. Defaults to the current gh repo.

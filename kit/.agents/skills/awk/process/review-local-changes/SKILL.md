@@ -39,7 +39,7 @@ strong review path.
 
 ## Revision Signal
 
-Use `revision-needed` as a label or field signal, not as a required board status.
+Use `revision-needed` as a label signal.
 
 - Keep review details on the PR, where the code context and review threads live.
 - Keep the issue lifecycle compact. If accepted fixes are being worked, the issue can move back to
@@ -90,11 +90,4 @@ Taste-only:
 - Ground findings in file and line references where possible.
 - Reject speculative or over-broad feedback.
 - Do not ask for broad refactors unless the current change created or exposed real risk.
-- Do not duplicate PR review state as a board phase when a label or field is enough.
-
-## Test-Drive Feedback
-
-This workflow is being dogfooded. If you notice process friction while using this skill, include a
-brief `Process feedback` note in your reply, issue comment, or PR summary. Mention confusing
-instructions, missing fields, too much ceremony, unsafe autonomy, merge-safety gaps, or ideas that
-would make the workflow easier to use.
+- Do not duplicate PR review state outside the PR when a label is enough.

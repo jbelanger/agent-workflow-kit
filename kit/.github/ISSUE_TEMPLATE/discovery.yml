@@ -3,11 +3,15 @@ description: Clarify product, UX, creative, platform, or architecture direction 
 title: "[Discovery] "
 labels: ["discovery", "next:discover-vision"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Still figuring out the direction?** Use this to work through an open product, UX, or technical question before committing to a spec or ADR. The **AWK State** block at the top is agent housekeeping — leave it as-is.
   - type: textarea
     id: awk_state
     attributes:
       label: AWK State
-      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
       value: |
         <!-- awk-state:start -->
         ## AWK State
@@ -28,41 +32,53 @@ body:
     id: source
     attributes:
       label: Source
-      description: Link the originating idea, issue, prompt, note, or imported plan.
+      description: Where this came from — link the originating idea, issue, prompt, note, or imported plan.
+      placeholder: |
+        e.g. Sparked by the activation goal in initiative #12.
     validations:
       required: true
   - type: textarea
     id: unresolved_direction
     attributes:
       label: Unresolved direction
-      description: What product, UX, creative, platform, architecture, or validation choice is too vague for implementation?
+      description: The product, UX, creative, platform, architecture, or validation choice that's still too vague to build.
+      placeholder: |
+        e.g. We know we want "guided onboarding" but not what the steps are or how much to automate.
     validations:
       required: true
   - type: textarea
     id: audience_and_context
     attributes:
       label: Audience and context
-      description: Target user, workflow, market/genre expectations, platform constraints, or domain context known so far.
+      description: Who it's for and the constraints around it — target user, workflow, market/genre expectations, platform limits, domain context known so far.
+      placeholder: |
+        e.g. Solo developers trying the tool for the first time; mostly on the web app, some on mobile.
     validations:
       required: false
   - type: textarea
     id: constraints
     attributes:
       label: Constraints and non-goals
-      description: What must discovery respect, and what should it deliberately not decide?
+      description: What discovery must respect, and what it should deliberately not decide.
+      placeholder: |
+        e.g. Must work without an email step. Don't decide the final visual design here.
     validations:
       required: true
   - type: textarea
     id: lenses
     attributes:
       label: Discovery lenses
-      description: Product, UX, creative, technical, validation, research, or other lenses needed before a useful artifact can exist.
+      description: Which angles to explore before a useful artifact can exist — product, UX, creative, technical, validation, research, or others.
+      placeholder: |
+        e.g. Product (what's the day-one win?) and UX (how many steps?). Light technical check on what's automatable.
     validations:
       required: true
   - type: textarea
     id: first_question
     attributes:
       label: First human question
-      description: One highest-leverage question for discover-vision to ask first, or explain why research should happen first.
+      description: The single highest-leverage question for discover-vision to ask first — or why research should happen before any question.
+      placeholder: |
+        e.g. "What's the one thing a new user must succeed at on day one?"
     validations:
       required: false

@@ -1,3 +1,8 @@
+<!--
+  Most of this is filled in for you. As the author, focus on Summary, Issue Linkage,
+  and the Validation checkboxes. The AWK State block just below is housekeeping your
+  agent keeps current — you can leave it as-is.
+-->
 <!-- awk-state:start -->
 ## AWK State
 Status: Review

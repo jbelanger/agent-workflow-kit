@@ -3,11 +3,15 @@ description: Record a durable architecture, storage, ownership, public-surface, 
 title: "[ADR] "
 labels: ["adr", "next:draft-artifact"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Record a decision you'll want to remember the reasoning for later** — architecture, storage, ownership, a public surface, or a policy. Lay out the options and your recommendation. The **AWK State** block at the top is agent housekeeping — leave it as-is.
   - type: textarea
     id: awk_state
     attributes:
       label: AWK State
-      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
       value: |
         <!-- awk-state:start -->
         ## AWK State
@@ -28,34 +32,47 @@ body:
     id: decision
     attributes:
       label: Decision to make
-      description: State the architecture, ownership, storage, boundary, public surface, or policy choice.
+      description: The architecture, ownership, storage, boundary, public-surface, or policy choice on the table.
+      placeholder: |
+        e.g. Where do we store uploaded files — in Postgres, on S3, or on local disk?
     validations:
       required: true
   - type: textarea
     id: context
     attributes:
       label: Context and source evidence
-      description: Link the issue, plan, code, incident, spec, spike, or prior decision that makes this ADR necessary.
+      description: Why this decision is needed now — link the issue, plan, code, incident, spec, spike, or prior decision that forces it.
+      placeholder: |
+        e.g. Upload volume is growing and the DB is the bottleneck (see incident #74). Triggered by spec #42.
     validations:
       required: true
   - type: textarea
     id: options
     attributes:
       label: Options considered
-      description: Name credible options and the tradeoff each creates.
+      description: The credible options, and the tradeoff each one creates.
+      placeholder: |
+        e.g.
+        - S3: durable and cheap, but adds an external dependency
+        - Postgres bytea: simple, but bloats the database
+        - Local disk: easy in dev, doesn't scale across instances
     validations:
       required: true
   - type: textarea
     id: recommendation
     attributes:
       label: Recommended direction
-      description: Say which option should become durable truth and why.
+      description: Which option should become durable truth, and why.
+      placeholder: |
+        e.g. S3 — durability and cost outweigh the added dependency, and it's the only option that scales horizontally.
     validations:
       required: true
   - type: textarea
     id: review_path
     attributes:
       label: Review and next step
-      description: Record whether the ADR needs drafting, artifact review, human decision, breakdown, or implementation work.
+      description: What happens after this — drafting, artifact review, a human decision, breakdown, or implementation.
+      placeholder: |
+        e.g. Needs a human decision on the dependency, then breakdown into the storage-layer task.
     validations:
       required: true

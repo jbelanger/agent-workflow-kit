@@ -3,11 +3,15 @@ description: Define behavior, contracts, records, APIs, or user-visible semantic
 title: "[Spec] "
 labels: ["spec", "next:draft-artifact"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Decide how something should behave before it gets built.** Capture the problem and the behavior you're proposing; your agent drafts it and a human accepts it before any code. The **AWK State** block at the top is agent housekeeping — leave it as-is.
   - type: textarea
     id: awk_state
     attributes:
       label: AWK State
-      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
       value: |
         <!-- awk-state:start -->
         ## AWK State
@@ -28,6 +32,7 @@ body:
     id: spec_state
     attributes:
       label: Spec state
+      description: Where this spec is in its life. Start at Draft.
       options:
         - Draft
         - Accepted
@@ -40,40 +45,52 @@ body:
     attributes:
       label: Problem
       description: What operational problem does this spec solve?
+      placeholder: |
+        e.g. When an import fails, users get a generic 500 with no detail, so they can't tell what to fix.
     validations:
       required: true
   - type: textarea
     id: source_context
     attributes:
       label: Source context
-      description: Link grooming, discovery, ADRs, incidents, product notes, code, or prior specs that define the work.
+      description: What this builds on — link grooming, discovery, ADRs, incidents, product notes, code, or prior specs.
+      placeholder: |
+        e.g. Comes out of discovery #31 and the incident write-up in docs/development/spikes/import-failures.md.
     validations:
       required: true
   - type: textarea
     id: proposed_behavior
     attributes:
       label: Proposed behavior or contract
-      description: What should become accepted truth after review?
+      description: What should become accepted truth after review? Be specific enough to build from.
+      placeholder: |
+        e.g. On import failure, return 422 with a body of { row, field, reason } entries — one per invalid cell. Define the error shape here.
     validations:
       required: true
   - type: textarea
     id: open_questions
     attributes:
       label: Open questions or decisions
-      description: Record unresolved behavior, product, architecture, ownership, validation, or UX questions. Use None only when honest.
+      description: Anything still unresolved — behavior, product, architecture, ownership, validation, or UX. Use None only when it's honestly settled.
+      placeholder: |
+        e.g. Should a partial import commit the valid rows, or reject the whole file?
     validations:
       required: true
   - type: textarea
     id: non_goals
     attributes:
       label: Non-goals
-      description: What should this spec not settle?
+      description: What should this spec deliberately not settle?
+      placeholder: |
+        e.g. Not deciding the retry/queue behavior; not changing the upload UI.
     validations:
       required: true
   - type: textarea
     id: acceptance
     attributes:
       label: Acceptance and breakdown notes
-      description: What makes this spec accepted, and what implementation slices should follow after acceptance?
+      description: What makes this spec accepted, and what implementation slices should follow once it is?
+      placeholder: |
+        e.g. Accepted once the error shape is approved. Then break into: (1) validation layer, (2) error response, (3) client display.
     validations:
       required: false

@@ -3,11 +3,15 @@ description: Fast-lane task for tiny, clear work that does not need separate dis
 title: "[Direct Task] "
 labels: ["task", "next:work-issue-local"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **A small, obvious change that doesn't need its own spec, ADR, or discovery.** Just say what changes, where it's allowed to touch, and how to check it. The **AWK State** block at the top is agent housekeeping — leave it as-is.
   - type: textarea
     id: awk_state
     attributes:
       label: AWK State
-      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
       value: |
         <!-- awk-state:start -->
         ## AWK State
@@ -28,14 +32,18 @@ body:
     id: goal
     attributes:
       label: Goal
-      description: The small concrete outcome.
+      description: The small, concrete outcome.
+      placeholder: |
+        e.g. Fix the typo "recieve" -> "receive" in the onboarding email copy.
     validations:
       required: true
   - type: textarea
     id: direct_task_rationale
     attributes:
       label: DIRECT_TASK rationale
-      description: Why no discovery, spec, ADR, spike, breakdown, or human question is needed.
+      description: Why this can skip the usual shaping — no discovery, spec, ADR, spike, breakdown, or human question needed.
+      placeholder: |
+        e.g. One-line copy fix with no behavior change — nothing to decide or design.
     validations:
       required: true
   - type: textarea
@@ -43,6 +51,10 @@ body:
     attributes:
       label: Scope
       description: In scope, out of scope, allowed files/directories, and forbidden files/directories.
+      placeholder: |
+        In: emails/onboarding.tsx
+        Out: rewording any other emails
+        Forbidden: everything outside emails/onboarding.tsx
     validations:
       required: true
   - type: textarea
@@ -50,20 +62,24 @@ body:
     attributes:
       label: Acceptance criteria
       description: What must be true when this tiny task is done?
+      placeholder: |
+        e.g. The word is spelled correctly; no other copy changed.
     validations:
       required: true
   - type: textarea
     id: validation
     attributes:
       label: Validation
-      description: Exact validation command, or why validation-only/check-only is honest for this tiny task.
+      description: The exact command to run — or, if nothing exercises this change, an honest note that it's check-only.
+      placeholder: |
+        e.g. `npm run lint` passes. (Or: check-only — no test touches this string.)
     validations:
       required: true
   - type: dropdown
     id: merge_risk
     attributes:
       label: Merge risk
-      description: Direct tasks should usually be Parallel-safe. Choose a higher risk only when coordination is real.
+      description: Direct tasks are usually Parallel-safe. Pick a higher risk only when coordination is real.
       options:
         - Parallel-safe
         - Needs coordination
@@ -74,6 +90,8 @@ body:
     id: pr_requirements
     attributes:
       label: PR requirements
-      description: Required issue linkage, summary facts, validation evidence, and any parent-resolution note.
+      description: What the eventual PR must include — issue linkage, the facts the summary should state, validation evidence, and any parent-resolution note.
+      placeholder: |
+        e.g. Closes #58. Summary names the fixed string. Lint output pasted as evidence.
     validations:
       required: true

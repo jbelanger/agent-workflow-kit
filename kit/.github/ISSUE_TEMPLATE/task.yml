@@ -3,11 +3,15 @@ description: A prepared implementation or documentation task for one agent, one 
 title: "[Task] "
 labels: ["task", "next:work-issue-local"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Work that's ready to build — one agent, one branch, one PR.** Fill in the sections below so the task is safe to hand off without a back-and-forth. The **AWK State** block at the top is housekeeping your agent keeps current; you can leave it as-is.
   - type: textarea
     id: awk_state
     attributes:
       label: AWK State
-      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
       value: |
         <!-- awk-state:start -->
         ## AWK State
@@ -29,48 +33,67 @@ body:
     attributes:
       label: Goal
       description: The concrete outcome this one task must deliver.
+      placeholder: |
+        e.g. Add a --json flag to the `export` command so CI can read the output as structured data.
     validations:
       required: true
   - type: textarea
     id: readiness
     attributes:
       label: Readiness evidence
-      description: Link accepted spec, ADR, discovery, spike, breakdown, or DIRECT_TASK rationale. Include human questions asked/answered, or why none were needed.
+      description: What makes this ready to build? Link the accepted spec, ADR, discovery, spike, breakdown, or direct-task rationale. Note any human questions asked and answered, or why none were needed.
+      placeholder: |
+        e.g. Behavior accepted in spec #42. No open human questions — the spec covers the edge cases.
     validations:
       required: true
   - type: textarea
     id: scope
     attributes:
       label: Scope and boundaries
-      description: Parent issue, non-goals, owned area, allowed files/directories, and forbidden files/directories.
+      description: Where this task is allowed to touch — and where it must not. Parent issue, non-goals, owned area, allowed files/directories, forbidden files/directories.
+      placeholder: |
+        Parent: #40
+        Owned area: the export pipeline
+        Allowed: src/export/**, tests/export/**
+        Forbidden: src/auth/**, anything outside export
+        Non-goals: changing the CSV format
     validations:
       required: true
   - type: textarea
     id: surfaces
     attributes:
       label: Architecture, contracts, and user surfaces
-      description: Public APIs, storage, migrations, screens, UX direction, accessibility/usability risks, or state why none are touched.
+      description: Anything others depend on — public APIs, storage, migrations, screens, UX direction, accessibility/usability risks. If none are touched, say so plainly.
+      placeholder: |
+        e.g. Adds one public flag (--json); no storage or migrations. Output is machine-readable, so there's no screen or UX surface here.
     validations:
       required: true
   - type: textarea
     id: acceptance
     attributes:
       label: Acceptance criteria
-      description: Observable conditions that make the task complete.
+      description: The observable conditions that mean this task is done.
+      placeholder: |
+        e.g.
+        - `export --json` prints valid JSON
+        - the existing text output is unchanged
+        - a new test covers the JSON path
     validations:
       required: true
   - type: textarea
     id: validation
     attributes:
       label: Feedback loop and validation
-      description: Feedback loop or test seam, required tests, and exact validation command.
+      description: How an agent knows it's working — the feedback loop or test seam, the tests required, and the exact command to run.
+      placeholder: |
+        e.g. Focused: `npm test -- export`. Full check: `npm run check`.
     validations:
       required: true
   - type: dropdown
     id: merge_risk
     attributes:
       label: Merge risk
-      description: Keep this consistent with the AWK State block.
+      description: How safely this can land alongside other in-flight work. Keep this consistent with the AWK State block.
       options:
         - Parallel-safe
         - Needs coordination
@@ -81,6 +104,8 @@ body:
     id: pr_requirements
     attributes:
       label: PR requirements
-      description: Required issue linkage, summary facts, validation evidence, deferred items, and parent-resolution notes.
+      description: What the eventual PR must include — issue linkage, the facts the summary should state, validation evidence, any deferred items, and parent-resolution notes.
+      placeholder: |
+        e.g. Closes #41. Summary names the new flag. Paste the test output as evidence. No deferred items.
     validations:
       required: true

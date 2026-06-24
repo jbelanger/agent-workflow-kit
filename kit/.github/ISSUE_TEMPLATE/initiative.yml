@@ -3,11 +3,15 @@ description: Group related specs, ADRs, tasks, discoveries, and PRs under one ou
 title: "[Initiative] "
 labels: ["initiative", "next:groom-issue"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **A larger outcome that several issues and PRs roll up to.** Describe what "done" looks like; the child work gets created underneath as you groom. The **AWK State** block at the top is agent housekeeping — leave it as-is.
   - type: textarea
     id: awk_state
     attributes:
       label: AWK State
-      description: Keep this block current. Mirror the Next workflow verb with exactly one next:* label when labels are available.
+      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
       value: |
         <!-- awk-state:start -->
         ## AWK State
@@ -29,33 +33,43 @@ body:
     attributes:
       label: Outcome
       description: What should be true when this initiative is done?
+      placeholder: |
+        e.g. A new user reaches their first successful import within 5 minutes of signing up.
     validations:
       required: true
   - type: textarea
     id: context
     attributes:
       label: Context and source docs
-      description: Link the source request, imported plan, durable docs, issues, or constraints that define the outcome.
+      description: What defines this outcome — link the source request, imported plan, durable docs, issues, or constraints.
+      placeholder: |
+        e.g. From the Q3 activation goal; builds on the onboarding discovery in docs/development/discovery/onboarding/.
     validations:
       required: true
   - type: textarea
     id: non_goals
     attributes:
       label: Non-goals
-      description: What should this initiative not try to solve?
+      description: What should this initiative deliberately not try to solve?
+      placeholder: |
+        e.g. Not redesigning the dashboard; not touching billing or pricing.
     validations:
       required: true
   - type: textarea
     id: child_work
     attributes:
       label: Child work and current routing
-      description: List child issues/PRs, or state what first child issue should be created next.
+      description: The child issues/PRs so far — or, if none yet, what the first child issue should be.
+      placeholder: |
+        e.g. First child: a discovery issue to map the onboarding steps. None created yet.
     validations:
       required: false
   - type: textarea
     id: success_and_stop
     attributes:
       label: Done condition and stop points
-      description: How do we know the initiative is complete, blocked, or ready for human decision?
+      description: How you'll know the initiative is complete, blocked, or waiting on a human decision.
+      placeholder: |
+        e.g. Done when activation rate clears 40%. Stop for a human call if it needs a pricing change.
     validations:
       required: true

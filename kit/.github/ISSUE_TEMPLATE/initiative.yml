@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **A larger outcome that several issues and PRs roll up to.** Describe what "done" looks like; the child work gets created underneath as you groom. The **AWK State** block at the top is agent housekeeping — leave it as-is.
+        **A larger outcome that several issues and PRs roll up to.** Describe what "done" looks like; child work gets shaped underneath as the initiative is groomed and broken down. The **AWK State** block at the top is agent housekeeping — leave it as-is.
   - type: textarea
     id: awk_state
     attributes:

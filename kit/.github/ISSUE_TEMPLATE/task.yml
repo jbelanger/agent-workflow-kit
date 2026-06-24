@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Work that's ready to build — one agent, one branch, one PR.** Fill in the sections below so the task is safe to hand off without a back-and-forth. The **AWK State** block at the top is housekeeping your agent keeps current; you can leave it as-is.
+        **Work that's ready to build — one agent, one branch or worktree, one PR.** Fill in the sections below so the task is safe to hand off without a back-and-forth. The **AWK State** block at the top is housekeeping your agent keeps current; you can leave it as-is.
   - type: textarea
     id: awk_state
     attributes:

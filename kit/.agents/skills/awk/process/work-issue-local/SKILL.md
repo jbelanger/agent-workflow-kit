@@ -130,9 +130,10 @@ Trivial disagreement can be resolved by the implementation agent with evidence. 
 touches architecture, contracts, ownership, public surface, storage, accepted docs, debt risk, or
 scope requires human review.
 
-For PR revision work, read the PR `AWK State` field `Revision cycles` before editing. If the PR has
-already had two unresolved agent revision cycles, stop and route to human review instead of applying
-another agent revision pass.
+For PR revision work, read the latest visible `Revision cycles` value from the PR Review State,
+workflow comments, or refreshed workflow cache before editing. If the PR has already had two
+unresolved agent revision cycles, stop and route to human review instead of applying another agent
+revision pass.
 
 Also stop before editing when `Revision cycles` is `1` and this assignment would be the second
 unresolved agent revision pass. Route to human review instead of dispatching the pass that would hit
@@ -162,6 +163,17 @@ When completing a child item, superseding refactor, or replacement PR:
 - If the replacement changes the understanding of the parent, return the parent to grooming or
   breakdown instead of rewriting the original work item.
 
+## PR Handoff
+
+When opening or updating the PR, apply or recommend exactly one `next:*` routing label on the PR and
+mirror that label on the active linked issue while the work remains agent-owned. Use
+`next:review-revision-triage` when the PR touches architecture, ownership, contracts, storage,
+public surface, core domain model, accepted specs or ADRs, or known debt risk. Use
+`next:review-local-changes` only for low-risk implementation or general doc/code PRs.
+
+Record the routing reason in the PR Review State or a visible workflow comment, including whether
+the PR is low-risk or architecture-sensitive and the current `Revision cycles` value.
+
 ## Loop Stop Conditions
 
 After this step, stop and hand off instead of silently choosing another workflow verb when:
@@ -182,7 +194,7 @@ Include:
 - Feedback loop / test seam.
 - Architecture direction and whether it still holds.
 - Review triage, when applicable.
-- AWK State update, including linked PR and revision cycles when applicable.
+- Workflow comment and label update, including linked PR and revision cycles when applicable.
 - Decisions and smells.
 - Naming issues.
 - Deferred items with owner, boundary, and removal condition.

@@ -37,6 +37,8 @@ prepared work as long as they read and write the same durable state:
   state model.
 - GitHub labels are lightweight repo configuration for issue type and review signals. The default
   templates assign those labels after `scripts/setup-github-labels.mjs` creates them.
+- A local workflow cache under `.awk/cache/` may be generated from GitHub when an agent needs a
+  structured read model. The cache is ignored by git, disposable, and never authoritative.
 - Do not use a separate planning tracker as part of the AWK contract. If a repository has another
   human planning surface, AWK agents should still resume from issues, PRs, docs, and labels.
 
@@ -61,26 +63,10 @@ It may recommend issue comments or label changes. It must not silently mutate sc
 artifacts, decide architecture, implement code, push, merge, or close work without explicit human
 instruction.
 
-Every planning reply should make the next state explicit:
-
-```text
-<!-- awk-state:start -->
-## AWK State
-Status:
-Issue Type:
-Next workflow verb:
-Owner:
-Merge Risk:
-Blocked by:
-Linked PR:
-Accepted direction:
-Last agent review:
-Revision cycles:
-<!-- awk-state:end -->
-```
-
-When GitHub labels are available, the active item should also carry exactly one `next:*` label that
-matches `Next workflow verb`.
+Every planning reply should make the next route explicit with a selected item, evidence, next
+workflow verb, blockers, and recommended label/comment changes. When GitHub labels are available,
+the active item should carry exactly one `next:*` label. Extra context belongs in readable issue or
+PR comments, not a duplicated hidden metadata block in the body.
 
 ## Packaging Boundary
 
@@ -92,6 +78,7 @@ The default installed kit includes:
 - GitHub issue and PR templates.
 - `docs/development/` project artifacts, with subfolders created only when an artifact exists.
 - `scripts/validate-workflow.mjs`.
+- `scripts/refresh-workflow-cache.mjs`.
 
 
 ## Consequences

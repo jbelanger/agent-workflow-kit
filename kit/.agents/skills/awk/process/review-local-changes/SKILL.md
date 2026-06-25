@@ -69,7 +69,7 @@ Return:
 ```md
 ## Findings
 
-## AWK State update
+## Workflow comment and label update
 
 ## Architecture concerns
 

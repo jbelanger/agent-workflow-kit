@@ -6,28 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **A small, obvious change that doesn't need its own spec, ADR, or discovery.** Just say what changes, where it's allowed to touch, and how to check it. The **AWK State** block at the top is agent housekeeping — leave it as-is.
-  - type: textarea
-    id: awk_state
-    attributes:
-      label: AWK State
-      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
-      value: |
-        <!-- awk-state:start -->
-        ## AWK State
-        Status: Ready
-        Issue Type: Direct Task
-        Next workflow verb: work-issue-local
-        Owner: Agent
-        Merge Risk: Parallel-safe
-        Blocked by: None
-        Linked PR: None
-        Accepted direction: DIRECT_TASK
-        Last agent review: None
-        Revision cycles: 0
-        <!-- awk-state:end -->
-    validations:
-      required: true
+        **A small, obvious change that doesn't need its own spec, ADR, or discovery.** Just say what changes, where it's allowed to touch, and how to check it. Agents use labels, comments, and the rebuildable workflow cache for routing state.
   - type: textarea
     id: goal
     attributes:

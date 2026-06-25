@@ -39,5 +39,8 @@ state.
   by GitHub issues.
 - Use `.agents/skills/awk/process/continue-work/SKILL.md` when asked to infer the next workflow step
   from GitHub issues, PRs, and repo docs.
+- When modifying installed AWK workflow files, keep the Agent Workflow Kit source package in sync:
+  promote the same change by cherry-pick or PR when possible, or explicitly tell the human that this
+  repo's AWK workflow now differs from the package and should be synced.
 - Agents must not merge.
 <!-- END_AGENT_WORKFLOW_KIT -->

@@ -25,6 +25,8 @@ Use the smallest durable surface that matches the job:
 - GitHub issues: active work items, discussion, human answers, and collaboration state.
 - GitHub PRs: proposed durable docs or code changes and their review gates.
 - GitHub labels: lightweight issue type and review signals.
+- `.awk/cache/state.json`: disposable local workflow snapshot rebuilt from GitHub when agents need
+  structured state.
 - `docs/development/`: accepted durable project truth such as vision briefs, specs, ADRs, spike
   writeups, and planning records.
 - `docs/awk/`: AWK process references and workflow decisions.
@@ -121,7 +123,10 @@ GitHub PR
   -> proposed durable doc or code change plus review gate
 
 GitHub labels
-  -> lightweight issue type and review signals
+  -> lightweight issue type, review signals, and the active next routing label
+
+local workflow cache
+  -> disposable structured snapshot rebuilt from GitHub when an agent needs it
 
 repo docs under docs/development/
   -> accepted durable truth after review
@@ -177,20 +182,32 @@ For doc or code changes, `Status = Review` requires a linked GitHub PR. Local co
 remain `In Progress`; issue-only review is only for decisions or artifact text fully visible in the
 issue thread.
 
+Drafted specs, ADRs, spikes, visual aids, and other durable planning artifacts follow the same
+visibility rule. In a GitHub-first repo, an issue must not point reviewers at an untracked,
+uncommitted, or unpushed artifact path. If the artifact is not already on the default branch, open or
+link an artifact PR before routing to `review-artifact`; otherwise keep the item in progress or
+blocked with "open/link artifact PR" as the next action.
+
 GitHub draft state is not the default workflow holding pen. Open PRs as ready for review when the
 branch is pushed, validation has run, and the PR body records issue linkage and current review state.
 Use draft only when work is knowingly incomplete, validation is missing, or the PR is exposing a WIP
 diff without asking for attention.
 
 A linked PR is not automatically human-ready, whether GitHub marks it draft or ready for review. If
-an implementation or general doc/code PR or issue does not record an agent `review-local-changes`
-result, keep the work agent-owned and route the next step to local review. If a linked PR exists to
-review a durable vision brief, spec, ADR, or spike, route to `review-artifact`; that review is the
-agent review pass for artifact acceptance or revision routing.
-After the agent fixes or classifies findings and records the result, ordinary cleanup can continue in
-the agent loop. The next human approval handoff is merge approval. If review finds architecture
-ambiguity, ownership drift, public-surface risk, storage risk, or an unclear long-term model, route
-to human architecture judgment before merge.
+an implementation or general doc/code PR or issue does not record an agent review result, keep the
+work agent-owned and classify the PR before choosing the review verb: architecture-sensitive PRs
+route to `review-revision-triage`; low-risk PRs route to `review-local-changes`. If a linked PR
+exists to review a durable vision brief, spec, ADR, or spike, route to `review-artifact`; that review
+is the agent review pass for artifact acceptance or revision routing.
+During artifact review, agents may fix state or provenance hygiene such as stale links, labels, or
+workflow comments. Artifact-content defects route back to `draft-artifact` unless the human
+explicitly asks the same agent to make that revision now; the artifact remains Draft/Proposed until
+accepted.
+Product, design, architecture, ownership, storage, public-surface, and validation forks remain human
+decisions. After the agent fixes or classifies findings and records the result, ordinary cleanup can
+continue in the agent loop. The next human approval handoff is merge approval. If review finds
+architecture ambiguity, ownership drift, public-surface risk, storage risk, or an unclear long-term
+model, route to human architecture judgment before merge.
 
 PR bodies should use `Closes #issue` only when the PR fully satisfies the issue acceptance criteria
 and needs no post-merge reconciliation. Use `Refs #issue` for initiatives, parent work, partial
@@ -212,9 +229,8 @@ cannot use GitHub.
 New repositories start with `init-awk`. Initialization must create the initial GitHub issue surface
 before ordinary workflow execution: a parent initiative when there is a larger outcome, child issues
 for the first real slices or unresolved decisions, links to source docs or imported plans, issue type
-labels, a canonical `AWK State` block, and one `next:*` routing label for each issue. Do not start
-implementation from an imported plan, README, or local Markdown record until that state exists in
-GitHub.
+labels, and one `next:*` routing label for each issue. Do not start implementation from an imported
+plan, README, or local Markdown record until that state exists in GitHub.
 
 During initialization, create the parent issue before child issues and update links after GitHub
 assigns issue numbers. A detailed plan may be accepted enough for artifact review or breakdown
@@ -253,16 +269,22 @@ Fast lane means fewer artifacts, not hidden state. If GitHub is available, activ
 in issues before implementation. A chat-only instruction can authorize the current turn, but durable
 state must be updated before downstream agents rely on it.
 
-## AWK State And Routing Labels
+## Routing Labels And Workflow Cache
 
-Issues and PRs carry one `AWK State` block delimited by `<!-- awk-state:start -->` and
-`<!-- awk-state:end -->`. The block is the human-readable source for current status, issue type,
-next workflow verb, owner, merge risk, blocker, linked PR, accepted direction, last agent review,
-and revision cycles.
+Issues and PRs do not need hidden workflow metadata blocks in their bodies. Bodies should stay
+human-readable: goals, source docs, readiness evidence, acceptance criteria, review context, and
+links.
 
-When GitHub labels are available, each active item should have exactly one `next:*` label matching
-the block's `Next workflow verb`. Use labels for routing queries and the state block for context.
-Do not create a second workflow model in external tracker fields.
+When GitHub labels are available, each active item should have exactly one `next:*` label. Use labels
+for routing queries. Use ordinary comments for transition reasons, blockers, accepted direction,
+review outcomes, and handoff notes that are not already clear from the issue or PR body.
+
+Agents may rebuild `.awk/cache/state.json` with `node scripts/refresh-workflow-cache.mjs` when they
+need a structured local view. The cache is derived from GitHub issues, PRs, labels, comments, and
+native merge state; it is ignored by git and can always be deleted and rebuilt. Do not hand-edit the
+cache or treat it as durable truth.
+
+Do not create a second durable workflow model in external tracker fields or local cache files.
 
 The direct-task fast lane uses `.github/ISSUE_TEMPLATE/direct-task.yml`. It is for tiny, clear work
 with a visible `DIRECT_TASK` rationale, one-agent scope, acceptance criteria, validation, merge risk,
@@ -613,15 +635,15 @@ should return to grooming or breakdown.
 
 There are two review paths.
 
-Use `review-local-changes` for lightweight pre-PR local diff review. It checks blockers,
-architecture concerns, feedback-loop quality, test gaps, naming issues, scope drift, suggested
-fixes, and taste-only notes.
-When an implementation or general doc/code PR already exists, this same review is still the next
-agent-owned step unless the PR or issue records that the agent review pass is complete. Artifact PRs
-whose selected verb is `review-artifact` do not need a separate `review-local-changes` pass before
-artifact acceptance; `review-artifact` owns that agent review.
-If the change touches architecture-sensitive surfaces or reveals a smell, switch to
-`review-revision-triage`.
+Use `review-local-changes` for lightweight pre-PR local diff review and low-risk PR review. It
+checks blockers, architecture concerns, feedback-loop quality, test gaps, naming issues, scope
+drift, suggested fixes, and taste-only notes.
+When an implementation or general doc/code PR already exists, classify it before choosing the
+agent-owned review step. Low-risk PRs without a recorded agent review route to
+`review-local-changes`. PRs that touch architecture-sensitive surfaces or carry known smell/debt
+risk route directly to `review-revision-triage`. Artifact PRs whose selected verb is
+`review-artifact` do not need a separate `review-local-changes` pass before artifact acceptance;
+`review-artifact` owns that agent review.
 
 Use `review-revision-triage` for risk-triggered PR review and non-trivial revision routing. Trigger
 it when the PR touches architecture, ownership, contracts, storage, public surface, core domain
@@ -645,13 +667,15 @@ is agent-pickable only when both agents agree no human-review-worthy smell exist
 Review details stay on the PR. Use `revision-needed` and `needs-human-review` as labels when
 available, or as issue comments when labels are not configured.
 
-Use `Revision cycles` in the PR `AWK State` block as a hard loop counter. Increment it when the same
-PR moves from review back to implementation for accepted revision work. After two unresolved agent
-revision cycles, route to human review with `needs-human-review` and `Next workflow verb:
-human-decision` instead of sending the PR through another agent revision pass.
+Use `Revision cycles` as a hard loop counter. Record it in the PR Review State section or a visible
+workflow comment so the cache can extract the latest value. Increment it when the same PR moves from
+review back to implementation for accepted revision work. After two unresolved agent revision cycles,
+route to human review with `needs-human-review` and `next:human-decision` instead of sending the PR
+through another agent revision pass.
 If a PR is at `Revision cycles: 1` and accepted blocking revision work remains, stop before
 dispatching the implementation pass that would become the second unresolved cycle. Keep
-`Revision cycles: 1`, route to `human-decision`, and record the accepted blocker.
+`Revision cycles: 1`, route to `human-decision`, and record the accepted blocker in a visible PR
+comment.
 
 ### 10. Refactor And Superseding PRs
 
@@ -694,10 +718,16 @@ Use squash merge by default so `main` keeps a readable history.
 
 ## Queue State
 
-Keep queue state in issue text, the canonical `AWK State` block, `next:*` labels, comments, and
-linked PRs. Do not add external tracker fields as a second workflow model. Blocker state belongs in
-the state block and explanatory comments. Revision state belongs on the PR state block and review
-labels.
+Keep queue state in issue text, `next:*` labels, review labels, comments, linked PRs, and native
+GitHub PR state. Do not add external tracker fields as a second workflow model. Blocker state
+belongs in explanatory comments or issue/PR prose. Revision state belongs in the PR Review State
+section or visible review comments plus review labels. The local cache is only a regenerated view of
+that GitHub state.
+
+When a worker opens or updates a PR, the active PR should carry exactly one `next:*` routing label.
+Mirror that label on the active linked issue while the work remains agent-owned. If the issue and PR
+would need different labels, explain why in a visible workflow comment instead of leaving the
+mismatch implicit.
 
 ## Loop Stop Conditions
 
@@ -775,3 +805,8 @@ Agents should include a brief `Process feedback` note in replies, issue comments
 when they encounter confusing instructions, missing fields, excess ceremony, unsafe autonomy,
 merge-safety gaps, or ideas that would make the workflow easier to use. Use `improve-workflow` to
 triage those notes before changing the process.
+
+When an agent changes installed AWK workflow files in a target repository, it must keep the Agent
+Workflow Kit source package in sync. Promote the same change by cherry-pick or PR when the source
+package is available, or explicitly tell the human that the target repo now differs from the package
+and needs a source-package sync.

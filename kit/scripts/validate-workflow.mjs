@@ -32,6 +32,7 @@ const requiredPortableFiles = [
   'scripts/setup-github-labels.mjs',
   'scripts/validate-workflow.mjs',
   'scripts/lint-workflow-state.mjs',
+  'scripts/refresh-workflow-cache.mjs',
 ];
 
 const requiredSkills = [
@@ -106,6 +107,7 @@ const sourceOnlyLegacyPayloadPaths = [
   'scripts/validate-workflow.mjs',
   'scripts/workflow-labels.mjs',
   'scripts/lint-workflow-state.mjs',
+  'scripts/refresh-workflow-cache.mjs',
 ];
 
 const issueTemplateLabels = new Map([
@@ -116,32 +118,6 @@ const issueTemplateLabels = new Map([
   ['.github/ISSUE_TEMPLATE/spec.yml', 'spec'],
   ['.github/ISSUE_TEMPLATE/task.yml', 'task'],
 ]);
-
-const awkStateFiles = [
-  '.github/ISSUE_TEMPLATE/adr.yml',
-  '.github/ISSUE_TEMPLATE/discovery.yml',
-  '.github/ISSUE_TEMPLATE/direct-task.yml',
-  '.github/ISSUE_TEMPLATE/initiative.yml',
-  '.github/ISSUE_TEMPLATE/spec.yml',
-  '.github/ISSUE_TEMPLATE/task.yml',
-  '.github/PULL_REQUEST_TEMPLATE.md',
-];
-
-const awkStateSnippets = [
-  '<!-- awk-state:start -->',
-  '## AWK State',
-  'Status:',
-  'Issue Type:',
-  'Next workflow verb:',
-  'Owner:',
-  'Merge Risk:',
-  'Blocked by:',
-  'Linked PR:',
-  'Accepted direction:',
-  'Last agent review:',
-  'Revision cycles:',
-  '<!-- awk-state:end -->',
-];
 
 const loopStopSnippets = [
   '## Loop Stop Conditions',
@@ -254,14 +230,6 @@ function hasIssueTemplateLabel(text, label) {
   return labelsLine.includes(`"${label}"`) || labelsLine.includes(`'${label}'`);
 }
 
-function validateAwkStateBlock(text, path, errors) {
-  for (const snippet of awkStateSnippets) {
-    if (!text.includes(snippet)) {
-      errors.push(`${path} is missing AWK State snippet: ${snippet}`);
-    }
-  }
-}
-
 function validate(cwd) {
   const errors = [];
 
@@ -306,17 +274,20 @@ function validate(cwd) {
     }
   }
 
+  const agentsPath = sourcePath(cwd, 'AGENTS.md');
+  if (existsSync(join(cwd, agentsPath))) {
+    const agents = read(cwd, agentsPath);
+    for (const snippet of ['source package in sync', 'cherry-pick or PR', 'differs from the package']) {
+      if (!agents.includes(snippet)) {
+        errors.push(`${agentsPath} is missing source-package sync snippet: ${snippet}`);
+      }
+    }
+  }
+
   for (const file of walkFiles(join(cwd, sourcePath(cwd, '.agents/skills/awk')))) {
     const relativePath = file.slice(cwd.length + 1);
     if (relativePath.endsWith('/SKILL.md')) {
       validateSkill(cwd, relativePath, errors);
-    }
-  }
-
-  for (const path of awkStateFiles) {
-    const actualPath = sourcePath(cwd, path);
-    if (existsSync(join(cwd, actualPath))) {
-      validateAwkStateBlock(read(cwd, actualPath), actualPath, errors);
     }
   }
 
@@ -355,7 +326,7 @@ function validate(cwd) {
   const continueSkillPath = sourcePath(cwd, '.agents/skills/awk/process/continue-work/SKILL.md');
   if (existsSync(join(cwd, continueSkillPath))) {
     const continueSkill = read(cwd, continueSkillPath);
-    for (const snippet of ['GitHub issues', 'AWK State', 'next:*', 'Next workflow verb', 'Revision cycles', 'work-issue-local', 'visible grooming result', 'direct-task rationale', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue', 'Runtime worker loops', 'compact re-brief']) {
+    for (const snippet of ['GitHub issues', 'workflow cache', 'next:*', 'Derived Workflow State', 'Revision cycles', 'work-issue-local', 'visible grooming result', 'direct-task rationale', 'linked PR', 'Local commits without a PR', 'ready for review', 'PR without recorded agent review', 'architecture-sensitive', 'human architecture', 'merge approval', 'Closes #issue', 'Refs #issue', 'Runtime worker loops', 'compact re-brief']) {
       if (!continueSkill.includes(snippet)) {
         errors.push(`continue-work skill is missing GitHub routing snippet: ${snippet}`);
       }
@@ -385,6 +356,26 @@ function validate(cwd) {
     ]) {
       if (!prepareSkill.includes(snippet)) {
         errors.push(`prepare-implementation skill is missing readiness snippet: ${snippet}`);
+      }
+    }
+  }
+
+  const maintainSkillPath = sourcePath(cwd, '.agents/skills/awk/process/maintain-awk/SKILL.md');
+  if (existsSync(join(cwd, maintainSkillPath))) {
+    const maintainSkill = read(cwd, maintainSkillPath);
+    for (const snippet of ['source package in sync', 'cherry-pick or PR', 'differs from the package']) {
+      if (!maintainSkill.includes(snippet)) {
+        errors.push(`maintain-awk skill is missing source-package sync snippet: ${snippet}`);
+      }
+    }
+  }
+
+  const improveWorkflowSkillPath = sourcePath(cwd, '.agents/skills/awk/process/improve-workflow/SKILL.md');
+  if (existsSync(join(cwd, improveWorkflowSkillPath))) {
+    const improveWorkflowSkill = read(cwd, improveWorkflowSkillPath);
+    for (const snippet of ['source package in sync', 'cherry-pick or PR', 'differs from the package']) {
+      if (!improveWorkflowSkill.includes(snippet)) {
+        errors.push(`improve-workflow skill is missing source-package sync snippet: ${snippet}`);
       }
     }
   }
@@ -431,10 +422,13 @@ function validate(cwd) {
       'Initial Issue Bootstrap',
       'one parent initiative issue',
       'child task, spec, ADR, discovery, or spike issues',
-      'Next workflow verb',
+      '`next:*` label',
       'do not implement from the plan directly',
       'Create the parent issue first',
       'Accepted enough for artifact review or breakdown is not accepted enough for implementation',
+      'source package in sync',
+      'cherry-pick or PR',
+      'differs from the package',
     ]) {
       if (!installDoc.includes(snippet)) {
         errors.push(`installing-agent-workflow-kit doc is missing init-bootstrap snippet: ${snippet}`);
@@ -445,7 +439,7 @@ function validate(cwd) {
   const githubFlowPath = sourcePath(cwd, 'docs/awk/workflow/github-first-flow.md');
   if (existsSync(join(cwd, githubFlowPath))) {
     const githubFlow = read(cwd, githubFlowPath);
-    for (const snippet of ['Review Handoff Rule', 'Issue Linkage Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff', 'visible grooming result', 'Open PRs as ready for review', 'completed agent review pass', 'draft/ready state', 'architecture ambiguity', 'merge approval', 'Closes #issue', 'Refs #issue']) {
+    for (const snippet of ['Review Handoff Rule', 'Issue Linkage Rule', 'Status = Review', 'linked GitHub PR', 'commits without a PR', 'visible acceptance handoff', 'visible grooming result', 'Open PRs as ready for review', 'completed agent review pass', 'draft/ready state', 'architecture-sensitive PRs', 'architecture ambiguity', 'merge approval', 'Closes #issue', 'Refs #issue']) {
       if (!githubFlow.includes(snippet)) {
         errors.push(`GitHub-first flow is missing review handoff snippet: ${snippet}`);
       }
@@ -470,12 +464,17 @@ function validate(cwd) {
         errors.push(`AI dev workflow is missing lazy artifact folder snippet: ${snippet}`);
       }
     }
+    for (const snippet of ['source package in sync', 'cherry-pick or PR', 'differs from the package']) {
+      if (!aiWorkflow.includes(snippet)) {
+        errors.push(`AI dev workflow is missing source-package sync snippet: ${snippet}`);
+      }
+    }
   }
 
   const prTemplatePath = sourcePath(cwd, '.github/PULL_REQUEST_TEMPLATE.md');
   if (existsSync(join(cwd, prTemplatePath))) {
     const prTemplate = read(cwd, prTemplatePath);
-    for (const snippet of ['AWK State', 'Issue Linkage', 'Closes #', 'Refs #', 'Reason:', 'Readiness', 'Revision cycles', 'Loop Stop / Handoff']) {
+    for (const snippet of ['Workflow routing label', 'Issue Linkage', 'Closes #', 'Refs #', 'Reason:', 'Readiness', 'Revision cycles', 'Review route reason', 'exactly one next:* label', 'Loop Stop / Handoff']) {
       if (!prTemplate.includes(snippet)) {
         errors.push(`pull request template is missing issue-linkage snippet: ${snippet}`);
       }

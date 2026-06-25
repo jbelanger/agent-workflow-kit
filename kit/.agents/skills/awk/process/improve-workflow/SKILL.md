@@ -39,6 +39,10 @@ Classify each item:
 - Preserve the audit trail. Do not rewrite original issues to hide process changes.
 - If the process issue created real risk for a PR or implementation task, state how to recover that
   work safely.
+- If you modify installed AWK workflow files in a target repository, keep the Agent Workflow Kit
+  source package in sync. Promote the same change by cherry-pick or PR when the source package is
+  available, or explicitly tell the human that the target repo now differs from the package and
+  needs a source-package sync.
 
 ## Loop Stop Conditions
 
@@ -68,7 +72,7 @@ Needs evidence:
 
 Human decision needed:
 
-AWK State/template impact:
+Workflow state/template impact:
 
 ## Proposed changes
 

@@ -31,41 +31,42 @@ Human leaves the keyboard
 
 | Surface | Owns | Does not own |
 | --- | --- | --- |
-| GitHub Issue | Work item, discussion, human answers, visible grooming result, process feedback, and source links. | Accepted durable specs or architecture truth by itself. |
-| GitHub PR | Proposed repo doc or code change, review discussion, validation summary, and issue linkage. | Autonomous merge or hidden acceptance. |
+| GitHub Issue | Work item, discussion, human answers, visible grooming result, process feedback, source links, and routing labels. | Accepted durable specs or architecture truth by itself. |
+| GitHub PR | Proposed repo doc or code change, review discussion, validation summary, issue linkage, native merge state, and routing labels. | Autonomous merge or hidden acceptance. |
 | GitHub labels | Lightweight issue type, review signals, and the active `next:*` routing label. | Acceptance evidence or rich context by themselves. |
 | `docs/development/` | Accepted durable truth after review: vision, specs, ADRs, spikes, workflow docs, and source evidence. | Raw scratch planning. |
 | `.agents/skills/awk/` | Workflow procedure. | Project-specific accepted direction. |
+| `.awk/cache/state.json` | Rebuildable local snapshot of GitHub issues, PRs, labels, comments, and derived routing facts for agents. | Durable truth, human-facing state, or anything that must survive regeneration. |
 | Runtime worker loop | Active execution binding for one Ready issue. | Durable queue state, accepted direction, review evidence, or issue/PR replacement. |
 
-## AWK State Block
+## Routing Labels And Cache
 
-Every issue and PR should carry one canonical state block:
+Each active issue or PR should carry exactly one `next:*` label. That label is the machine-readable
+routing signal. Issue type labels such as `spec`, `task`, `adr`, and review labels such as
+`revision-needed` or `needs-human-review` provide additional routing signals.
 
-```md
-<!-- awk-state:start -->
-## AWK State
-Status:
-Issue Type:
-Next workflow verb:
-Owner:
-Merge Risk:
-Blocked by:
-Linked PR:
-Accepted direction:
-Last agent review:
-Revision cycles:
-<!-- awk-state:end -->
+When a PR is the active work surface, it should carry its own `next:*` label. Mirror that route on
+the linked active issue while the work remains agent-owned; if the issue and PR intentionally differ,
+record the reason in a visible workflow comment.
+
+AWK does not read hidden or constantly edited body metadata for routing. Bodies should stay readable
+and describe the work. Workflow transitions should be recorded as ordinary issue or PR comments when
+extra context is needed, and labels should be updated for routing.
+
+Agents may rebuild a local cache when structured state helps:
+
+```bash
+node scripts/refresh-workflow-cache.mjs --repo owner/name
 ```
 
-Use this block for human-readable state and rich context. Use exactly one `next:*` label for the
-machine-readable routing signal when labels are available. When a skill changes routing, it should
-replace this block or recommend the exact replacement, then add the new `next:*` label and remove
-stale `next:*` labels.
+The generated `.awk/cache/state.json` is ignored by git and disposable. It summarizes GitHub-native
+state plus derived facts such as next routing labels, type labels, review labels, linked PR/issue
+numbers, merge state, and recent workflow comments. If it is stale, rebuild it; do not patch it by
+hand.
 
-`Status`, `Blocked by`, `Accepted direction`, `Linked PR`, `Last agent review`, and
-`Revision cycles` belong in the block because they carry explanation. Do not spread those fields
-across competing comments unless the comment contains a replacement block.
+When a skill changes routing, it should recommend or apply label changes and, when useful, add a
+short workflow comment with the reason, blocker, accepted direction, or handoff. Rich context belongs
+in visible prose, not in a duplicated metadata block.
 
 ## Review Handoff Rule
 
@@ -79,9 +80,11 @@ Use draft only when work is knowingly incomplete, validation is missing, or the 
 diff without asking for attention.
 
 Do not treat PR draft/ready state as proof that the completed agent review pass exists. Until the
-issue or PR records that pass, keep implementation and general doc/code work agent-owned, then route
-to `review-local-changes`. Route durable artifact PRs to `review-artifact`; that skill is the agent
-review pass for artifact acceptance or revision routing.
+issue or PR records that pass, keep implementation and general doc/code work agent-owned and
+classify the PR before choosing the review verb. Route low-risk PRs to `review-local-changes`; route
+architecture-sensitive PRs, including PRs touching contracts, storage, public surface, core domain
+model, accepted specs, or ADRs, to `review-revision-triage`. Route durable artifact PRs to
+`review-artifact`; that skill is the agent review pass for artifact acceptance or revision routing.
 If review finds architecture ambiguity, ownership drift, public-surface risk, storage risk, or an
 unclear long-term model, route to human architecture judgment before merge approval.
 
@@ -89,13 +92,15 @@ unclear long-term model, route to human architecture judgment before merge appro
 process, or chore changes, clean validation plus explicit human approval is enough to move to the
 human-owned merge step.
 
-Use `Revision cycles` as a hard stop for repeated agent review loops. Increment it when the same PR
-is routed from agent review back to implementation. After two unresolved agent revision cycles, add
-or recommend `needs-human-review`, set `Next workflow verb: human-decision`, and stop the agent loop
-until the human decision is recorded.
+Use `Revision cycles` as a hard stop for repeated agent review loops. Record the count in the PR
+Review State section or a visible workflow comment, and let the cache extract the latest value.
+Increment it when the same PR is routed from agent review back to implementation. After two
+unresolved agent revision cycles, add or recommend `needs-human-review`, set or recommend the
+`next:human-decision` label, and stop the agent loop until the human decision is recorded.
 When a PR is already at `Revision cycles: 1` and accepted blocking revision work remains, stop
 before dispatching the implementation pass that would become the second unresolved cycle. Keep
-`Revision cycles: 1`, route to `human-decision`, and record the accepted blocker.
+`Revision cycles: 1`, route to `human-decision`, and record the accepted blocker in a visible
+comment.
 
 ## Issue Linkage Rule
 

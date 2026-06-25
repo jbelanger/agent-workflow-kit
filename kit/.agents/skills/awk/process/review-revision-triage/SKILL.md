@@ -79,16 +79,17 @@ and explain the options, recommendation, and reasoning on the PR.
 
 ## Revision Cycle Guard
 
-Use the PR `AWK State` field `Revision cycles` as a hard loop counter. Increment it when an agent
-routes the same PR from review back to implementation for accepted revision work.
+Use the latest visible PR `Revision cycles` value as a hard loop counter. Read it from the PR Review
+State section, workflow comments, or refreshed workflow cache. Increment it when an agent routes the
+same PR from review back to implementation for accepted revision work.
 
 Before routing accepted revision work back to implementation, check whether that dispatch would
 become the second unresolved agent revision cycle. If `Revision cycles` is already `1`, stop before
-dispatch: set `Next workflow verb: human-decision`, add or recommend `needs-human-review`, keep
-`Revision cycles: 1`, and explain the accepted blocker.
+dispatch: set or recommend `next:human-decision`, add or recommend `needs-human-review`, keep
+`Revision cycles: 1`, and explain the accepted blocker in a visible PR comment.
 
 After two unresolved agent revision cycles on the same PR, stop the agent loop. Add or recommend
-`needs-human-review`, set `Next workflow verb: human-decision`, and explain whether the blocker is
+`needs-human-review`, set or recommend `next:human-decision`, and explain whether the blocker is
 architecture, product direction, scope, validation, or conflicting review feedback. Do not route the
 same PR back to `work-issue-local` until the human decision is recorded.
 
@@ -147,7 +148,7 @@ Revision routing:
 - needs-human-review:
 - blocking before merge:
 - follow-up issue needed:
-- AWK State update:
+- Workflow comment and label update:
 - Revision cycles:
 
 Proposed fix:

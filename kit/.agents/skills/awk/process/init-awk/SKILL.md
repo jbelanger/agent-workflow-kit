@@ -62,8 +62,9 @@ that source into GitHub state before any downstream AWK skill runs:
 - Link every child back to the parent issue.
 - Link every issue back to source docs, imported plans, prompts, or local files that define the work.
 - Label each issue with the matching AWK issue type label.
-- Record the canonical `AWK State` block in the issue body or a setup comment.
-- Add exactly one `next:*` label that mirrors `Next workflow verb` when labels are available.
+- Add exactly one `next:*` label for the next workflow verb when labels are available.
+- Use readable issue prose or setup comments for non-obvious blockers, accepted direction, handoff
+  notes, or linked PRs.
 - Record `Next workflow verb` for each issue: usually `groom-issue`, `review-artifact`,
   `breakdown-issue`, `prepare-implementation`, or `work-issue-local` during initialization,
   depending on whether the issue already has a complete Ready task contract and implementation
@@ -90,19 +91,12 @@ the boundaries.
 
 ## Initial child issues
 
-<!-- awk-state:start -->
-## AWK State
-Status:
-Issue Type: Initiative
-Next workflow verb:
-Owner:
-Merge Risk:
-Blocked by:
-Linked PR:
-Accepted direction:
-Last agent review:
-Revision cycles: 0
-<!-- awk-state:end -->
+## Workflow routing
+
+- Issue type label:
+- Next workflow label:
+- Blocked by:
+- Accepted direction:
 ```
 
 ### Child Issue Minimum Shape
@@ -118,19 +112,12 @@ Revision cycles: 0
 
 - Parent:
 
-<!-- awk-state:start -->
-## AWK State
-Status:
-Issue Type:
-Next workflow verb:
-Owner:
-Merge Risk:
-Blocked by:
-Linked PR:
-Accepted direction:
-Last agent review:
-Revision cycles: 0
-<!-- awk-state:end -->
+## Workflow routing
+
+- Issue type label:
+- Next workflow label:
+- Blocked by:
+- Accepted direction:
 ```
 
 ### Detailed Plan Import Rule
@@ -188,7 +175,7 @@ Root README status:
 Labels status:
 Initial issues:
 Issue bootstrap complete:
-AWK State updates:
+Workflow comments and label updates:
 Blocked:
 
 ## Next workflow step

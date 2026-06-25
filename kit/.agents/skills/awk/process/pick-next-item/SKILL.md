@@ -43,7 +43,7 @@ Return:
 - Why this one:
 - Expected workflow:
 - Risk:
-- Recommended AWK State or `next:*` label update:
+- Recommended workflow comment or `next:*` label update:
 - First action:
 
 ## Not chosen

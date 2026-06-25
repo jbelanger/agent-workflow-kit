@@ -126,22 +126,10 @@ Return:
 ## Proposed child work items
 
 ### Work item: ...
-<!-- awk-state:start -->
-## AWK State
-Status:
-Issue Type: Task
-Next workflow verb:
-Owner:
-Merge Risk:
-Blocked by:
-Linked PR:
-Accepted direction:
-Last agent review:
-Revision cycles: 0
-<!-- awk-state:end -->
-
 Work item type:
 Status:
+Issue type label:
+Next workflow label:
 Parent:
 Goal:
 Non-goals:

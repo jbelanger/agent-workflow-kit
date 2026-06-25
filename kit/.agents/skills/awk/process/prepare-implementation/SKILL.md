@@ -50,7 +50,7 @@ Produce a compact prompt or issue comment. Keep it as a pointer to durable state
 of the workflow rules:
 
 ```md
-# AWK State update
+# Workflow comment and label update
 
 # Runtime worker loop
 

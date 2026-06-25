@@ -47,12 +47,14 @@ function proveGithubFirst(root) {
     '# Project Agents\n\nPreserve this project-owned guidance.\n'
   );
   writeFileSync(join(target, 'README.md'), '# Project README\n');
+  writeFileSync(join(target, '.gitignore'), '# Project ignores\nnode_modules/\n');
 
   run(process.execPath, ['scripts/install-workflow-kit.mjs', '--target', target]);
   run(process.execPath, [join(target, 'scripts/validate-workflow.mjs'), '--cwd', target]);
 
   const agents = readFileSync(join(target, 'AGENTS.md'), 'utf8');
   const readme = readFileSync(join(target, 'README.md'), 'utf8');
+  const gitignore = readFileSync(join(target, '.gitignore'), 'utf8');
   assert(
     agents.includes('Preserve this project-owned guidance.'),
     'Install did not preserve existing project AGENTS.md guidance.'
@@ -63,6 +65,14 @@ function proveGithubFirst(root) {
     'Install did not merge the marked AWK block into AGENTS.md.'
   );
   assert(readme === '# Project README\n', 'Install overwrote the project-owned README.md.');
+  assert(
+    gitignore.includes('# Project ignores\nnode_modules/\n'),
+    'Install did not preserve existing project .gitignore content.'
+  );
+  assert(
+    gitignore.includes('.awk/cache/'),
+    'Install did not add .awk/cache/ to .gitignore.'
+  );
   assert(
     existsSync(join(target, '.agents/skills/awk/process/init-awk/SKILL.md')),
     'Install did not create namespaced AWK skills.'
@@ -81,7 +91,8 @@ function proveGithubFirst(root) {
   assert(
     existsSync(join(target, '.github/ISSUE_TEMPLATE/task.yml')) &&
       existsSync(join(target, 'scripts/setup-github-labels.mjs')) &&
-      existsSync(join(target, 'scripts/validate-workflow.mjs')),
+      existsSync(join(target, 'scripts/validate-workflow.mjs')) &&
+      existsSync(join(target, 'scripts/refresh-workflow-cache.mjs')),
     'Install did not copy target-root templates and scripts from kit/.'
   );
   for (const lazyPath of [

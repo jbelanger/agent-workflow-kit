@@ -50,7 +50,7 @@ Return:
 - Work items needing grooming.
 - Work items needing breakdown.
 - Work items needing human decision.
-- Recommended AWK State or `next:*` label updates.
+- Recommended workflow comments or `next:*` label updates.
 - Cleanup candidates.
 
 ## Rules

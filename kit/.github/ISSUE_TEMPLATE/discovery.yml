@@ -6,28 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Still figuring out the direction?** Use this to work through an open product, UX, or technical question before committing to a spec or ADR. The **AWK State** block at the top is agent housekeeping — leave it as-is.
-  - type: textarea
-    id: awk_state
-    attributes:
-      label: AWK State
-      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
-      value: |
-        <!-- awk-state:start -->
-        ## AWK State
-        Status: Discovery
-        Issue Type: Discovery
-        Next workflow verb: discover-vision
-        Owner: Agent
-        Merge Risk: Unknown
-        Blocked by: None
-        Linked PR: None
-        Accepted direction: None
-        Last agent review: None
-        Revision cycles: 0
-        <!-- awk-state:end -->
-    validations:
-      required: true
+        **Still figuring out the direction?** Use this to work through an open product, UX, or technical question before committing to a spec or ADR. Agents use labels, comments, and the rebuildable workflow cache for routing state.
   - type: textarea
     id: source
     attributes:

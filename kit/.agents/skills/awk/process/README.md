@@ -15,10 +15,10 @@ part of the process loop.
 
 ## Shared State Rules
 
-Every process skill that changes workflow state should return the exact replacement `AWK State`
-block or a precise issue/PR comment that contains it. When GitHub labels are available, mirror
-`Next workflow verb` with exactly one `next:*` label and remove stale `next:*` labels from that
-item.
+Every process skill that changes workflow state should return the precise issue/PR comment text
+and label changes needed to make the handoff visible. When GitHub labels are available, keep exactly
+one `next:*` label on the item and remove stale `next:*` labels. The local workflow cache is
+rebuilt from GitHub when needed; do not ask humans to maintain hidden body metadata blocks.
 
 ## Shared Loop Stop Conditions
 

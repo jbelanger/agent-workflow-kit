@@ -18,8 +18,9 @@ for interactive discovery, durable planning work, or `breakdown-issue`.
 - Prefer updating the current work item over creating a parallel planning item.
 - Durable project specs, ADRs, spikes, and discovery bundles belong under `docs/development/`.
 - AWK workflow references and process decisions belong under `docs/awk/`.
-- Repo-local work items under `docs/development/work-items/` are the portable default planning
-  record when no external tracker is required.
+- GitHub issues are the default planning and handoff record. Repo-local work items under
+  `docs/development/work-items/` are a portability fallback only when GitHub is unavailable or the
+  human explicitly chose a local-only dry run.
 - GitHub issues and PRs may mirror current planning, discussion, review, and audit trail.
 - Recommend issue text, comments, and labels. Do not depend on external board transitions.
 - Ask one clarification question at a time only for ordinary clarification that can resolve grooming
@@ -223,7 +224,7 @@ Return:
 - Human decision needed: `YES` or `NO`, with reason.
 - Clarification question, or `None`.
 - Recommended work item fields, labels, or status.
-- Recommended AWK State block and `next:*` label updates.
+- Recommended workflow comment and `next:*` label updates.
 - Next action.
 
 ## Rules

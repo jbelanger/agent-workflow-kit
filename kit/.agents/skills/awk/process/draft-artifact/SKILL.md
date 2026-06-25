@@ -20,6 +20,10 @@ production code. Do not mark a proposal accepted unless the human explicitly acc
   `docs/development/` subfolders as placeholders.
 - Chat notes, GitHub issues, and PR comments are source evidence until promoted into a repo artifact.
 - Preserve provenance: link or name source artifacts, run IDs, work items, issues, and source docs.
+- When GitHub is available, a new or changed durable artifact is not ready for `review-artifact`
+  until the artifact files are visible through GitHub: either already merged on the default branch
+  or proposed in a linked PR. Do not update an issue to `next:review-artifact` while the referenced
+  artifact exists only as an untracked, uncommitted, or unpushed local file.
 - Ask one clarification question when the artifact would otherwise invent product behavior,
   architecture direction, acceptance criteria, ownership, storage, or public surface.
 - If a source grooming artifact says `Grooming status: NEEDS_INTERVIEW`, `NEEDS_RESEARCH`, or
@@ -110,6 +114,10 @@ Rules:
 - For platform or architecture-sensitive specs, include the credible options and tradeoffs. If the
   source only contains one agent-invented recommendation without evidence, stop and route back to
   grooming, ADR, or spike.
+- If the spec is drafted in a GitHub-first repo, expose the draft by opening or updating an artifact
+  PR before marking the issue ready for `review-artifact`. The linked issue should record the PR in
+  visible issue prose or a workflow comment. If you cannot publish the branch or PR, leave the issue
+  in progress or blocked and make "open/link artifact PR" the next action.
 
 ## ADR Draft Rules
 
@@ -180,6 +188,7 @@ After this step, stop and hand off instead of silently choosing another workflow
 - PR is waiting for human merge;
 - validation cannot run;
 - architecture fork detected;
+- GitHub is available but the drafted artifact is local-only or has no linked PR;
 - next workflow verb changes.
 
 ## Output
@@ -191,7 +200,7 @@ Return:
 Type:
 Path:
 State/status:
-AWK State update:
+Workflow comment and label update:
 
 ## Source provenance
 

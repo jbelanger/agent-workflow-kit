@@ -213,7 +213,7 @@ Return:
 ## Discovery route
 Stage:
 Status: READY_FOR_VISION | NEEDS_INTERVIEW | NEEDS_RESEARCH | NEEDS_DECISION | READY_FOR_SPEC | DIRECT_TASK | DROP | DEFER
-AWK State update:
+Workflow comment and label update:
 Selected lenses:
 Skipped lenses:
 

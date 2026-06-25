@@ -1,22 +1,9 @@
 <!--
   If an agent prepared this PR, most sections may already be filled in. As the author,
-  focus on Summary, Issue Linkage, and the Validation checkboxes. The AWK State block
-  just below is housekeeping your agent keeps current — you can leave it as-is.
+  focus on Summary, Issue Linkage, Validation, and Review State. Workflow routing
+  lives in labels, review comments, and the rebuildable workflow cache. Apply exactly one next:* label
+  to the PR, and mirror it on the linked issue while agent-owned.
 -->
-<!-- awk-state:start -->
-## AWK State
-Status: Review
-Issue Type:
-Next workflow verb: review-local-changes
-Owner: Agent
-Merge Risk:
-Blocked by: None
-Linked PR: This PR
-Accepted direction:
-Last agent review: None
-Revision cycles: 0
-<!-- awk-state:end -->
-
 ## Summary
 
 ## Issue Linkage
@@ -58,7 +45,10 @@ Reason:
 
 ## Review State
 
-<!-- Status, Last agent review, and Revision cycles live in the AWK State block above. Keep them there only. -->
+- Workflow routing label on this PR, and mirrored linked issue label while agent-owned:
+- Last agent review:
+- Revision cycles: 0
+- Review route reason: low-risk local review / architecture-sensitive strong review / artifact review / human-owned merge
 - Accepted review items:
 - Rejected review items:
 - Deferred items with owner, boundary, and removal condition:

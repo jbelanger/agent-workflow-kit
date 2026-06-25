@@ -21,6 +21,7 @@ Required:
   scripts/workflow-labels.mjs
   scripts/setup-github-labels.mjs
   scripts/validate-workflow.mjs
+  scripts/refresh-workflow-cache.mjs
   pushed GitHub repository
   initial GitHub issues before workflow execution
 
@@ -51,6 +52,7 @@ Optional:
 | `scripts/workflow-labels.mjs` | Yes | Shared workflow label contract used by setup and validation. |
 | `scripts/setup-github-labels.mjs` | Yes | Minimal GitHub setup for labels used by issue templates. |
 | `scripts/validate-workflow.mjs` | Yes | Local validation for the installed AWK payload and workflow contract. |
+| `scripts/refresh-workflow-cache.mjs` | Yes | Rebuilds the disposable local workflow cache from GitHub when agents need structured state. |
 | GitHub issues/PRs | Yes for workflow execution | Active orchestration, human answers, remote planning, audit trail, and review. |
 | GitHub labels | Recommended setup | Lightweight issue type and review signals created by `scripts/setup-github-labels.mjs`. |
 | `docs/development/work-items/` | Optional fallback | Portable planning records only when GitHub is absent. |
@@ -87,9 +89,9 @@ Before any AWK workflow step after initialization, create the initial GitHub iss
   decisions;
 - links from children to parent and from every issue to source docs or imported plans;
 - issue type labels from the installed templates;
-- a canonical `AWK State` block for each issue;
-- exactly one `next:*` label that mirrors each issue's `Next workflow verb` when labels are
-  available.
+- exactly one `next:*` label per active issue;
+- visible issue prose or comments that explain any non-obvious blocker, accepted direction, or
+  handoff.
 
 Create the parent issue first, create child issues one at a time, then update the parent or add a
 setup comment with the assigned child issue numbers. Do the same for sibling links that could not be
@@ -113,6 +115,21 @@ node scripts/setup-github-labels.mjs
 ```
 
 This creates labels only.
+
+Agents can rebuild the local workflow snapshot when they need a structured view:
+
+```bash
+node scripts/refresh-workflow-cache.mjs --repo owner/name
+```
+
+The generated `.awk/cache/state.json` is disposable and ignored by git.
+
+## Keeping The Package In Sync
+
+Installed repositories may reveal useful AWK workflow improvements. When an agent changes installed
+AWK workflow files in a target repository, it must keep the Agent Workflow Kit source package in sync:
+promote the same change by cherry-pick or PR when the source package is available, or explicitly tell
+the human that the target repo now differs from the package and needs a source-package sync.
 
 ## Validation
 

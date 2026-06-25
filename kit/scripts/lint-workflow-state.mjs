@@ -1,11 +1,9 @@
 #!/usr/bin/env node
-// Runtime linter for the AWK State contract on live GitHub issues and PRs.
+// Runtime linter for the AWK routing-state contract on live GitHub issues and PRs.
 //
-// validate-workflow.mjs proves the kit *templates and skills* carry the AWK State block, the
-// next:* label vocabulary, and the loop-stop conditions. It cannot prove that a *live* issue or PR
-// is honest. This linter closes that gap: it reads an actual item via the GitHub CLI and fails when
-// the machine-readable routing state (block, next:* label, revision counter) is missing, stale, or
-// self-contradictory, or non-canonical.
+// Bodies are for readable work context; labels route work; comments preserve handoff details; the
+// workflow cache is rebuilt from GitHub when agents need a structured read model. Body metadata
+// blocks, if present, are ignored.
 //
 // Usage:
 //   node scripts/lint-workflow-state.mjs --issue 123 [--repo owner/name]
@@ -21,150 +19,69 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { nextWorkflowVerbs } from './workflow-labels.mjs';
 
-const REQUIRED_FIELDS = [
-  'Status', 'Issue Type', 'Next workflow verb', 'Owner', 'Merge Risk',
-  'Blocked by', 'Linked PR', 'Accepted direction', 'Last agent review', 'Revision cycles',
-];
-const REQUIRED_FIELD_SET = new Set(REQUIRED_FIELDS);
-
-const MERGE_RISKS = ['Parallel-safe', 'Needs coordination', 'Serial only', 'Unknown'];
-const EMPTY_VALUES = new Set(['', 'tbd', 'todo', 'fixme', '...', '<fill>', '<value>']);
+const NEXT_PREFIX = 'next:';
+const KNOWN_NEXT_LABELS = new Set(nextWorkflowVerbs.map((verb) => `${NEXT_PREFIX}${verb}`));
 const REVISION_ESCALATION_THRESHOLD = 2;
-
-const START = '<!-- awk-state:start -->';
-const END = '<!-- awk-state:end -->';
 
 // ---- Pure, offline-testable core ------------------------------------------------------------
 
-export function parseAwkState(body) {
-  const text = String(body ?? '');
-  const start = text.indexOf(START);
-  const end = text.indexOf(END);
-  const startCount = text.split(START).length - 1;
-  const endCount = text.split(END).length - 1;
-  const blockErrors = [];
-
-  if (startCount > 1 || endCount > 1) {
-    blockErrors.push(`Expected exactly one AWK State block, found ${startCount} start marker(s) and ${endCount} end marker(s)`);
-  }
-
-  if (start === -1 || end === -1 || end < start) {
-    return { found: false, fields: {}, blockErrors };
-  }
-  const inner = text.slice(start + START.length, end);
-  const fields = {};
-  for (const rawLine of inner.split('\n')) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith('##') || line.startsWith('<!--')) continue;
-    const colon = line.indexOf(':');
-    if (colon === -1) continue;
-    const key = line.slice(0, colon).trim();
-    const value = line.slice(colon + 1).trim();
-    fields[key] = value;
-  }
-  return { found: true, fields, blockErrors };
+function labelsFor(item) {
+  return (item.labels ?? []).map((label) => (typeof label === 'string' ? label : label.name)).filter(Boolean);
 }
 
-function isEmpty(value) {
-  return value === undefined || EMPTY_VALUES.has(String(value).trim().toLowerCase());
+function textFor(item) {
+  const comments = (item.comments ?? []).map((comment) => comment.body ?? '').join('\n\n');
+  return [item.body ?? '', comments].join('\n\n');
 }
 
-// item: { kind: 'issue'|'pr', number, body, labels: string[] }
+function latestRevisionCycles(item) {
+  const matches = [...textFor(item).matchAll(/\bRevision cycles:\s*(\d+)/gi)];
+  if (matches.length === 0) return null;
+  return Number(matches.at(-1)[1]);
+}
+
+// item: { kind: 'issue'|'pr', number, body, labels: string[], comments?: [] }
 // returns { errors: string[], warnings: string[] }
 export function lintItem(item) {
   const errors = [];
   const warnings = [];
-  const labels = (item.labels ?? []).map((l) => (typeof l === 'string' ? l : l.name));
-  const nextLabels = labels.filter((l) => l.startsWith('next:'));
-  const { found, fields, blockErrors } = parseAwkState(item.body);
+  const labels = labelsFor(item);
+  const nextLabels = labels.filter((label) => label.startsWith(NEXT_PREFIX));
 
-  errors.push(...blockErrors);
-
-  if (!found) {
-    errors.push('AWK State block not found (missing <!-- awk-state:start -->/<!-- awk-state:end --> markers)');
-    return { errors, warnings };
-  }
-
-  for (const field of REQUIRED_FIELDS) {
-    if (!(field in fields)) {
-      errors.push(`AWK State is missing required field: ${field}`);
-    } else if (isEmpty(fields[field])) {
-      errors.push(`AWK State field is empty/placeholder: ${field}`);
-    }
-  }
-
-  for (const field of Object.keys(fields)) {
-    if (!REQUIRED_FIELD_SET.has(field)) {
-      errors.push(`AWK State has unexpected field '${field}'; keep the block to the canonical fields only`);
-    }
-  }
-
-  const verb = fields['Next workflow verb'];
-  const verbValid = verb && nextWorkflowVerbs.includes(verb);
-  if (verb && !verbValid) {
-    errors.push(`Next workflow verb '${verb}' is not a known AWK verb`);
-  }
-
-  // Exactly one next:* label, and it must mirror Next workflow verb.
   if (nextLabels.length === 0) {
-    errors.push('No next:* routing label present; expected exactly one mirroring Next workflow verb');
+    errors.push('No next:* routing label present; expected exactly one');
   } else if (nextLabels.length > 1) {
     errors.push(`Multiple next:* labels present (${nextLabels.join(', ')}); keep exactly one`);
-  } else if (verbValid) {
-    const expected = `next:${verb}`;
-    if (nextLabels[0] !== expected) {
-      errors.push(`Label ${nextLabels[0]} does not match Next workflow verb '${verb}' (expected ${expected})`);
-    }
+  } else if (!KNOWN_NEXT_LABELS.has(nextLabels[0])) {
+    errors.push(`Unknown next:* routing label: ${nextLabels[0]}`);
   }
 
-  // Revision counter must be a non-negative integer.
-  const rawCycles = fields['Revision cycles'];
-  let cycles = null;
-  if (rawCycles !== undefined && !isEmpty(rawCycles)) {
-    if (!/^\d+$/.test(rawCycles)) {
-      errors.push(`Revision cycles must be a non-negative integer, got '${rawCycles}'`);
-    } else {
-      cycles = Number(rawCycles);
-    }
-  }
-
-  // Escalation guard: a PR stuck at >= threshold revisions must be routed to a human, not re-looped.
-  if (
-    item.kind === 'pr'
-    && cycles === REVISION_ESCALATION_THRESHOLD - 1
-    && verb === 'work-issue-local'
-    && labels.includes('revision-needed')
-  ) {
-    errors.push(
-      `Revision cycles=${cycles} and revision-needed would dispatch the second unresolved agent revision pass; `
-      + 'route to human-decision instead of work-issue-local',
-    );
-  }
-
-  if (cycles !== null && cycles >= REVISION_ESCALATION_THRESHOLD) {
-    const stillLooping = labels.includes('revision-needed')
-      || verb === 'work-issue-local'
-      || verb === 'review-revision-triage';
-    if (verb !== 'human-decision' && stillLooping) {
+  if (item.kind === 'pr') {
+    const cycles = latestRevisionCycles(item);
+    const nextVerb = nextLabels.length === 1 ? nextLabels[0].slice(NEXT_PREFIX.length) : null;
+    if (
+      cycles === REVISION_ESCALATION_THRESHOLD - 1
+      && labels.includes('revision-needed')
+      && nextVerb === 'work-issue-local'
+    ) {
       errors.push(
-        `Revision cycles=${cycles} (>=${REVISION_ESCALATION_THRESHOLD}) but item is still in the agent revision loop `
-        + `(verb=${verb || 'unset'}); route to human-decision instead of another agent pass`,
+        `Revision cycles=${cycles} and revision-needed would dispatch the second unresolved agent revision pass; `
+        + 'route to next:human-decision instead of next:work-issue-local',
       );
     }
-    if (verb === 'human-decision' && !labels.includes('needs-human-review')) {
-      warnings.push(`Revision cycles=${cycles} routed to human-decision but missing 'needs-human-review' label`);
+    if (
+      cycles !== null
+      && cycles >= REVISION_ESCALATION_THRESHOLD
+      && labels.includes('revision-needed')
+      && nextVerb !== 'human-decision'
+    ) {
+      errors.push(
+        `Revision cycles=${cycles} (>=${REVISION_ESCALATION_THRESHOLD}) but PR is still in the agent loop; `
+        + 'route to next:human-decision',
+      );
     }
-  }
-
-  // Soft checks.
-  const mergeRisk = fields['Merge Risk'];
-  if (mergeRisk && !isEmpty(mergeRisk) && !MERGE_RISKS.includes(mergeRisk)) {
-    warnings.push(`Merge Risk '${mergeRisk}' is not one of: ${MERGE_RISKS.join(', ')}`);
-  }
-  if (item.kind === 'pr') {
-    const linked = fields['Linked PR'];
-    if (linked && !isEmpty(linked) && !/this pr/i.test(linked) && !/#?\d+/.test(linked)) {
-      warnings.push(`Linked PR '${linked}' on a PR should be 'This PR' or a PR number`);
+    if (nextVerb === 'human-decision' && !labels.includes('needs-human-review')) {
+      warnings.push("next:human-decision is present without 'needs-human-review'");
     }
   }
 
@@ -191,11 +108,6 @@ function repoArgs(repo) {
   return repo ? ['--repo', repo] : [];
 }
 
-function fetchItem(kind, number, repo) {
-  const data = gh([kind, 'view', String(number), ...repoArgs(repo), '--json', 'number,body,labels']);
-  return { kind, number: data.number, body: data.body ?? '', labels: data.labels ?? [] };
-}
-
 function repoNameWithOwner(repo) {
   return repo ?? gh(['repo', 'view', '--json', 'nameWithOwner']).nameWithOwner;
 }
@@ -205,6 +117,17 @@ function repoParts(repo) {
   const [owner, name] = nameWithOwner.split('/');
   if (!owner || !name) throw new Error(`Invalid repository name '${nameWithOwner}'; expected owner/name`);
   return { owner, name };
+}
+
+function fetchItem(kind, number, repo) {
+  const data = gh([kind, 'view', String(number), ...repoArgs(repo), '--json', 'number,body,labels,comments']);
+  return {
+    kind,
+    number: data.number,
+    body: data.body ?? '',
+    labels: data.labels ?? [],
+    comments: data.comments ?? [],
+  };
 }
 
 function listOpenNumbers(kind, repo) {
@@ -264,200 +187,131 @@ function parseArgs(argv) {
   return opts;
 }
 
-function reportItem(item) {
-  const { errors, warnings } = lintItem(item);
-  const tag = `${item.kind} #${item.number}`;
-  for (const w of warnings) console.warn(`warning: ${tag}: ${w}`);
-  for (const e of errors) console.error(`error: ${tag}: ${e}`);
-  return errors.length;
+function usage() {
+  console.log('Usage: node scripts/lint-workflow-state.mjs [--issue N | --pr N | --all-open] [--repo owner/name] [--strict]');
+  console.log('       node scripts/lint-workflow-state.mjs --self-test');
+  console.log('       node scripts/lint-workflow-state.mjs --body-file f --labels a,b --kind issue|pr');
 }
 
-const SELF_TEST_CASES = [
-  {
-    name: 'valid ready task',
-    expectErrors: 0,
-    item: {
-      kind: 'issue', number: 1, labels: ['task', 'next:work-issue-local'],
-      body: block({ 'Next workflow verb': 'work-issue-local', 'Revision cycles': '0' }),
+function selfTest() {
+  const cases = [
+    {
+      name: 'valid issue label only',
+      item: { kind: 'issue', number: 1, labels: ['task', 'next:work-issue-local'], body: '' },
+      errors: [],
     },
-  },
-  {
-    name: 'missing block',
-    expectErrors: 1,
-    item: { kind: 'issue', number: 2, labels: ['next:groom-issue'], body: 'no state here' },
-  },
-  {
-    name: 'empty field',
-    expectErrors: 1,
-    item: {
-      kind: 'issue', number: 3, labels: ['next:groom-issue'],
-      body: block({ 'Next workflow verb': 'groom-issue', 'Owner': '' }),
+    {
+      name: 'missing next label',
+      item: { kind: 'issue', number: 2, labels: ['task'], body: '' },
+      errors: ['No next:* routing label present; expected exactly one'],
     },
-  },
-  {
-    name: 'label/verb mismatch',
-    expectErrors: 1,
-    item: {
-      kind: 'issue', number: 4, labels: ['next:groom-issue'],
-      body: block({ 'Next workflow verb': 'work-issue-local' }),
+    {
+      name: 'duplicate next labels',
+      item: { kind: 'issue', number: 3, labels: ['next:groom-issue', 'next:work-issue-local'], body: '' },
+      errors: ['Multiple next:* labels present (next:groom-issue, next:work-issue-local); keep exactly one'],
     },
-  },
-  {
-    name: 'multiple next labels',
-    expectErrors: 1,
-    item: {
-      kind: 'issue', number: 5, labels: ['next:groom-issue', 'next:work-issue-local'],
-      body: block({ 'Next workflow verb': 'groom-issue' }),
+    {
+      name: 'revision cycle guard',
+      item: {
+        kind: 'pr',
+        number: 5,
+        labels: ['next:work-issue-local', 'revision-needed'],
+        body: 'Revision cycles: 1',
+      },
+      errors: [
+        'Revision cycles=1 and revision-needed would dispatch the second unresolved agent revision pass; route to next:human-decision instead of next:work-issue-local',
+      ],
     },
-  },
-  {
-    name: 'duplicate state blocks',
-    expectErrors: 1,
-    item: {
-      kind: 'issue', number: 6, labels: ['task', 'next:work-issue-local'],
-      body: `${block({ 'Next workflow verb': 'work-issue-local' })}\n\n${block({ 'Next workflow verb': 'review-revision-triage', 'Revision cycles': '2' })}`,
-    },
-  },
-  {
-    name: 'non-integer revision cycles',
-    expectErrors: 1,
-    item: {
-      kind: 'pr', number: 7, labels: ['next:review-local-changes'],
-      body: block({ 'Next workflow verb': 'review-local-changes', 'Revision cycles': 'two' }),
-    },
-  },
-  {
-    name: 'unexpected state field',
-    expectErrors: 1,
-    item: {
-      kind: 'pr', number: 8, labels: ['next:review-local-changes'],
-      body: `${START}\n## AWK State\n${[
-        ...REQUIRED_FIELDS.map((k) => `${k}: ${blockFieldDefaults()[k]}`),
-        'Linked issue: #1',
-      ].join('\n')}\n${END}`,
-    },
-  },
-  {
-    name: 'escalation not routed to human',
-    expectErrors: 1,
-    item: {
-      kind: 'pr', number: 9, labels: ['next:work-issue-local', 'revision-needed'],
-      body: block({ 'Next workflow verb': 'work-issue-local', 'Revision cycles': '2' }),
-    },
-  },
-  {
-    name: 'second revision dispatch not routed to human',
-    expectErrors: 1,
-    item: {
-      kind: 'pr', number: 10, labels: ['next:work-issue-local', 'revision-needed'],
-      body: block({ 'Next workflow verb': 'work-issue-local', 'Revision cycles': '1' }),
-    },
-  },
-  {
-    name: 'escalation routed to human',
-    expectErrors: 0,
-    item: {
-      kind: 'pr', number: 11, labels: ['next:human-decision', 'needs-human-review'],
-      body: block({ 'Next workflow verb': 'human-decision', 'Revision cycles': '3', 'Blocked by': 'human architecture decision' }),
-    },
-  },
-];
+  ];
 
-function blockFieldDefaults() {
-  return {
-    Status: 'Ready', 'Issue Type': 'Task', 'Next workflow verb': 'work-issue-local',
-    Owner: 'Agent', 'Merge Risk': 'Parallel-safe', 'Blocked by': 'None', 'Linked PR': 'None',
-    'Accepted direction': 'DIRECT_TASK', 'Last agent review': 'None', 'Revision cycles': '0',
-  };
-}
-
-function block(overrides = {}) {
-  const base = blockFieldDefaults();
-  const merged = { ...base, ...overrides };
-  const lines = REQUIRED_FIELDS.map((k) => `${k}: ${merged[k]}`);
-  return `${START}\n## AWK State\n${lines.join('\n')}\n${END}`;
-}
-
-function runSelfTest() {
-  let failures = 0;
-  for (const tc of SELF_TEST_CASES) {
-    const { errors } = lintItem(tc.item);
-    const pass = tc.expectErrors === 0 ? errors.length === 0 : errors.length >= tc.expectErrors;
-    if (!pass) {
-      failures += 1;
-      console.error(`FAIL: ${tc.name} (expected ~${tc.expectErrors} errors, got ${errors.length}: ${errors.join('; ')})`);
-    } else {
-      console.log(`ok: ${tc.name}`);
+  let failed = 0;
+  for (const test of cases) {
+    const actual = lintItem(test.item);
+    const errors = JSON.stringify(actual.errors);
+    const expectedErrors = JSON.stringify(test.errors ?? []);
+    const warnings = JSON.stringify(actual.warnings);
+    const expectedWarnings = JSON.stringify(test.warnings ?? []);
+    if (errors !== expectedErrors || warnings !== expectedWarnings) {
+      failed += 1;
+      console.error(`Self-test failed: ${test.name}`);
+      console.error(`  errors expected ${expectedErrors}, got ${errors}`);
+      console.error(`  warnings expected ${expectedWarnings}, got ${warnings}`);
     }
   }
-  if (failures > 0) {
-    console.error(`Self-test failed: ${failures} case(s).`);
+  if (failed > 0) {
+    console.error(`Workflow-state lint self-test failed: ${failed} failure(s).`);
     process.exit(1);
   }
-  console.log('Self-test passed.');
+  console.log('Workflow-state lint self-test passed.');
+}
+
+function printResult(item, result) {
+  for (const warning of result.warnings) {
+    console.warn(`warning: ${item.kind} #${item.number}: ${warning}`);
+  }
+  for (const error of result.errors) {
+    console.error(`error: ${item.kind} #${item.number}: ${error}`);
+  }
 }
 
 function main() {
-  let opts;
-  try {
-    opts = parseArgs(process.argv.slice(2));
-  } catch (e) {
-    console.error(e.message);
-    process.exit(1);
-  }
-
+  const opts = parseArgs(process.argv.slice(2));
   if (opts.help) {
-    console.log('Usage: node scripts/lint-workflow-state.mjs [--issue N | --pr N | --all-open] [--repo owner/name] [--strict]');
-    console.log('       node scripts/lint-workflow-state.mjs --self-test');
-    console.log('       node scripts/lint-workflow-state.mjs --body-file f --labels a,b --kind issue|pr');
-    process.exit(0);
+    usage();
+    return;
   }
+  if (opts.selfTest) return selfTest();
 
-  if (opts.selfTest) return runSelfTest();
-
-  // Offline mode for testing without gh.
   if (opts.bodyFile) {
     const item = {
       kind: opts.kind ?? 'issue',
       number: 0,
       body: readFileSync(opts.bodyFile, 'utf8'),
-      labels: opts.labels ? opts.labels.split(',').map((s) => s.trim()).filter(Boolean) : [],
+      labels: opts.labels ? opts.labels.split(',').filter(Boolean) : [],
+      comments: [],
     };
-    process.exit(reportItem(item) > 0 ? 1 : 0);
+    const result = lintItem(item);
+    printResult(item, result);
+    process.exit(result.errors.length > 0 ? 1 : 0);
   }
 
   if (!ghAvailable()) {
-    const msg = 'GitHub CLI (gh) not available; skipping live AWK State lint.';
-    if (opts.strict) {
-      console.error(`error: ${msg} (--strict)`);
-      process.exit(1);
-    }
-    console.warn(`warning: ${msg}`);
-    process.exit(0);
+    const msg = 'GitHub CLI (gh) not available; skipping live workflow-state lint.';
+    if (opts.strict) throw new Error(msg);
+    console.warn(msg);
+    return;
+  }
+
+  const items = [];
+  if (opts.issue) items.push(fetchItem('issue', opts.issue, opts.repo));
+  if (opts.pr) items.push(fetchItem('pr', opts.pr, opts.repo));
+  if (opts.allOpen) {
+    for (const number of listOpenNumbers('issue', opts.repo)) items.push(fetchItem('issue', number, opts.repo));
+    for (const number of listOpenNumbers('pr', opts.repo)) items.push(fetchItem('pr', number, opts.repo));
+  }
+
+  if (items.length === 0) {
+    usage();
+    process.exit(1);
   }
 
   let errorCount = 0;
-  try {
-    if (opts.issue) errorCount += reportItem(fetchItem('issue', opts.issue, opts.repo));
-    if (opts.pr) errorCount += reportItem(fetchItem('pr', opts.pr, opts.repo));
-    if (opts.allOpen) {
-      for (const n of listOpenNumbers('issue', opts.repo)) errorCount += reportItem(fetchItem('issue', n, opts.repo));
-      for (const n of listOpenNumbers('pr', opts.repo)) errorCount += reportItem(fetchItem('pr', n, opts.repo));
-    }
-    if (!opts.issue && !opts.pr && !opts.allOpen) {
-      console.error('Nothing to lint. Pass --issue, --pr, --all-open, --self-test, or --body-file.');
-      process.exit(1);
-    }
-  } catch (e) {
-    console.error(`error: ${e.message}`);
-    process.exit(1);
+  for (const item of items) {
+    const result = lintItem(item);
+    printResult(item, result);
+    errorCount += result.errors.length;
   }
 
   if (errorCount > 0) {
-    console.error(`AWK State lint failed: ${errorCount} error(s).`);
+    console.error(`Workflow-state lint failed: ${errorCount} error(s).`);
     process.exit(1);
   }
-  console.log('AWK State lint passed.');
+  console.log('Workflow-state lint passed.');
 }
 
-main();
+try {
+  main();
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}

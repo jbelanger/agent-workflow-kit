@@ -15,6 +15,7 @@ const payloadRoot = join(kitRoot, 'kit');
 
 const awkBlockStart = '<!-- BEGIN_AGENT_WORKFLOW_KIT -->';
 const awkBlockEnd = '<!-- END_AGENT_WORKFLOW_KIT -->';
+const cacheGitignoreEntry = '.awk/cache/';
 
 function usage() {
   return `Usage: node scripts/install-workflow-kit.mjs --target <repo> [--force] [--dry-run]
@@ -152,6 +153,36 @@ function copyFile(file, options, result) {
   }
 }
 
+function mergeGitignoreText(currentText) {
+  const lines = currentText.split(/\r?\n/).map((line) => line.trim());
+  if (lines.includes(cacheGitignoreEntry)) return currentText;
+
+  const trimmed = currentText.trimEnd();
+  const prefix = trimmed ? `${trimmed}\n\n` : '';
+  return `${prefix}# Agent Workflow Kit\n${cacheGitignoreEntry}\n`;
+}
+
+function ensureGitignore(options, result) {
+  const target = join(options.target, '.gitignore');
+  const currentText = existsSync(target) ? readFileSync(target, 'utf8') : '';
+  const nextText = mergeGitignoreText(currentText);
+
+  if (nextText === currentText) {
+    result.unchanged.push('.gitignore');
+    return;
+  }
+
+  if (currentText) {
+    result.merged.push('.gitignore');
+  } else {
+    result.created.push('.gitignore');
+  }
+
+  if (!options.dryRun) {
+    writeFileSync(target, nextText);
+  }
+}
+
 function install(options) {
   if (!existsSync(options.target)) {
     throw new Error(`Target repository does not exist: ${options.target}`);
@@ -169,6 +200,7 @@ function install(options) {
   for (const file of files) {
     copyFile(file, options, result);
   }
+  ensureGitignore(options, result);
 
   return result;
 }

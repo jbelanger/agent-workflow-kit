@@ -6,28 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Record a decision you'll want to remember the reasoning for later** — architecture, storage, ownership, a public surface, or a policy. Lay out the options and your recommendation. The **AWK State** block at the top is agent housekeeping — leave it as-is.
-  - type: textarea
-    id: awk_state
-    attributes:
-      label: AWK State
-      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
-      value: |
-        <!-- awk-state:start -->
-        ## AWK State
-        Status: Grooming
-        Issue Type: ADR
-        Next workflow verb: draft-artifact
-        Owner: Agent
-        Merge Risk: Unknown
-        Blocked by: None
-        Linked PR: None
-        Accepted direction: None
-        Last agent review: None
-        Revision cycles: 0
-        <!-- awk-state:end -->
-    validations:
-      required: true
+        **Record a decision you'll want to remember the reasoning for later** — architecture, storage, ownership, a public surface, or a policy. Lay out the options and your recommendation. Agents use labels, comments, and the rebuildable workflow cache for routing state.
   - type: textarea
     id: decision
     attributes:

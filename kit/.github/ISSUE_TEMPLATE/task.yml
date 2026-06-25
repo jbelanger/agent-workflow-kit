@@ -6,28 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Work that's ready to build — one agent, one branch or worktree, one PR.** Fill in the sections below so the task is safe to hand off without a back-and-forth. The **AWK State** block at the top is housekeeping your agent keeps current; you can leave it as-is.
-  - type: textarea
-    id: awk_state
-    attributes:
-      label: AWK State
-      description: Housekeeping your agent maintains — you can leave the defaults. (The agent keeps the Next workflow verb in sync with one next:* label.)
-      value: |
-        <!-- awk-state:start -->
-        ## AWK State
-        Status: Ready
-        Issue Type: Task
-        Next workflow verb: work-issue-local
-        Owner: Agent
-        Merge Risk: Unknown
-        Blocked by: None
-        Linked PR: None
-        Accepted direction: None
-        Last agent review: None
-        Revision cycles: 0
-        <!-- awk-state:end -->
-    validations:
-      required: true
+        **Work that's ready to build — one agent, one branch or worktree, one PR.** Fill in the sections below so the task is safe to hand off without a back-and-forth. Agents use labels, comments, and the rebuildable workflow cache for routing state.
   - type: textarea
     id: goal
     attributes:
@@ -93,7 +72,7 @@ body:
     id: merge_risk
     attributes:
       label: Merge risk
-      description: How safely this can land alongside other in-flight work. Keep this consistent with the AWK State block.
+      description: How safely this can land alongside other in-flight work.
       options:
         - Parallel-safe
         - Needs coordination

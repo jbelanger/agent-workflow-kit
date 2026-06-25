@@ -39,12 +39,9 @@ migration.
    - old AWK workflow docs under `docs/development/workflow/`;
    - old AWK GitHub-first ADR at `docs/development/adrs/github-first-orchestration.md`.
 6. Do not delete arbitrary project-owned skills or docs just because they live outside `.agents/skills/awk/`.
-7. If the maintenance changes AWK workflow behavior, keep the Agent Workflow Kit source package in sync.
-   Promote the same change by cherry-pick or PR when the source package is available, or explicitly
-   tell the human that the target repo now differs from the package and needs a source-package sync.
-8. Run `node scripts/validate-workflow.mjs`.
-9. Verify GitHub label setup when GitHub is available.
-10. Report changed files and any required follow-up issues.
+7. Run `node scripts/validate-workflow.mjs`.
+8. Verify GitHub label setup when GitHub is available.
+9. Report changed files and any required follow-up issues.
 
 ## Hard Stops
 

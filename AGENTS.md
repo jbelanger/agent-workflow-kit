@@ -63,19 +63,24 @@ task lane and move sequentially through the required handoffs. The point is to l
 handoff, not to skip directly to code or force every task through the longest possible path:
 
 1. Reset or confirm a clean target baseline.
-2. Create or select the initial work item. Use a deliberately vague item only when testing the
+2. For a GitHub-first AWK trial, publish or confirm the target GitHub repository, push the baseline,
+   verify labels, and run `init-awk` until initial GitHub issues exist before delegating grooming,
+   discovery, breakdown, preparation, implementation, or review. If GitHub publishing is impossible
+   or intentionally out of scope, get an explicit human-approved local-only exception and call the
+   run a local dry run, not a realistic GitHub workflow trial.
+3. Create or select the initial work item. Use a deliberately vague item only when testing the
    vague-idea lane.
-3. Run the first required lane step: plan inspection for detailed plans, grooming for unclear work,
+4. Run the first required lane step: plan inspection for detailed plans, grooming for unclear work,
    bug diagnosis for unclear bugs, maintenance inspection for AWK updates, or PR review for existing
    changes.
-4. Use discovery, spec, ADR, or spike only when grooming shows that direction is missing.
-5. Break accepted direction into one-agent, one-worktree, one-PR child tasks.
-6. Prepare an implementation brief for each ready task.
-7. Hand each task to a separate worker agent or worktree.
-8. Review each worker's output before human merge review.
-9. Run `improve-workflow` triage on actionable process feedback before source-package edits. Record
+5. Use discovery, spec, ADR, or spike only when grooming shows that direction is missing.
+6. Break accepted direction into one-agent, one-worktree, one-PR child tasks.
+7. Prepare an implementation brief for each ready task.
+8. Hand each task to a separate worker agent or worktree.
+9. Review each worker's output before human merge review.
+10. Run `improve-workflow` triage on actionable process feedback before source-package edits. Record
    accepted, rejected, deferred, needs-evidence, or human-decision classifications.
-10. Promote only accepted lessons back into this source repo.
+11. Promote only accepted lessons back into this source repo.
 
 Use subagents to simulate the future multi-agent handoff model. The main thread is the supervisor
 only: it orchestrates, delegates, monitors quality, records handoff state, and captures process
@@ -89,6 +94,11 @@ result for protocol compliance, ask the human for a decision when a delegated ag
 stop or redirect the run when quality is poor. The supervisor should not silently repair a delegated
 agent's work in place, skip the handoff by doing the work itself, or let a subagent skip ahead to
 later phases.
+
+The supervisor should also not use local `docs/development/work-items/` records as the primary
+handoff surface in a realistic trial. Those records are a portability fallback for GitHub-unavailable
+or explicitly local-only dry runs. A realistic AWK trial must leave visible GitHub issues and, once
+code or reviewable docs exist, PRs.
 
 Grooming is the expected heavy step for vague ideas. It may use advisory subagents for product, UX,
 technical architecture, validation, or creative direction, but their output is advisory. The

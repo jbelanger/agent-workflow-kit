@@ -156,7 +156,7 @@ function listOpenNumbers(kind, repo) {
     if (cursor) args.push('-F', `after=${cursor}`);
 
     const data = gh(args);
-    const page = data.repository?.[connection];
+    const page = data.data?.repository?.[connection] ?? data.repository?.[connection];
     if (!page) throw new Error(`Could not list open ${kind === 'pr' ? 'PRs' : 'issues'} for ${owner}/${name}`);
 
     numbers.push(...page.nodes.map((node) => node.number));

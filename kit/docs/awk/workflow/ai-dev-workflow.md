@@ -805,8 +805,3 @@ Agents should include a brief `Process feedback` note in replies, issue comments
 when they encounter confusing instructions, missing fields, excess ceremony, unsafe autonomy,
 merge-safety gaps, or ideas that would make the workflow easier to use. Use `improve-workflow` to
 triage those notes before changing the process.
-
-When an agent changes installed AWK workflow files in a target repository, it must keep the Agent
-Workflow Kit source package in sync. Promote the same change by cherry-pick or PR when the source
-package is available, or explicitly tell the human that the target repo now differs from the package
-and needs a source-package sync.

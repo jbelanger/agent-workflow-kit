@@ -360,26 +360,6 @@ function validate(cwd) {
     }
   }
 
-  const maintainSkillPath = sourcePath(cwd, '.agents/skills/awk/process/maintain-awk/SKILL.md');
-  if (existsSync(join(cwd, maintainSkillPath))) {
-    const maintainSkill = read(cwd, maintainSkillPath);
-    for (const snippet of ['source package in sync', 'cherry-pick or PR', 'differs from the package']) {
-      if (!maintainSkill.includes(snippet)) {
-        errors.push(`maintain-awk skill is missing source-package sync snippet: ${snippet}`);
-      }
-    }
-  }
-
-  const improveWorkflowSkillPath = sourcePath(cwd, '.agents/skills/awk/process/improve-workflow/SKILL.md');
-  if (existsSync(join(cwd, improveWorkflowSkillPath))) {
-    const improveWorkflowSkill = read(cwd, improveWorkflowSkillPath);
-    for (const snippet of ['source package in sync', 'cherry-pick or PR', 'differs from the package']) {
-      if (!improveWorkflowSkill.includes(snippet)) {
-        errors.push(`improve-workflow skill is missing source-package sync snippet: ${snippet}`);
-      }
-    }
-  }
-
   const workIssueSkillPath = sourcePath(cwd, '.agents/skills/awk/process/work-issue-local/SKILL.md');
   if (existsSync(join(cwd, workIssueSkillPath))) {
     const workIssueSkill = read(cwd, workIssueSkillPath);
@@ -426,9 +406,6 @@ function validate(cwd) {
       'do not implement from the plan directly',
       'Create the parent issue first',
       'Accepted enough for artifact review or breakdown is not accepted enough for implementation',
-      'source package in sync',
-      'cherry-pick or PR',
-      'differs from the package',
     ]) {
       if (!installDoc.includes(snippet)) {
         errors.push(`installing-agent-workflow-kit doc is missing init-bootstrap snippet: ${snippet}`);
@@ -462,11 +439,6 @@ function validate(cwd) {
     for (const snippet of ['Create artifact folders only when writing the first artifact', 'Do not keep empty']) {
       if (!aiWorkflow.includes(snippet)) {
         errors.push(`AI dev workflow is missing lazy artifact folder snippet: ${snippet}`);
-      }
-    }
-    for (const snippet of ['source package in sync', 'cherry-pick or PR', 'differs from the package']) {
-      if (!aiWorkflow.includes(snippet)) {
-        errors.push(`AI dev workflow is missing source-package sync snippet: ${snippet}`);
       }
     }
   }

@@ -124,13 +124,6 @@ node scripts/refresh-workflow-cache.mjs --repo owner/name
 
 The generated `.awk/cache/state.json` is disposable and ignored by git.
 
-## Keeping The Package In Sync
-
-Installed repositories may reveal useful AWK workflow improvements. When an agent changes installed
-AWK workflow files in a target repository, it must keep the Agent Workflow Kit source package in sync:
-promote the same change by cherry-pick or PR when the source package is available, or explicitly tell
-the human that the target repo now differs from the package and needs a source-package sync.
-
 ## Validation
 
 In an installed project:

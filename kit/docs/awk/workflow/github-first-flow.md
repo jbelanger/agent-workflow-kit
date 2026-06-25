@@ -49,6 +49,10 @@ When a PR is the active work surface, it should carry its own `next:*` label. Mi
 the linked active issue while the work remains agent-owned; if the issue and PR intentionally differ,
 record the reason in a visible workflow comment.
 
+After implementation opens or updates a PR, the PR becomes the active review surface. The worker must
+verify the PR's own `next:*` label and visible review-state/comment before final handoff; updating
+only the linked issue is incomplete.
+
 AWK does not read hidden or constantly edited body metadata for routing. Bodies should stay readable
 and describe the work. Workflow transitions should be recorded as ordinary issue or PR comments when
 extra context is needed, and labels should be updated for routing.
@@ -83,7 +87,8 @@ Do not treat PR draft/ready state as proof that the completed agent review pass 
 issue or PR records that pass, keep implementation and general doc/code work agent-owned and
 classify the PR before choosing the review verb. Route low-risk PRs to `review-local-changes`; route
 architecture-sensitive PRs, including PRs touching contracts, storage, public surface, core domain
-model, accepted specs, or ADRs, to `review-revision-triage`. Route durable artifact PRs to
+model, shared application state, first framework/toolchain setup, accepted specs, accepted UX
+direction, or ADRs, to `review-revision-triage`. Route durable artifact PRs to
 `review-artifact`; that skill is the agent review pass for artifact acceptance or revision routing.
 If review finds architecture ambiguity, ownership drift, public-surface risk, storage risk, or an
 unclear long-term model, route to human architecture judgment before merge approval.

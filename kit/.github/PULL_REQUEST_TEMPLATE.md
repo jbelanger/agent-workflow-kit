@@ -2,7 +2,9 @@
   If an agent prepared this PR, most sections may already be filled in. As the author,
   focus on Summary, Issue Linkage, Validation, and Review State. Workflow routing
   lives in labels, review comments, and the rebuildable workflow cache. Apply exactly one next:* label
-  to the PR, and mirror it on the linked issue while agent-owned.
+  to the PR, and mirror it on the linked issue while agent-owned. Before final handoff, verify the
+  PR label plus Review State here or a visible PR workflow comment; an issue-only label update is
+  incomplete.
 -->
 ## Summary
 

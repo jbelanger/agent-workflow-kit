@@ -165,14 +165,23 @@ When completing a child item, superseding refactor, or replacement PR:
 
 ## PR Handoff
 
-When opening or updating the PR, apply or recommend exactly one `next:*` routing label on the PR and
-mirror that label on the active linked issue while the work remains agent-owned. Use
-`next:review-revision-triage` when the PR touches architecture, ownership, contracts, storage,
-public surface, core domain model, accepted specs or ADRs, or known debt risk. Use
-`next:review-local-changes` only for low-risk implementation or general doc/code PRs.
+Before finalizing an implementation pass that opened or updated a PR, run this gate against the
+actual GitHub PR, not only the linked issue:
 
-Record the routing reason in the PR Review State or a visible workflow comment, including whether
-the PR is low-risk or architecture-sensitive and the current `Revision cycles` value.
+1. Classify the PR route. Use `next:review-revision-triage` when the PR touches architecture,
+   ownership, contracts, storage, public surface, core domain model, shared application state, first
+   framework/toolchain setup, accepted specs or ADRs, accepted UX direction, or known debt risk. Use
+   `next:review-local-changes` only for low-risk implementation or general doc/code PRs.
+2. Apply or recommend exactly one `next:*` routing label on the PR.
+3. Mirror that label on the active linked issue while the work remains agent-owned.
+4. Record visible routing state in the PR Review State or a PR workflow comment: route reason,
+   whether the PR is low-risk or architecture-sensitive, last agent review, and current
+   `Revision cycles`.
+5. Re-read or verify the PR and linked issue state before the final response. If labels or comments
+   could not be mutated, include the exact recommended labels and workflow comment in the final
+   summary.
+
+Do not finish with only the issue updated. Once a PR exists, the PR is the active review surface.
 
 ## Loop Stop Conditions
 

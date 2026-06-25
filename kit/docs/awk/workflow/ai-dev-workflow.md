@@ -631,6 +631,14 @@ When completing a child item, superseding refactor, or replacement PR, the imple
 reads the parent work item and decides whether the parent is now resolved, partly resolved, or
 should return to grooming or breakdown.
 
+Before finalizing after opening or updating a PR, the implementation agent must run the PR handoff
+gate against the actual GitHub PR: classify the review route, apply or recommend exactly one
+`next:*` label on the PR, mirror it on the linked issue while agent-owned, and record a PR Review
+State or visible PR workflow comment with the route reason, last agent review, and current
+`Revision cycles`. An issue label by itself is not a complete PR handoff. Shared application state,
+first framework/toolchain setup, accepted UX/spec surfaces, and other contract or architecture
+surfaces route to `review-revision-triage`, not the lightweight review path.
+
 ### 9. Review
 
 There are two review paths.
@@ -728,6 +736,10 @@ When a worker opens or updates a PR, the active PR should carry exactly one `nex
 Mirror that label on the active linked issue while the work remains agent-owned. If the issue and PR
 would need different labels, explain why in a visible workflow comment instead of leaving the
 mismatch implicit.
+
+Implementation workers must verify the PR label and visible PR review-state/comment before final
+handoff. If they cannot mutate GitHub, they must leave exact recommended label and comment text
+instead of reporting that the route was updated.
 
 ## Loop Stop Conditions
 

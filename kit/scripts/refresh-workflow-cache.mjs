@@ -30,6 +30,7 @@ function parseArgs(argv) {
     if (arg === '--repo') opts.repo = next();
     else if (arg === '--output') opts.output = next();
     else if (arg === '--limit') opts.limit = Number(next());
+    else if (arg === '--self-test') opts.selfTest = true;
     else if (arg === '--help' || arg === '-h') opts.help = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
@@ -42,7 +43,8 @@ function parseArgs(argv) {
 function usage() {
   console.log(
     'Usage: node scripts/refresh-workflow-cache.mjs [--repo owner/name] '
-      + '[--output .awk/cache/state.json] [--limit 100]',
+      + '[--output .awk/cache/state.json] [--limit 100]\n'
+      + '       node scripts/refresh-workflow-cache.mjs --self-test',
   );
 }
 
@@ -87,10 +89,60 @@ function linkedPrNumbers(item) {
   return uniqueNumbers(matches);
 }
 
+function revisionCycleValues(text) {
+  const values = [];
+  for (const line of String(text ?? '').split(/\r?\n/)) {
+    const match = line.match(
+      /^\s*(?:[-*]\s*)?(?:\*\*)?Revision cycles(?:\s*:\s*\*\*|\s*\*\*\s*:|\s*:)\s*(?:\*\*)?(\d+)\b/i,
+    );
+    if (match) values.push(Number(match[1]));
+  }
+  return values;
+}
+
 function revisionCycles(item) {
-  const matches = [...allText(item).matchAll(/\bRevision cycles:\s*(\d+)/gi)];
-  if (matches.length === 0) return null;
-  return Number(matches.at(-1)[1]);
+  const comments = [...(item.comments ?? [])].sort((a, b) => (
+    String(a.createdAt ?? '').localeCompare(String(b.createdAt ?? ''))
+  ));
+  const values = [
+    ...revisionCycleValues(item.body),
+    ...comments.flatMap((comment) => revisionCycleValues(comment.body)),
+  ];
+  return values.length > 0 ? values.at(-1) : null;
+}
+
+function assertEqual(actual, expected, message) {
+  if (actual !== expected) {
+    throw new Error(`${message}: expected ${expected}, got ${actual}`);
+  }
+}
+
+function runSelfTest() {
+  assertEqual(
+    revisionCycles({
+      comments: [
+        { createdAt: '2026-01-01T00:00:00Z', body: 'Revision cycles: 0\nNext workflow verb: work-issue-local' },
+        {
+          createdAt: '2026-01-01T00:01:00Z',
+          body: 'A fresh PR stays at `Revision cycles: 0`; record `Revision cycles: 1` after the pass.',
+        },
+        { createdAt: '2026-01-01T00:02:00Z', body: 'Revision routing:\n- Revision cycles: 1' },
+      ],
+    }),
+    1,
+    'latest state line wins over explanatory prose',
+  );
+  assertEqual(
+    revisionCycles({ comments: [{ body: '- **Revision cycles:** 2' }] }),
+    2,
+    'bold markdown state line parses',
+  );
+  assertEqual(
+    revisionCycles({ comments: [{ body: 'Inline example `Revision cycles: 2` should not parse.' }] }),
+    null,
+    'inline example is ignored',
+  );
+  console.log('refresh-workflow-cache self-test passed.');
 }
 
 function excerpt(text, max = 320) {
@@ -219,6 +271,10 @@ function main() {
   const opts = parseArgs(process.argv.slice(2));
   if (opts.help) {
     usage();
+    return;
+  }
+  if (opts.selfTest) {
+    runSelfTest();
     return;
   }
 

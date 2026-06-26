@@ -676,10 +676,12 @@ Review details stay on the PR. Use `revision-needed` and `needs-human-review` as
 available, or as issue comments when labels are not configured.
 
 Use `Revision cycles` as a hard loop counter. Record it in the PR Review State section or a visible
-workflow comment so the cache can extract the latest value. Increment it when the same PR moves from
-review back to implementation for accepted revision work. After two unresolved agent revision cycles,
-route to human review with `needs-human-review` and `next:human-decision` instead of sending the PR
-through another agent revision pass.
+workflow comment so the cache can extract the latest value. The value counts completed unresolved
+implementation revision passes on the same PR, not review findings. A first review that finds
+accepted revision work keeps `Revision cycles: 0` while routing to `work-issue-local`; record
+`Revision cycles: 1` only after that revision pass completes and routes back to review. After two
+unresolved agent revision cycles, route to human review with `needs-human-review` and
+`next:human-decision` instead of sending the PR through another agent revision pass.
 If a PR is at `Revision cycles: 1` and accepted blocking revision work remains, stop before
 dispatching the implementation pass that would become the second unresolved cycle. Keep
 `Revision cycles: 1`, route to `human-decision`, and record the accepted blocker in a visible PR

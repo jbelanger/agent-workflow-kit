@@ -80,8 +80,11 @@ and explain the options, recommendation, and reasoning on the PR.
 ## Revision Cycle Guard
 
 Use the latest visible PR `Revision cycles` value as a hard loop counter. Read it from the PR Review
-State section, workflow comments, or refreshed workflow cache. Increment it when an agent routes the
-same PR from review back to implementation for accepted revision work.
+State section, workflow comments, or refreshed workflow cache. The value counts completed unresolved
+implementation revision passes on the same PR, not review findings. When the first review finds
+accepted revision work on a fresh PR, keep `Revision cycles: 0` while routing the PR to
+`work-issue-local`; record `Revision cycles: 1` only after that revision pass completes and routes
+back to review.
 
 Before routing accepted revision work back to implementation, check whether that dispatch would
 become the second unresolved agent revision cycle. If `Revision cycles` is already `1`, stop before

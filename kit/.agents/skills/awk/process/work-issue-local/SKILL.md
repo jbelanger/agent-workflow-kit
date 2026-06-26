@@ -131,7 +131,9 @@ touches architecture, contracts, ownership, public surface, storage, accepted do
 scope requires human review.
 
 For PR revision work, read the latest visible `Revision cycles` value from the PR Review State,
-workflow comments, or refreshed workflow cache before editing. If the PR has already had two
+workflow comments, or refreshed workflow cache before editing. `Revision cycles` counts completed
+unresolved implementation revision passes, not the review comment that requested the first fix. A PR
+at `Revision cycles: 0` may receive its first accepted revision pass. If the PR has already had two
 unresolved agent revision cycles, stop and route to human review instead of applying another agent
 revision pass.
 

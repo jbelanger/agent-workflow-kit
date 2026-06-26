@@ -166,10 +166,13 @@ When recommending or making state changes:
 - record rich context such as blockers, accepted direction, linked PRs, last agent review, and
   revision cycles in visible issue/PR prose or comments when it is not already clear from GitHub.
 
-If a PR has `Revision cycles: 1` and still has `revision-needed` or unresolved accepted review work,
-route to `human-decision` with `needs-human-review` instead of sending it through the implementation
-pass that would become the second unresolved agent revision cycle. Keep `Revision cycles: 1` until a
-human decision is recorded or a real implementation revision pass completes.
+`Revision cycles` counts completed unresolved implementation revision passes on the same PR, not the
+review that first requested fixes. A fresh PR with `Revision cycles: 0` may route once to
+`work-issue-local` for accepted review work. If a PR has `Revision cycles: 1` and still has
+`revision-needed` or unresolved accepted review work, route to `human-decision` with
+`needs-human-review` instead of sending it through the implementation pass that would become the
+second unresolved agent revision cycle. Keep `Revision cycles: 1` until a human decision is recorded
+or a real implementation revision pass completes.
 
 If a PR has `Revision cycles: 2` or higher and still has `revision-needed` or unresolved accepted
 review work, it is already past the agent loop stop. Route to `human-decision` with

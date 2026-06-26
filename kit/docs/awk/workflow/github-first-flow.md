@@ -99,8 +99,10 @@ human-owned merge step.
 
 Use `Revision cycles` as a hard stop for repeated agent review loops. Record the count in the PR
 Review State section or a visible workflow comment, and let the cache extract the latest value.
-Increment it when the same PR is routed from agent review back to implementation. After two
-unresolved agent revision cycles, add or recommend `needs-human-review`, set or recommend the
+The count is completed unresolved implementation revision passes on the same PR, not review
+findings. Keep `Revision cycles: 0` while sending a fresh PR to its first accepted revision pass;
+record `Revision cycles: 1` only after that revision pass completes and routes back to review. After
+two unresolved agent revision cycles, add or recommend `needs-human-review`, set or recommend the
 `next:human-decision` label, and stop the agent loop until the human decision is recorded.
 When a PR is already at `Revision cycles: 1` and accepted blocking revision work remains, stop
 before dispatching the implementation pass that would become the second unresolved cycle. Keep

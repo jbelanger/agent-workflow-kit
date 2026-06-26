@@ -117,12 +117,15 @@ function recentWorkflowComments(item) {
 
 function deriveWarnings(kind, labels, nextLabels, cycles, item) {
   const warnings = [];
-  if (nextLabels.length === 0) {
-    warnings.push('Missing next:* routing label');
-  } else if (nextLabels.length > 1) {
-    warnings.push(`Multiple next:* routing labels: ${nextLabels.join(', ')}`);
-  } else if (!nextLabelNames.has(nextLabels[0])) {
-    warnings.push(`Unknown next:* routing label: ${nextLabels[0]}`);
+  const requiresActiveRoute = kind !== 'pr' || item.state === 'OPEN';
+  if (requiresActiveRoute) {
+    if (nextLabels.length === 0) {
+      warnings.push('Missing next:* routing label');
+    } else if (nextLabels.length > 1) {
+      warnings.push(`Multiple next:* routing labels: ${nextLabels.join(', ')}`);
+    } else if (!nextLabelNames.has(nextLabels[0])) {
+      warnings.push(`Unknown next:* routing label: ${nextLabels[0]}`);
+    }
   }
 
   if (kind === 'pr') {

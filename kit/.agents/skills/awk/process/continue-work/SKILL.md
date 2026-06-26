@@ -27,6 +27,8 @@ be inspected.
 - Repo docs hold accepted durable truth.
 - PRs hold proposed doc/code changes and review gates.
 - Labels provide lightweight issue type, review signals, and active next-route signals.
+- `next:*` labels are active routing state only on open issues and open PRs. Merged or closed PRs
+  are terminal; use native PR state for reconciliation, not leftover PR labels.
 - The local workflow cache is disposable derived state. Rebuild it from GitHub when stale; do not
   hand-edit it or treat it as durable truth.
 - Skills hold procedure.
@@ -57,16 +59,27 @@ be inspected.
 - If issue/comment history leaves meaningful ambiguity about intent, behavior, ownership,
   architecture, acceptance criteria, or validation, route to `groom-issue` or `discover-vision`
   instead of implementation.
+- A route or slice selected during grooming, discovery, or breakdown is not implementation
+  authorization. Treat it as input to durable routing state unless the user separately assigns a
+  Ready item to `work-issue-local`.
+- Material findings from any skill are first-class workflow inputs. A material finding is evidence
+  that could change product/design direction, architecture, validation targets, scope, accepted
+  artifacts, or the readiness of current work. Route it to `triage-finding` when the implication or
+  owner is not already obvious; otherwise route it directly to the owning thinking step before more
+  execution.
 
 ## Routing Order
 
 1. Check whether the user named a specific issue, PR, branch, artifact, or work item. If so, route
    that item before scanning broader workflow state.
-2. Inspect active PRs before starting new work. An artifact PR whose issue names
-   `review-artifact` routes to `review-artifact`; an architecture-sensitive implementation or
-   general doc/code PR routes to `review-revision-triage`; other implementation or general doc/code
-   PRs without recorded agent review usually route to `review-local-changes`; a reviewable or
-   revision-needed PR usually beats new planning work.
+2. Inspect active human-authored or agent-authored PRs before starting new work. Automated dependency
+   update PRs from Dependabot or equivalent dependency bots do not preempt project workflow unless
+   the user names them, they fix an urgent security advisory, or a failing dependency check blocks
+   current work. An artifact PR whose issue names `review-artifact` routes to `review-artifact`; an
+   architecture-sensitive implementation or general doc/code PR routes to
+   `review-revision-triage`; other implementation or general doc/code PRs without recorded agent
+   review usually route to `review-local-changes`; a reviewable or revision-needed PR usually beats
+   new planning work.
 3. If several items are eligible, prefer:
    - review or revision work that unblocks merge,
    - accepted direction ready for breakdown,
@@ -90,6 +103,7 @@ Classify the selected item before choosing a verb:
 | Maintenance or refactor | `groom-issue`, `maintain-awk`, or `review-revision-triage` depending on whether the risk is ownership, migration, or PR feedback |
 | UI-bearing product work | Require accepted UX direction, or route to `discover-vision` with the UX lens and visual review aids when useful |
 | Small direct task | Fast lane with visible `DIRECT_TASK` rationale, one-agent scope, acceptance criteria, validation, and merge risk; skip only the gates and separate briefs that add no useful evidence |
+| Material product, UX, creative, game-design, platform, architecture, validation, or scope finding | `triage-finding` when the implication or owner is unclear; otherwise record the finding and route to the owning thinking step |
 | Artifact PR ready for acceptance or revision routing | `review-artifact` |
 | Architecture-sensitive implementation or general doc/code diff or PR without agent review | `review-revision-triage` |
 | Low-risk implementation or general doc/code diff or PR without agent review | `review-local-changes` |
@@ -109,6 +123,7 @@ Route to one of these verbs:
 | Several items are plausible | `pick-next-item` |
 | Issue has no visible grooming result or direct-task rationale | `groom-issue` |
 | Issue intent or type is unclear | `groom-issue` |
+| Material finding needs classification, owner, recording location, or route | `triage-finding` |
 | Product, UX, creative, game, platform, or architecture vision is unresolved | `discover-vision` |
 | Accepted or groomed direction needs a spec, ADR, or spike record | `draft-artifact` |
 | Vision brief, spec, or ADR is ready for human acceptance or revision routing | `review-artifact` |
@@ -121,6 +136,10 @@ Route to one of these verbs:
 Do not call a mutating implementation path merely because an issue is Ready. The user must ask to
 implement or otherwise grant that action in the current turn.
 
+If this turn produced or changed the route to `work-issue-local`, stop after recording or
+recommending the handoff. Do not dispatch implementation in the same uninterrupted loop that created
+the visible grooming, breakdown, or preparation result.
+
 ## GitHub State Rules
 
 Do not recommend `Status = Review` for doc or code changes unless the issue has a linked PR. If the
@@ -131,6 +150,10 @@ Do not use GitHub draft state as the default workflow holding pen. Open PRs as r
 the branch is pushed, validation has run, and the PR body records issue linkage and current review
 state. Use draft only when work is knowingly incomplete, validation is missing, or the PR is exposing
 a WIP diff without asking for attention.
+
+Do not route from `next:*` labels on merged or closed PRs. Treat those labels as archival cleanup
+noise; route post-merge work from the linked issue, issue-closing state, and visible reconciliation
+comments.
 
 Do not treat PR draft/ready state as proof that the agent review gate is complete. For
 implementation or general doc/code PRs, classify the PR before choosing the review verb. If it
@@ -187,6 +210,7 @@ After this step, stop and hand off instead of silently choosing another workflow
 - PR is waiting for human merge;
 - validation cannot run;
 - architecture fork detected;
+- material finding requires product/design, architecture, validation, scope, or artifact judgment;
 - next workflow verb changes.
 
 ## Output
@@ -210,6 +234,7 @@ Linked PR:
 Accepted direction:
 Last agent review:
 Revision cycles:
+Material findings:
 
 Derived state is a read model from GitHub labels, native PR/issue state, comments, and repo docs.
 Do not ask humans to maintain it as a body block. Mirror `Next workflow verb` with exactly one

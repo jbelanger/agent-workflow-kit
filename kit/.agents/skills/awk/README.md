@@ -23,7 +23,7 @@ Use the process skills as workflow verbs:
 | Shape | `process/discover-vision`, `process/draft-artifact`, `process/review-artifact`, `process/breakdown-issue` |
 | Execute | `process/work-issue-local`; `process/prepare-implementation` only when a stale or incomplete Ready issue needs a compact re-brief |
 | Review | `process/review-local-changes`, `process/review-revision-triage` |
-| Improve | `process/improve-workflow` |
+| Findings / Improve | `process/triage-finding`, `process/improve-workflow` |
 
 Do not skip from vague idea or Inbox directly to implementation. A fast lane may skip discovery,
 spec, ADR, a separate artifact, or a separate implementation re-brief only when the issue records a
@@ -38,6 +38,10 @@ Runtime worker loops are ephemeral; GitHub issues, PRs, and repo docs remain the
   inside `process/discover-vision`.
 - `domain/`: placeholder for AWK-compatible domain skill packaging. Project-specific domain skills
   may also exist elsewhere under `.agents/skills/`.
+- Advisory experts are optional project-owned expert voices, not AWK workflow verbs. Prefer
+  installing reusable experts under `.agents/skills/advisory/<name>/` and listing them in
+  `.agents/advisory-experts.md` so `triage-finding`, `discover-vision`, and humans can find the
+  right sparring partner without adding another `next:*` route.
 
 Each skill still owns its own folder and `SKILL.md`:
 

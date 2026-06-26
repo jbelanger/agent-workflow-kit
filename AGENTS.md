@@ -31,6 +31,9 @@ source files, run validation, and commit or push only when asked.
 - `kit/.github/` contains issue and PR templates for target repositories.
 - `kit/docs/awk/` contains installable AWK process docs.
 - `kit/docs/development/README.md` is the installable target-project artifact folder contract.
+- Root `advisory-experts/` contains optional reusable advisory expert skills. Target projects opt in
+  by copying one to `.agents/skills/advisory/<name>/`, optionally adding a grounded wrapper, and
+  registering it in `.agents/advisory-experts.md`; these are not installed by default.
 - Root `docs/development/` records durable source-repo design notes and source spikes.
 - Root `scripts/` contains source-package helpers such as the installer and portable-install proof.
 

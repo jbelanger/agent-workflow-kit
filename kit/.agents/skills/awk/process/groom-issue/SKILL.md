@@ -15,6 +15,9 @@ for interactive discovery, durable planning work, or `breakdown-issue`.
 
 - Grooming classifies unclear work before implementation.
 - Grooming produces direction; `breakdown-issue` creates child implementation work items.
+- A grooming handoff is not an implementation assignment. When grooming selects `breakdown-issue`,
+  `prepare-implementation`, or `work-issue-local` as the next workflow verb, record or recommend the
+  visible handoff and stop.
 - Prefer updating the current work item over creating a parallel planning item.
 - Durable project specs, ADRs, spikes, and discovery bundles belong under `docs/development/`.
 - AWK workflow references and process decisions belong under `docs/awk/`.
@@ -27,6 +30,8 @@ for interactive discovery, durable planning work, or `breakdown-issue`.
   itself. Do not conduct a product, UX, creative, game, platform, or architecture vision interview
   inside grooming.
 - Give options, a recommendation, and the reason when asking an ordinary clarification question.
+- Word route questions as planning choices, not invitations to start coding. For example, ask which
+  route or slice to record next, not which path the agent should start implementing.
 - Explain decisions in simple operational terms, assuming the human has not looked at the code
   recently.
 - Use a compact table, diagram, or before/after flow when it makes the decision clearer.
@@ -111,6 +116,9 @@ re-brief when one is needed. Even `DIRECT_TASK` must make the skipped planning v
 - Ambiguities, alternatives, architecture concerns, and validation challenges considered.
 - Human question asked and answered, or why no human answer was needed.
 - Next workflow verb.
+
+The record must exist in durable workflow state before a runtime worker loop begins. A chat-only
+answer that chooses a path, route, or slice during grooming is not enough to start implementation.
 
 If meaningful ambiguity remains, absence of a visible human question is evidence that the work is
 still in grooming unless the record explains why that ambiguity does not affect the next slice.
@@ -207,6 +215,10 @@ After this step, stop and hand off instead of silently choosing another workflow
 - architecture fork detected;
 - next workflow verb changes.
 
+Stop when the next workflow verb changes even if the human selected one of the proposed routes in
+the current grooming exchange. Treat that answer as input to the visible grooming record or
+breakdown handoff, not as permission to start the next skill.
+
 ## Output
 
 Return:
@@ -234,7 +246,7 @@ Return:
 - Keep normal clarification in grooming.
 - Prefer updating the current work item over creating a parallel planning item.
 - If the work item is tiny enough for direct implementation, record the `DIRECT_TASK` rationale,
-  scope, acceptance criteria, validation, and merge risk, then route to `work-issue-local`.
+  scope, acceptance criteria, validation, and merge risk, then route to `work-issue-local` and stop.
 - If accepted direction needs decomposition, hand it to `breakdown-issue` so the orchestrator can
   produce merge-safe executable task boundaries and a self-contained issue body.
 - If the work item needs a product, UX, creative, game, platform, or architecture interview, stop

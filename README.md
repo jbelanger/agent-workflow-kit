@@ -86,6 +86,7 @@ repos receive them under `docs/awk/`.
 | `kit/docs/awk/` | Workflow reference, the GitHub-first ADR, and the install contract. |
 | `kit/docs/development/README.md` | Installed target-project artifact folder contract. |
 | `kit/scripts/` | Scripts copied into target repos. |
+| `advisory-experts/` | Optional reusable advisory expert skills. To opt in, copy one to `.agents/skills/advisory/<name>/`, optionally add a grounded wrapper, and register it in `.agents/advisory-experts.md`. Not installed by default. |
 | `docs/development/` | This repo's own decisions, source spikes, and notes. |
 | `scripts/` | Source-package installer and portable-install proof. |
 

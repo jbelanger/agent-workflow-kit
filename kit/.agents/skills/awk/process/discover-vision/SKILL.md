@@ -30,6 +30,7 @@ accepted without explicit human acceptance.
 - `AGENTS.md` and `docs/awk/workflow/ai-dev-workflow.md`.
 - The grooming artifact, work item, issue, prompt, or prior discovery bundle.
 - Existing specs, ADRs, spikes, research notes, or source docs named by the work item.
+- `.agents/advisory-experts.md` when present.
 - Relevant domain docs, product constraints, UI references, architecture notes, or validation
   evidence needed for the selected lenses.
 
@@ -53,6 +54,9 @@ Conditional lenses:
 Rules:
 
 - Use at most five lenses.
+- When an advisory expert registry exists and the human is brainstorming or the domain risk is
+  specialized, recommend or consult the matching advisory expert as evidence for discovery. Advisory
+  experts do not ask the human directly, own `next:*` labels, or create accepted truth.
 - Do not run discovery for `DIRECT_TASK`, `DROP`, or `DEFER`.
 - Do not force UX or creative lenses onto purely backend, CLI, data, or maintenance work.
 - If current market, library, genre, competitor, legal, or standards evidence would materially

@@ -35,6 +35,9 @@ cross-module direction, and operating policy.
   bounded, named, and given a removal condition.
 - No untracked technical debt.
 - No PR is clean only because tests pass if the architecture direction is wrong.
+- Do not bury material findings inside implementation. If evidence could change product/design
+  direction, architecture, validation targets, scope, accepted artifacts, or readiness, record it and
+  route to the owning thinking step before more execution.
 
 ## Readiness Gate
 
@@ -49,6 +52,10 @@ is the normal implementation contract. Acceptable evidence is one of:
 
 If this evidence is missing, stop before implementation and route back to `groom-issue`. Do not
 treat a well-written issue body as a substitute for grooming.
+
+The readiness record must exist in durable workflow state before this implementation skill starts. A
+chat-only grooming answer or same-turn route selection is not enough, even when it names an
+agent-safe slice.
 
 If meaningful ambiguity remains, the visible grooming record must include the clarification question
 asked and answered, or explain why that ambiguity does not affect the next slice.
@@ -73,7 +80,9 @@ interaction constraints, accessibility/usability risks, and what is deliberately
 7. Implement in narrow slices.
 8. Add or update focused tests for changed behavior.
 9. Run focused validation first, then broader checks if warranted.
-10. Summarize changes, validation, decisions, smells, deferred items, and parent work item
+10. Classify material findings before continuing; stop and route if they affect product/design,
+    architecture, validation targets, scope, accepted artifacts, or readiness.
+11. Summarize changes, validation, decisions, smells, deferred items, and parent work item
     resolution.
 
 ## Feedback Loop Selection
@@ -194,6 +203,7 @@ After this step, stop and hand off instead of silently choosing another workflow
 - PR is waiting for human merge;
 - validation cannot run;
 - architecture fork detected;
+- material finding requires product/design, architecture, validation, scope, or artifact judgment;
 - next workflow verb changes.
 
 ## Final Summary
@@ -206,6 +216,7 @@ Include:
 - Architecture direction and whether it still holds.
 - Review triage, when applicable.
 - Workflow comment and label update, including linked PR and revision cycles when applicable.
+- Material findings, with evidence, implication, owner, and recommended route.
 - Decisions and smells.
 - Naming issues.
 - Deferred items with owner, boundary, and removal condition.

@@ -70,6 +70,7 @@ Current categories:
 | `process/` | Planning, orchestration, implementation routing, review routing, and workflow improvement. |
 | `specialist/` | Concrete expert procedures that are not already covered by the process loop, currently TDD and bug diagnosis. |
 | `domain/` | Project or business-domain skills with domain vocabulary, records, policies, reports, or workflows. |
+| Advisory experts | Optional project-owned expert voices for human brainstorming and domain pressure-testing; install reusable ones under `.agents/skills/advisory/<name>/` and list them in `.agents/advisory-experts.md` when present. |
 
 Process: planning and orchestration:
 
@@ -81,6 +82,7 @@ Process: planning and orchestration:
 | `pick-next-item` | Recommend the best next work item based on readiness, risk, dependencies, and value. | No |
 | `continue-work` | Inspect GitHub issues, PRs, labels, and repo docs to choose the next safe workflow verb. | No |
 | `groom-issue` | Turn an unclear work item into a task, spec, ADR, spike, bug, refactor, drop, or defer. | No |
+| `triage-finding` | Classify and route material findings from any skill, PR, harness, spike, playtest, review, or implementation pass. | No |
 | `discover-vision` | Orchestrate early high-interaction product, UX, creative, platform, or architecture discovery before specs. | Docs only |
 | `draft-artifact` | Draft or update one durable spec, ADR, or spike from groomed direction. | Docs only |
 | `review-artifact` | Review and accept or route revision for a durable vision brief, spec, or ADR. | Docs only |
@@ -103,10 +105,21 @@ Specialist skills:
 | `tdd` | Behavior-first red/green/refactor through the highest useful public seam. |
 | `diagnose-bug` | Build a tight red-capable bug feedback loop before implementation. |
 
+Advisory experts:
+
+- Are not AWK workflow verbs and should not get `next:*` labels.
+- Should live under `.agents/skills/advisory/<name>/` when installed from a reusable source, with a
+  project-specific wrapper when local grounding is needed.
+- Help humans and discovery agents think through domain-specific forks.
+- Produce advice, questions, risks, or recommendations, not accepted truth.
+- Should be listed in `.agents/advisory-experts.md` when a project wants AWK to know they exist.
+
 Do not create one mega-skill for the whole workflow. Skills should match the verbs people actually
 say. Product, UX, creative, architecture, and validation discovery are lenses inside
-`discover-vision`, not separate specialist skill files. Add specialist or domain skills only when
-repeated work needs durable procedural knowledge that is not part of the process loop.
+`discover-vision`; advisory experts can be consulted by humans, `triage-finding`, or
+`discover-vision` when a domain needs sharper pressure-testing. Add procedural specialist or domain
+skills only when repeated work needs durable procedural knowledge that is not part of the process
+loop.
 
 ## GitHub-First Orchestration
 
@@ -161,9 +174,37 @@ human authorizes implementation. Use `prepare-implementation` only when the Read
 spread across too many comments or links for a fresh worker, or missing a compact task contract that
 would let the worker start safely.
 
+A planning response that names `work-issue-local` as the next route is not itself a runtime worker
+loop. If grooming, discovery, breakdown, or preparation changes the next workflow verb, record the
+handoff and stop; start implementation only from a separate explicit assignment after visible Ready
+state exists.
+
 Every meaningful workflow pass should include process feedback when it notices workflow weakness.
 That feedback belongs in the issue comment or PR summary where it was observed, then routes through
 `improve-workflow` when it needs a durable change.
+
+### Material Findings Gate
+
+Any skill can surface a material finding: evidence that may change product/design direction,
+architecture, validation targets, scope, accepted artifacts, or whether the current work is actually
+ready. A material finding is not a command to keep implementing. It is a stop-and-route signal. Use
+`triage-finding` when the finding's implication, owner, recording location, or next route is not
+obvious.
+
+When a material finding appears:
+
+1. Record the evidence in visible issue/PR prose.
+2. State why it matters and which assumption, artifact, validation target, or work boundary it may
+   change.
+3. Name the owner of the thinking step.
+4. Set or recommend the next workflow verb before more execution.
+
+Route product, UX, creative, game-design, platform, or validation findings through
+`discover-vision`, a project-specific advisory/domain skill when one exists, `draft-artifact`, or a
+spike. Route architecture, ownership, contract, storage, public-surface, or core-model findings
+through `review-revision-triage`, ADR/spec work, or human decision. Routine implementation facts
+that do not change direction, readiness, validation, or scope can stay in the PR summary or issue
+comment.
 
 ### Visible Grooming Gate
 
@@ -279,6 +320,11 @@ When GitHub labels are available, each active item should have exactly one `next
 for routing queries. Use ordinary comments for transition reasons, blockers, accepted direction,
 review outcomes, and handoff notes that are not already clear from the issue or PR body.
 
+Automated dependency-update PRs from Dependabot or equivalent dependency bots are ordinary repository
+maintenance, not AWK-owned work by default. They may remain without `next:*` routing labels and
+should not preempt project work unless the human names the PR, the update fixes an urgent security
+advisory, or a failing dependency check blocks current work.
+
 Agents may rebuild `.awk/cache/state.json` with `node scripts/refresh-workflow-cache.mjs` when they
 need a structured local view. The cache is derived from GitHub issues, PRs, labels, comments, and
 native merge state; it is ignored by git and can always be deleted and rebuilt. Do not hand-edit the
@@ -386,7 +432,7 @@ Grooming status values:
 | `NEEDS_INTERVIEW` | One human answer is needed before useful durable text can exist. |
 | `NEEDS_RESEARCH` | Evidence must be gathered before the next decision or draft. |
 | `NEEDS_DECISION` | A known architecture, product, ownership, storage, public surface, or policy decision blocks progress. |
-| `DIRECT_TASK` | The work is tiny and ready for `work-issue-local` once the issue records rationale, scope, acceptance, validation, and merge risk; no discovery, spec, ADR, spike, breakdown, or re-brief is needed. |
+| `DIRECT_TASK` | The work is tiny and can route to `work-issue-local` after the issue records rationale, scope, acceptance, validation, and merge risk; no discovery, spec, ADR, spike, breakdown, or re-brief is needed. The grooming pass still stops after recording that route. |
 | `DROP` | The work should not be done. |
 | `DEFER` | The work may be valid but should not move now. |
 
@@ -505,6 +551,12 @@ Create artifact folders only when writing the first artifact in that folder. Do 
 Draft artifacts are reviewable proposals. They are not accepted truth until the human accepts them
 through review or an explicit decision. Do not create implementation child work items from a draft
 spec or proposed ADR.
+
+When an updated artifact adds a later finding or superseding decision, run a supersession coherence
+pass before routing it to review. Older Problem statements, proposed contracts, acceptance criteria,
+open questions, and breakdown notes must either be revised to the new candidate contract or clearly
+marked as historical/superseded evidence. Do not rely on a new final section, PR summary, or chat
+handoff to override contradictory active text inside the artifact.
 
 For product or design specs, the draft must include a real product/design vision before detailed
 rules: intended audience, experience pillars, core loop or workflow, comparable references or
@@ -734,6 +786,11 @@ belongs in explanatory comments or issue/PR prose. Revision state belongs in the
 section or visible review comments plus review labels. The local cache is only a regenerated view of
 that GitHub state.
 
+`next:*` labels route active work only: open issues and open PRs. Merged or closed PRs are terminal;
+native PR state overrides any leftover labels. Preserve those labels as audit noise if GitHub leaves
+them in place, but route post-merge work from the linked issue and reconciliation comments. Humans do
+not need to remove `next:human-merge` after merging.
+
 When a worker opens or updates a PR, the active PR should carry exactly one `next:*` routing label.
 Mirror that label on the active linked issue while the work remains agent-owned. If the issue and PR
 would need different labels, explain why in a visible workflow comment instead of leaving the
@@ -752,7 +809,13 @@ After each workflow verb, stop and hand off instead of silently continuing when:
 - PR is waiting for human merge;
 - validation cannot run;
 - architecture fork detected;
+- material finding requires product/design, architecture, validation, scope, or artifact judgment;
 - next workflow verb changes.
+
+When the next workflow verb changes, handoff means returning the selected route, the exact visible
+state update, and the next skill to run. A human selecting a route, path, or slice during a planning
+exchange chooses what to record next; it does not authorize a code-mutating skill unless the user
+separately assigns a Ready item for implementation.
 
 ## Definition Of Ready
 

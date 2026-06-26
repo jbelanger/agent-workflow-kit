@@ -89,6 +89,19 @@ function linkedPrNumbers(item) {
   return uniqueNumbers(matches);
 }
 
+function isDependencyAutomationPr(kind, item, labels) {
+  if (kind !== 'pr') return false;
+  const author = String(item.author?.login ?? '');
+  const isDependencyBot = /dependabot|renovate/i.test(author);
+  return isDependencyBot && labels.includes('dependencies');
+}
+
+function terminalPrState(kind, item) {
+  const state = String(item.state ?? '');
+  if (kind !== 'pr' || state === '' || state === 'OPEN') return null;
+  return state.toLowerCase();
+}
+
 function revisionCycleValues(text) {
   const values = [];
   for (const line of String(text ?? '').split(/\r?\n/)) {
@@ -142,6 +155,53 @@ function runSelfTest() {
     null,
     'inline example is ignored',
   );
+  const dependencyBotPr = summarize('pr', {
+    number: 24,
+    title: 'chore(deps-dev): bump vite',
+    state: 'OPEN',
+    author: { login: 'dependabot[bot]' },
+    labels: [{ name: 'dependencies' }],
+    body: 'Bumps vite. Upstream notes mention #12345.',
+    comments: [],
+  });
+  assertEqual(
+    dependencyBotPr.linkedIssueNumbers.length,
+    0,
+    'dependency bot upstream release-note issue links are ignored',
+  );
+  assertEqual(
+    dependencyBotPr.warnings.length,
+    0,
+    'dependency bot PRs do not require next labels',
+  );
+  assertEqual(
+    dependencyBotPr.automation,
+    'dependency-update',
+    'dependency bot PR automation is recorded',
+  );
+  const mergedPr = summarize('pr', {
+    number: 27,
+    title: 'merged implementation PR',
+    state: 'MERGED',
+    labels: [{ name: 'next:human-merge' }],
+    comments: [],
+  });
+  assertEqual(
+    mergedPr.warnings.length,
+    0,
+    'merged PR next labels do not produce stale-route warnings',
+  );
+  assertEqual(
+    mergedPr.nextVerb,
+    null,
+    'merged PR next labels are ignored for effective routing',
+  );
+  assertEqual(
+    mergedPr.ignoredNextLabels.join(','),
+    'next:human-merge',
+    'merged PR next labels are preserved as ignored labels',
+  );
+  assertEqual(mergedPr.terminalState, 'merged', 'merged PR terminal state is recorded');
   console.log('refresh-workflow-cache self-test passed.');
 }
 
@@ -169,7 +229,10 @@ function recentWorkflowComments(item) {
 
 function deriveWarnings(kind, labels, nextLabels, cycles, item) {
   const warnings = [];
-  const requiresActiveRoute = kind !== 'pr' || item.state === 'OPEN';
+  const terminalState = terminalPrState(kind, item);
+  const requiresActiveRoute = (
+    kind !== 'pr' || (item.state === 'OPEN' && !isDependencyAutomationPr(kind, item, labels))
+  );
   if (requiresActiveRoute) {
     if (nextLabels.length === 0) {
       warnings.push('Missing next:* routing label');
@@ -180,7 +243,7 @@ function deriveWarnings(kind, labels, nextLabels, cycles, item) {
     }
   }
 
-  if (kind === 'pr') {
+  if (kind === 'pr' && !terminalState) {
     const nextVerb = nextLabels[0]?.slice(NEXT_LABEL_PREFIX.length);
     if (
       cycles === REVISION_ESCALATION_THRESHOLD - 1
@@ -199,9 +262,6 @@ function deriveWarnings(kind, labels, nextLabels, cycles, item) {
     ) {
       warnings.push(`Revision cycles=${cycles} should route to next:human-decision`);
     }
-    if (item.state === 'MERGED' && nextVerb === 'human-merge') {
-      warnings.push('Merged PR still carries next:human-merge; linked issues may need refreshed routing');
-    }
   }
 
   return warnings;
@@ -210,8 +270,12 @@ function deriveWarnings(kind, labels, nextLabels, cycles, item) {
 function summarize(kind, item) {
   const labels = labelNames(item);
   const nextLabels = labels.filter((label) => label.startsWith(NEXT_LABEL_PREFIX));
+  const terminalState = terminalPrState(kind, item);
+  const effectiveNextLabels = terminalState ? [] : nextLabels;
   const cycles = kind === 'pr' ? revisionCycles(item) : null;
   const closingIssuesReferences = item.closingIssuesReferences ?? [];
+  const dependencyAutomation = isDependencyAutomationPr(kind, item, labels);
+  const closingIssueNumbers = closingIssuesReferences.map((issue) => issue.number);
 
   return {
     kind,
@@ -228,12 +292,17 @@ function summarize(kind, item) {
     typeLabels: labels.filter((label) => issueTypeNames.has(label)),
     reviewLabels: labels.filter((label) => reviewSignalNames.has(label)),
     nextLabels,
-    nextVerb: nextLabels.length === 1 && nextLabels[0].startsWith(NEXT_LABEL_PREFIX)
-      ? nextLabels[0].slice(NEXT_LABEL_PREFIX.length)
+    ignoredNextLabels: terminalState ? nextLabels : [],
+    nextVerb: effectiveNextLabels.length === 1 && effectiveNextLabels[0].startsWith(NEXT_LABEL_PREFIX)
+      ? effectiveNextLabels[0].slice(NEXT_LABEL_PREFIX.length)
       : null,
-    linkedIssueNumbers: linkedIssueNumbers(item, closingIssuesReferences),
+    linkedIssueNumbers: dependencyAutomation
+      ? uniqueNumbers(closingIssueNumbers)
+      : linkedIssueNumbers(item, closingIssuesReferences),
     linkedPrNumbers: linkedPrNumbers(item),
+    automation: dependencyAutomation ? 'dependency-update' : null,
     revisionCycles: cycles,
+    terminalState,
     isDraft: item.isDraft ?? null,
     mergedAt: item.mergedAt ?? null,
     mergeStateStatus: item.mergeStateStatus ?? null,

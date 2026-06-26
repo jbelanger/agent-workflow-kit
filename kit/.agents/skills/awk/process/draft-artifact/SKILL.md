@@ -20,6 +20,10 @@ production code. Do not mark a proposal accepted unless the human explicitly acc
   `docs/development/` subfolders as placeholders.
 - Chat notes, GitHub issues, and PR comments are source evidence until promoted into a repo artifact.
 - Preserve provenance: link or name source artifacts, run IDs, work items, issues, and source docs.
+- When updating an existing artifact with a later finding or superseding decision, perform a
+  supersession coherence pass before routing to review: older Problem, Proposed behavior,
+  Acceptance criteria, Open questions, and Breakdown notes must either be updated to the new
+  contract or explicitly marked as historical/superseded evidence.
 - When GitHub is available, a new or changed durable artifact is not ready for `review-artifact`
   until the artifact files are visible through GitHub: either already merged on the default branch
   or proposed in a linked PR. Do not update an issue to `next:review-artifact` while the referenced
@@ -93,6 +97,10 @@ Rules:
 
 - Keep `Spec state: Draft` until human acceptance.
 - Do not create child implementation work items from a draft spec.
+- Before marking an updated spec ready for review, scan the whole artifact for stale claims that the
+  new draft supersedes. Do not leave an older active contract, acceptance criterion, open question,
+  or breakdown note in place when a later section changes that contract; convert it to provenance or
+  revise it.
 - If the spec file already exists and is `Accepted`, `Implemented`, or `Superseded`, do not rewrite
   it without explicit instruction. Propose a new draft or ask.
 - For product, design, game, interaction, or user-facing workflow specs, include a product/design

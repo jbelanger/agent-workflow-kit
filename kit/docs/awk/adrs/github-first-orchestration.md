@@ -50,6 +50,7 @@ issues, comments, linked PRs, repo docs, and labels, then choose the next workfl
 - `triage-backlog`
 - `pick-next-item`
 - `groom-issue`
+- `triage-finding`
 - `discover-vision`
 - `draft-artifact`
 - `review-artifact`

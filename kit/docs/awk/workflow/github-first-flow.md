@@ -41,9 +41,11 @@ Human leaves the keyboard
 
 ## Routing Labels And Cache
 
-Each active issue or PR should carry exactly one `next:*` label. That label is the machine-readable
-routing signal. Issue type labels such as `spec`, `task`, `adr`, and review labels such as
-`revision-needed` or `needs-human-review` provide additional routing signals.
+Each active issue or PR should carry exactly one `next:*` label. Active means an open issue or open
+PR. Merged and closed PRs are terminal for routing; their leftover `next:*` labels are archival and
+must be ignored by `continue-work` and the cache. Issue type labels such as `spec`, `task`, `adr`,
+and review labels such as `revision-needed` or `needs-human-review` provide additional routing
+signals.
 
 When a PR is the active work surface, it should carry its own `next:*` label. Mirror that route on
 the linked active issue while the work remains agent-owned; if the issue and PR intentionally differ,
@@ -68,9 +70,23 @@ state plus derived facts such as next routing labels, type labels, review labels
 numbers, merge state, and recent workflow comments. If it is stale, rebuild it; do not patch it by
 hand.
 
+For merged or closed PRs, the cache preserves raw labels for audit but reports no effective
+`nextVerb`; post-merge routing belongs on the linked issue. Humans do not need to remove
+`next:human-merge` after merging.
+
 When a skill changes routing, it should recommend or apply label changes and, when useful, add a
 short workflow comment with the reason, blocker, accepted direction, or handoff. Rich context belongs
 in visible prose, not in a duplicated metadata block.
+
+When a skill surfaces a material finding, GitHub should carry it as ordinary issue/PR prose before
+the agent continues. Record the evidence, the assumption or artifact it may change, the owner of the
+thinking step, and the recommended next route. Use `triage-finding` when the finding's implication,
+owner, recording location, or next route is not obvious. Do not leave important findings only in
+runtime chat or local logs.
+
+Advisory experts are named in comments, not represented as `next:*` labels. The durable route should
+remain an AWK verb such as `triage-finding`, `discover-vision`, `review-revision-triage`, or
+`human-decision`; the comment may name the advisory expert to consult.
 
 ## Review Handoff Rule
 
@@ -128,6 +144,10 @@ for the current turn. A self-contained Ready issue can route directly to `work-i
 `prepare-implementation` only when a stale or scattered issue needs a compact re-brief before a
 fresh worker loop starts.
 
+If a planning step just changed the next route to `work-issue-local`, stop after recording that
+handoff. A human selecting a route or slice during grooming is choosing durable routing state, not
+authorizing implementation in the same uninterrupted worker loop.
+
 ## Loop Stop Conditions
 
 After each workflow verb, stop and hand off instead of silently continuing when:
@@ -137,6 +157,7 @@ After each workflow verb, stop and hand off instead of silently continuing when:
 - PR is waiting for human merge;
 - validation cannot run;
 - architecture fork detected;
+- material finding requires product/design, architecture, validation, scope, or artifact judgment;
 - next workflow verb changes.
 
 ## Process Feedback

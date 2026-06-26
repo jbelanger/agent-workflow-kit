@@ -24,12 +24,22 @@ Intake -> Shape -> Execute -> Review -> Improve
 - **Execute:** `work-issue-local`; use `prepare-implementation` only to re-brief a stale or
   incomplete Ready issue before handing it to a worker.
 - **Review:** `review-local-changes`, `review-revision-triage`.
-- **Improve:** `improve-workflow`.
+- **Improve:** `triage-finding`, `improve-workflow`.
 
 Do not skip from vague idea or Inbox directly to implementation. A fast lane still needs visible
 issue state, a `DIRECT_TASK` rationale, one-agent scope, acceptance criteria, validation, and merge
 risk. Runtime worker loops are ephemeral; GitHub issues, PRs, and repo docs remain the durable AWK
 state.
+
+When a planning skill changes the next workflow verb, stop after recording the handoff. A human
+choosing a path, slice, or route during grooming is routing input, not implementation authorization;
+start implementation only from a separate `work-issue-local` assignment after visible Ready state
+exists.
+
+When any skill surfaces a material finding that may change product/design direction, architecture,
+validation targets, scope, or accepted artifacts, stop and route the finding to the owning thinking
+step before more execution. Use `triage-finding` when the route is not obvious; record the evidence,
+why it matters, the owner, and the recommended next workflow verb in durable issue/PR state.
 
 - AWK skills live under `.agents/skills/awk/`.
 - AWK process docs live under `docs/awk/`.
